@@ -57,3 +57,6 @@ class Vec() :
     
     def __abs__(self):
         return Vec(abs(self.x), abs(self.y))
+    
+    def distance_to(self, other):
+        return (other-self).length
