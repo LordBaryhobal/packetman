@@ -6,24 +6,24 @@ class Game:
     Main class managing the interface, world rendering and simulation
     """
 
-    def __init__(self) -> None:
+    def __init__(self):
         pass
 
     #Main game loop, calls the simulation and rendering functions
-    def mainloop(self) -> None:
+    def mainloop(self):
         while True:
             self.handle_events()
             self.physics()
             self.render()
     
     #Handle events triggered during this game loop
-    def handle_events(self) -> None:
+    def handle_events(self):
         pass
 
     #Processes physic simulation
-    def physics(self) -> None:
+    def physics(self):
         pass
     
     #Renders the game
-    def render(self) -> None:
+    def render(self):
         pass

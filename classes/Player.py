@@ -9,5 +9,5 @@ class Player(Entity):
     and manages interactions
     """
 
-    def __init__(self) -> None:
+    def __init__(self):
         super().__init__()
