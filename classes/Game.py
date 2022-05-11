@@ -9,21 +9,25 @@ class Game:
     def __init__(self):
         pass
 
-    #Main game loop, calls the simulation and rendering functions
     def mainloop(self):
+        """Main game loop, calls the simulation and rendering functions"""
+
         while True:
             self.handle_events()
             self.physics()
             self.render()
     
-    #Handle events triggered during this game loop
     def handle_events(self):
+        """Handle events triggered during this game loop"""
+
         pass
 
-    #Processes physic simulation
     def physics(self):
+        """Processes physic simulation"""
+
         pass
     
-    #Renders the game
     def render(self):
+        """Renders the game"""
+        
         pass

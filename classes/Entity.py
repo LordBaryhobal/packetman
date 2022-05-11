@@ -15,10 +15,10 @@ class Entity:
         self.vel = Vec()
         self.acc = Vec()
     
-    """
-    Renders the entity on a given surface at a given position and scale
-    @param surface: pygame.Surface to render on
-    @param pos: Vec instance containing the relative position of the entity on the surface
-    """
     def render(self, surface, pos):
+        """
+        Renders the entity on a given surface at a given position and scale
+        @param surface: pygame.Surface to render on
+        @param pos: Vec instance containing the relative position of the entity on the surface
+        """
         pass
