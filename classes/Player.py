@@ -1,7 +1,7 @@
 #Packetman is a small game created in the scope of a school project
 #Copyright (C) 2022  Louis HEREDERO & Mathéo BENEY
 
-from Entity import Entity
+from .Entity import Entity
 
 class Player(Entity):
     """

@@ -1,6 +1,10 @@
 #Packetman is a small game created in the scope of a school project
 #Copyright (C) 2022  Louis HEREDERO & Mathéo BENEY
 
+from .World import World
+from .Camera import Camera
+import pygame
+
 class Game:
     """
     Main class managing the interface, world rendering and simulation
