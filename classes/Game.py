@@ -10,8 +10,18 @@ class Game:
     Main class managing the interface, world rendering and simulation
     """
 
+    WIDTH = 800
+    HEIGHT = 600
+
+    MAX_FPS = 60
+
     def __init__(self):
-        pass
+        self.world = World(self)
+        self.camera = Camera(self)
+
+        pygame.init()
+        self.window = pygame.display.set_mode([Game.WIDTH, Game.HEIGHT])
+        self.clock = pygame.time.Clock()
 
     def mainloop(self):
         """Main game loop, calls the simulation and rendering functions"""
@@ -29,9 +39,14 @@ class Game:
     def physics(self):
         """Processes physic simulation"""
 
-        pass
+        delta = 0
+        self.world.physics(delta)
     
     def render(self):
         """Renders the game"""
         
-        pass
+        surface = self.window
+        self.camera.render(surface)
+
+        pygame.display.flip()
+        self.clock.tick(self.MAX_FPS)
