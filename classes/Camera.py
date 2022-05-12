@@ -8,8 +8,8 @@ class Camera:
     of tiles and entities.
     """
 
-    def __init__(self, game):
-        self.game = game
+    def __init__(self):
+        pass
 
     def render(self, surface):
         pass

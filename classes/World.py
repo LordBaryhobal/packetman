@@ -11,8 +11,7 @@ class World:
     WIDTH = 10
     HEIGHT = 10
 
-    def __init__(self, game):
-        self.game = game
+    def __init__(self):
         self.tiles = np.zeros([self.WIDTH, self.HEIGHT])
     
     def render(self):

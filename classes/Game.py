@@ -7,7 +7,7 @@ import pygame
 
 class Game:
     """
-    Main class managing the interface, world rendering and simulation
+    Singleton class managing the interface, world rendering and simulation
     """
 
     WIDTH = 800
@@ -15,13 +15,25 @@ class Game:
 
     MAX_FPS = 60
 
+    _instance = None
+
     def __init__(self):
-        self.world = World(self)
-        self.camera = Camera(self)
+        """Initializes a Game instance. Should not be called manually"""
+
+        self.world = World()
+        self.camera = Camera()
 
         pygame.init()
         self.window = pygame.display.set_mode([Game.WIDTH, Game.HEIGHT])
         self.clock = pygame.time.Clock()
+    
+    @property
+    def instance():
+        """Returns the unique Game instance, initializing one if none already exists"""
+        if Game._instance is None:
+            Game._instance = Game()
+
+        return Game._instance
 
     def mainloop(self):
         """Main game loop, calls the simulation and rendering functions"""
