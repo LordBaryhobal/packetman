@@ -1,10 +1,11 @@
 #Packetman is a small game created in the scope of a school project
 #Copyright (C) 2022  Louis HEREDERO & Mathéo BENEY
 
-from .World import World
-from .Camera import Camera
-from .Logger import Logger
-from .Event import Event
+from classes.World import World
+from classes.Camera import Camera
+from classes.Logger import Logger
+from classes.Event import Event
+from classes.Animation import Animation
 import pygame, json
 
 class classproperty(property):
@@ -45,6 +46,7 @@ class Game:
         self.clock = pygame.time.Clock()
 
         self.events = []
+        self.animations = []
     
     @classproperty
     def instance(cls):
@@ -75,6 +77,11 @@ class Game:
             if event.type == pygame.QUIT:
                 if self.quit():
                     return
+
+        for animation in self.animations:
+            animation.update()
+        
+        self.animations = list(filter(lambda a: not a.finished, self.animations))
 
         #Custom events
         events = self.events
@@ -108,3 +115,6 @@ class Game:
     
     def quit(self):
         self.running = False
+    
+    def animate(self, obj, attr_, val_a, val_b, duration, start=True, loop=None, type_=Animation.NONE):
+        self.animations.append(Animation(obj, attr_, val_a, val_b, duration, start, loop, type_))
