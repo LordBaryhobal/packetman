@@ -35,6 +35,7 @@ class Game:
         self.world = World()
         self.camera = Camera()
 
+        self.running = True
         pygame.init()
         self.window = pygame.display.set_mode([Game.WIDTH, Game.HEIGHT])
         self.clock = pygame.time.Clock()
@@ -53,10 +54,13 @@ class Game:
     def mainloop(self):
         """Main game loop, calls the simulation and rendering functions"""
 
-        while True:
+        while self.running:
             self.handle_events()
             self.physics()
             self.render()
+    
+        pygame.display.quit()
+        pygame.quit()
     
     def handle_events(self):
         """Handle events triggered during this game loop"""
@@ -91,8 +95,13 @@ class Game:
     def render(self):
         """Renders the game"""
         
+        pygame.display.set_caption(f"Packetman - {self.clock.get_fps():.2f}fps")
+
         surface = self.window
         self.camera.render(surface)
 
         pygame.display.flip()
         self.clock.tick(self.MAX_FPS)
+    
+    def quit(self):
+        self.running = False
