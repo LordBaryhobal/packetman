@@ -29,8 +29,12 @@ class Game:
     def __init__(self):
         """Initializes a Game instance. Should not be called manually"""
 
-        with open("../config.json", "r") as f:
+        self.logger = Logger()
+
+        with open("./config.json", "r") as f:
             self.config = json.loads(f.read())
+        
+        self.logger.loglevel = self.config["loglevel"]
 
         self.world = World()
         self.camera = Camera()
@@ -39,7 +43,6 @@ class Game:
         pygame.init()
         self.window = pygame.display.set_mode([Game.WIDTH, Game.HEIGHT])
         self.clock = pygame.time.Clock()
-        self.logger = Logger(self.config.loglevel)
 
         self.events = []
     
@@ -58,7 +61,7 @@ class Game:
             self.handle_events()
             self.physics()
             self.render()
-    
+        
         pygame.display.quit()
         pygame.quit()
     
