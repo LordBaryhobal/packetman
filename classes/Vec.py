@@ -3,7 +3,7 @@
 
 import math
 
-class Vec() :
+class Vec():
     """
     Simple vector class
     """
@@ -60,3 +60,15 @@ class Vec() :
     
     def distance_to(self, other):
         return (other-self).length
+    
+    def max(self, other):
+        return Vec(max(self.x, other.x), max(self.y, other.y))
+    
+    def min(self, other):
+        return Vec(min(self.x, other.x), min(self.y, other.y))
+    
+    def __eq__(self, other):
+        return self.x == other.x and self.y == other.y
+    
+    def __repr__(self):
+        return f"Vec({self.x}, {self.y})"

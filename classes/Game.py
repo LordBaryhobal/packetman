@@ -34,10 +34,10 @@ class Game:
         with open("./config.json", "r") as f:
             self.config = json.loads(f.read())
         
-        self.logger.loglevel = self.config["loglevel"]
+        self.logger.level = self.config["loglevel"]
 
         self.world = World()
-        self.camera = Camera()
+        self.camera = Camera(self)
 
         self.running = True
         pygame.init()
