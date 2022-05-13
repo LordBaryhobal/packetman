@@ -7,6 +7,13 @@ from .Logger import Logger
 from .Event import Event
 import pygame, json
 
+class classproperty(property):
+    """Utility class for annotating class properties. Parallel to `@property`"""
+
+    def __get__(self, cls, owner):
+        return classmethod(self.fget).__get__(None, owner)()
+
+
 class Game:
     """
     Singleton class managing the interface, world rendering and simulation
@@ -35,13 +42,13 @@ class Game:
 
         self.events = []
     
-    @property
-    def instance():
+    @classproperty
+    def instance(cls):
         """Returns the unique Game instance, initializing one if none already exists"""
-        if Game._instance is None:
-            Game._instance = Game()
+        if cls._instance is None:
+            cls._instance = Game()
 
-        return Game._instance
+        return cls._instance
 
     def mainloop(self):
         """Main game loop, calls the simulation and rendering functions"""
