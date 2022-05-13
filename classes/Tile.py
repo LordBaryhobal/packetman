@@ -11,5 +11,5 @@ class Tile:
         self.type = type_ # 0 = empty, 1 = ..., 2 = ..., 3 = ...
     
     def render(self, surface, position,size):
-        pygame.draw.rect(surface, self.color, (position.x, position.y, size, size))
+        pygame.draw.rect(surface, self.color[self.type], (position.x, position.y, size, size))
     

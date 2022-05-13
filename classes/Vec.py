@@ -3,7 +3,7 @@
 
 import math
 
-class Vec() :
+class Vec():
     """
     Simple vector class
     """
@@ -69,3 +69,6 @@ class Vec() :
     
     def __eq__(self, other):
         return self.x == other.x and self.y == other.y
+    
+    def __repr__(self):
+        return f"Vec({self.x}, {self.y})"

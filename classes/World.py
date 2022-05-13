@@ -17,10 +17,11 @@ class World:
         self.create_tilelist()
         
     def create_tilelist(self):
-        self.tiles = np.random.randint(0,8,(self.HEIGHT,self.WIDTH))
+        arr = np.random.randint(0,8,(self.HEIGHT,self.WIDTH))
+        self.tiles = np.empty([self.HEIGHT,self.WIDTH], dtype='object')
         for x in range(self.WIDTH):
             for y in range(self.HEIGHT):
-                self.tiles[y][x] = Tile(x,y,self.tiles[y][x])
+                self.tiles[y][x] = Tile(x,y,arr[y][x])
     
     def render(self):
         pass
@@ -28,4 +29,5 @@ class World:
     def physics(self, delta):
         pass
     def get_tiles_in_rect(self, topleft, bottomright):
-        return self.tiles[topleft.y:bottomright.y, topleft.x:bottomright.x]
+        print(topleft, bottomright)
+        return self.tiles[bottomright.y:topleft.y+1, topleft.x:bottomright.x+1]
