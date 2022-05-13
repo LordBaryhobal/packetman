@@ -3,7 +3,9 @@
 
 from .World import World
 from .Camera import Camera
-import pygame
+from .Logger import Logger
+from .Event import Event
+import pygame, json
 
 class Game:
     """
@@ -20,12 +22,18 @@ class Game:
     def __init__(self):
         """Initializes a Game instance. Should not be called manually"""
 
+        with open("../config.json", "r") as f:
+            self.config = json.loads(f.read())
+
         self.world = World()
         self.camera = Camera()
 
         pygame.init()
         self.window = pygame.display.set_mode([Game.WIDTH, Game.HEIGHT])
         self.clock = pygame.time.Clock()
+        self.logger = Logger(self.config.loglevel)
+
+        self.events = []
     
     @property
     def instance():
@@ -46,12 +54,31 @@ class Game:
     def handle_events(self):
         """Handle events triggered during this game loop"""
 
-        pass
+        #Pygame events
+        events = pygame.event.get()
+
+        for event in events:
+            if event.type == pygame.QUIT:
+                if self.quit():
+                    return
+
+        #Custom events
+        events = self.events
+
+        for event in events:
+            if event.type == Event.NONE:
+                pass
+            
+            elif event.type == Event.UPDATED:
+                if hasattr(event.obj) and hasattr(event.callback):
+                    getattr(event.obj, event.callback).__call__(event)
+
+        self.events = []
 
     def physics(self):
         """Processes physic simulation"""
 
-        delta = 0
+        delta = self.clock.get_time()/1000
         self.world.physics(delta)
     
     def render(self):

@@ -7,5 +7,7 @@ class Event:
     collisions or user interactions
     """
 
-    def __init__(self):
-        pass
+    NONE = 0
+
+    def __init__(self, type_):
+        self.type = type_
