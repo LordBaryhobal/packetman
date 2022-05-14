@@ -20,10 +20,10 @@ class World:
         self.create_tilelist()
         self.entities = []
 
-        self.entities.append(Entity(Vec(5,5)))
+        #self.entities.append(Entity(Vec(5,5)))
         
     def create_tilelist(self):
-        arr = np.random.randint(0,8,(self.HEIGHT,self.WIDTH))
+        arr = np.zeros((self.HEIGHT,self.WIDTH))
         self.tiles = np.empty([self.HEIGHT,self.WIDTH], dtype='object')
         for x in range(self.WIDTH):
             for y in range(self.HEIGHT):
@@ -33,6 +33,7 @@ class World:
         pass
     
     def get_tiles_in_rect(self, topleft, bottomright):
+        self.modify_tilelistlen(bottomright.max(topleft))
         return self.tiles[bottomright.y:topleft.y+1, topleft.x:bottomright.x+1]
     
     def get_entities_in_rect(self, topleft, bottomright):
@@ -43,7 +44,7 @@ class World:
     def set_tile(self, pos, type_):
         if pos.x >= self.WIDTH or pos.y >= self.HEIGHT:
             self.modify_tilelistlen(pos)
-        self.tiles[pos.y][pos.x].type = type_
+        self.tiles[pos.y][pos.x] = Tile(pos.x,pos.y,type_)
         
     def modify_tilelistlen(self,pos):
         xpad,ypad = 0,0
@@ -60,3 +61,6 @@ class World:
                 for y in range(self.HEIGHT):
                     if self.tiles[y][x] == 0:
                         self.tiles[y][x] = Tile(x,y,0)
+    
+    def save(self, filename):
+        pass
