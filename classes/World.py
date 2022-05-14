@@ -20,10 +20,10 @@ class World:
         self.create_tilelist()
         self.entities = []
 
-        self.entities.append(Entity(Vec(5,5)))
+        #self.entities.append(Entity(Vec(5,5)))
         
     def create_tilelist(self):
-        arr = np.random.randint(0,8,(self.HEIGHT,self.WIDTH))
+        arr = np.zeros((self.HEIGHT,self.WIDTH))
         self.tiles = np.empty([self.HEIGHT,self.WIDTH], dtype='object')
         for x in range(self.WIDTH):
             for y in range(self.HEIGHT):
