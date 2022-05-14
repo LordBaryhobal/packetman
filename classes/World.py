@@ -43,7 +43,7 @@ class World:
     def set_tile(self, pos, type_):
         if pos.x >= self.WIDTH or pos.y >= self.HEIGHT:
             self.modify_tilelistlen(pos)
-        self.tiles[pos.y][pos.x].type = type_
+        self.tiles[pos.y][pos.x] = Tile(pos.x,pos.y,type_)
         
     def modify_tilelistlen(self,pos):
         xpad,ypad = 0,0
