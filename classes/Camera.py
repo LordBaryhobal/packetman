@@ -35,6 +35,7 @@ class Camera:
         """Renders the visible tiles and entities
         @param surface: pygame surface to render on
         """
+        surface.fill((0,0,0))
         for tile in self.visible_tiles:
             tile.render(surface, self.world_to_screen(tile.coo),self.tilesize)
 
