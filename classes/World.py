@@ -60,3 +60,6 @@ class World:
                 for y in range(self.HEIGHT):
                     if self.tiles[y][x] == 0:
                         self.tiles[y][x] = Tile(x,y,0)
+    
+    def save(self, filename):
+        pass
