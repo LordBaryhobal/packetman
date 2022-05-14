@@ -7,6 +7,7 @@ from classes.Logger import Logger
 from classes.Event import Event
 from classes.Animation import Animation
 import pygame, json
+from .Vec import Vec
 
 class classproperty(property):
     """Utility class for annotating class properties. Parallel to `@property`"""
