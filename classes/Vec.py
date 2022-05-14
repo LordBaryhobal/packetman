@@ -74,3 +74,6 @@ class Vec():
     
     def __repr__(self):
         return f"Vec({self.x}, {self.y})"
+    
+    def copy(self):
+        return Vec(self.x, self.y)

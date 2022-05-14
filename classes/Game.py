@@ -81,13 +81,13 @@ class Game:
         #Pygame events
         events = pygame.event.get()
         
+        for event in events:
+            if event.type == pygame.QUIT:
+                if self.quit():
+                    return
+        
         if self.config["edition"]:
             self.editor.handle_events(events)
-        else:
-            for event in events:
-                if event.type == pygame.QUIT:
-                    if self.quit():
-                        return
 
         for animation in self.animations:
             animation.update()

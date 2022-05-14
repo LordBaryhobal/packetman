@@ -30,7 +30,7 @@ class Entity:
 
         self.color = [(100,100,100),(0,0,0),(100,0,0),(0,100,0),(0,0,100),(100,100,0),(100,0,100),(0,100,100)][type_]
 
-        self.box = Rect(self.pos.x, self.pos.y, 1, 1) # width and height in tiles
+        self.box = Rect(self.pos.x, self.pos.y, 1, 0.5) # width and height in tiles
     
     def render(self, surface, pos, size):
         """
@@ -41,3 +41,13 @@ class Entity:
         """
         
         pygame.draw.rect(surface, self.color, (pos.x, pos.y-self.box.h*size, self.box.w*size, self.box.h*size))
+
+    def physics(self, delta):
+        """Simulates physics"""
+
+        self.acc = Vec(0,-1)
+
+        pos1 = self.pos.copy()
+        self.pos += self.vel * delta
+        self.vel += self.acc * delta
+        
