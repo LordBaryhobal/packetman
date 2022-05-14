@@ -62,10 +62,7 @@ class Game:
 
         while self.running:
             self.handle_events()
-
-            if not self.config["edition"]:
-                self.physics()
-            
+            self.physics()
             self.render()
         
         pygame.display.quit()
