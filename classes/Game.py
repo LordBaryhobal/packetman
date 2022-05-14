@@ -117,5 +117,5 @@ class Game:
     def quit(self):
         self.running = False
     
-    def animate(self, obj, attr_, val_a, val_b, duration, start=True, loop=None, type_=Animation.NONE):
+    def animate(self, obj, attr_, val_a, val_b, duration, start=True, loop=None, type_=Animation.FLOAT):
         self.animations.append(Animation(obj, attr_, val_a, val_b, duration, start, loop, type_))
