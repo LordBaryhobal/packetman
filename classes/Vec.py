@@ -19,6 +19,8 @@ class Vec():
         return Vec(self.x - other.x, self.y - other.y)
     
     def __mul__(self, other):
+        if isinstance(other, Vec):
+            return Vec(self.x * other.x, self.y * other.y)
         return Vec(self.x * other, self.y * other)
     
     def __truediv__(self, other):
