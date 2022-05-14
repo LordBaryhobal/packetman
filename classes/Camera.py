@@ -20,9 +20,10 @@ class Camera:
         self.coo = Vec(0,0)
         self.game = game
         self.tilesize = self.game.HEIGHT//10
-        self.uptade_visible_tiles()
+        self.update_visible_tiles()
+        self.update_visible_tiles()
         
-    def uptade_visible_tiles(self):
+    def update_visible_tiles(self):
         self.coo = self.coo.max(Vec())
         
         #according to the screen
