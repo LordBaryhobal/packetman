@@ -91,7 +91,7 @@ class World:
                         entity.vel.x = 0
                     else:
                         entity.vel.y = 0
-                input()
+                #input()
         
     def set_tile(self, pos, type_):
         if pos.x >= self.WIDTH or pos.y >= self.HEIGHT:

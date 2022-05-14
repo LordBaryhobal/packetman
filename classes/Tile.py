@@ -13,7 +13,7 @@ class Tile:
     
     def render(self, surface, position,size):
         if self.type != 0:
-            pygame.draw.rect(surface, self.color[self.type], (position.x, position.y, size, size))
+            pygame.draw.rect(surface, self.color[self.type], (position.x, position.y-size, size, size))
     
     def copy(self):
         """

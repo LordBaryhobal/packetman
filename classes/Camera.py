@@ -65,4 +65,4 @@ class Camera:
         """Converts world to screen coordinates
         @param pos: Vec to convert
         """
-        return Vec(pos.x*self.tilesize,self.game.HEIGHT-(pos.y+1)*self.tilesize) + Vec(-self.coo.x,self.coo.y)
+        return Vec(pos.x*self.tilesize,self.game.HEIGHT-pos.y*self.tilesize) + Vec(-self.coo.x,self.coo.y)
