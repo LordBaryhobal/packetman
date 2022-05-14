@@ -13,3 +13,9 @@ class Rect:
         ver = not (r2.y > self.y+self.h or self.y > r2.y+r2.h)
 
         return hor and ver
+    
+    def pos_from_vector(self, topleft,bottomright):
+        self.x = topleft.x
+        self.y = topleft.y
+        self.w = bottomright.x - topleft.x
+        self.h = bottomright.y - topleft.y
