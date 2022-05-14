@@ -12,25 +12,37 @@ class World:
     World class holding world tiles and entities. Also processes physics.
     """
 
-    WIDTH = 20
-    HEIGHT = 20
+    WIDTH = 8
+    HEIGHT = 8
     
 
     def __init__(self):
         self.create_tilelist()
         self.entities = []
 
-        self.entities.append(Entity(Vec(5,5)))
+        self.entities.append(Entity(Vec(1.5,5)))
         
     def create_tilelist(self):
-        arr = np.random.randint(0,8,(self.HEIGHT,self.WIDTH))
+        #arr = np.random.randint(0,8,(self.HEIGHT,self.WIDTH))
+        arr = np.array([
+            [1,2,1,2,1,2,1,2],
+            [0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0]
+        ])
+
         self.tiles = np.empty([self.HEIGHT,self.WIDTH], dtype='object')
         for x in range(self.WIDTH):
             for y in range(self.HEIGHT):
                 self.tiles[y][x] = Tile(x,y,arr[y][x])
     
     def physics(self, delta):
-        pass
+        for entity in self.entities:
+            entity.physics(delta)
     
     def get_tiles_in_rect(self, topleft, bottomright):
         return self.tiles[bottomright.y:topleft.y+1, topleft.x:bottomright.x+1]
