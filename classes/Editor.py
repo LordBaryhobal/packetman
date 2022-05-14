@@ -16,7 +16,9 @@ class Editor():
        self.selecting = False
        self.selection = None
        self.boundingbox = Rect()
-    
+       
+       self.selected_tiles = []
+       self.moveselection = False
        
     
     def handle_events(self,events):
@@ -39,6 +41,16 @@ class Editor():
                 
                 if event.button == 1:
                     self.placing = True
+                    if self.selection is not None and self.selecting == False:
+                        self.moveselection = True
+                        
+                        v1 = Vec(min(self.selection[0].x,self.selection[1].x),max(self.selection[0].y,self.selection[1].y))
+                        v2 = Vec(max(self.selection[0].x,self.selection[1].x),min(self.selection[0].y,self.selection[1].y))
+                        
+                        self.selected_tiles = self.game.world.get_tiles_in_rect(v1,v2).copy()
+                        self.modify_selection(0)
+                        
+                        self.start_selection_pos = self.game.camera.screen_to_world(Vec(*pygame.mouse.get_pos()))
                 
                 if event.button == 2:
                     self.startmove = Vec(pygame.mouse.get_pos()[0],pygame.mouse.get_pos()[1])
@@ -91,9 +103,18 @@ class Editor():
             self.boundingbox.from_vectors(v1,v2+Vec(self.game.camera.tilesize,self.game.camera.tilesize))
             self.boundingbox.render(surface,(100,100,100),5)
             
+        
         elif self.selection is not None:
-            v1,v2 = self.game.camera.world_to_screen(self.selection[0]), self.game.camera.world_to_screen(self.selection[1])
+            displacement = Vec()
+            
+            if self.moveselection:
+                displacement = self.game.camera.screen_to_world(Vec(*pygame.mouse.get_pos()))-self.start_selection_pos
+                for tile in self.selected_tiles.flatten():
+                    tile.render(surface, self.game.camera.world_to_screen(tile.coo+displacement),self.game.camera.tilesize)
+            
+            v1,v2 = self.game.camera.world_to_screen(self.selection[0]+displacement), self.game.camera.world_to_screen(self.selection[1]+displacement)
             v1,v2 = v1.min(v2),v1.max(v2)
             
             self.boundingbox.from_vectors(v1,v2+Vec(self.game.camera.tilesize,self.game.camera.tilesize))
             self.boundingbox.render(surface,(100,100,100),5)
+            
