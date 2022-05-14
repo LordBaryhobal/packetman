@@ -15,7 +15,7 @@ class Rect:
 
         return hor and ver
     
-    def pos_from_vector(self, topleft,bottomright):
+    def from_vectors(self, topleft,bottomright):
         self.x = topleft.x
         self.y = topleft.y
         self.w = bottomright.x - topleft.x
