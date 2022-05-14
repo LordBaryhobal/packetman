@@ -9,6 +9,7 @@ class Tile:
         self.coo = Vec(x, y)
         self.color = [(255,255,255),(0,0,0),(255,0,0),(0,255,0),(0,0,255),(255,255,0),(255,0,255),(0,255,255)]
         self.type = type_ # 0 = empty, 1 = ..., 2 = ..., 3 = ...
+        self.solid = (self.type == 2)
     
     def render(self, surface, position,size):
         pygame.draw.rect(surface, self.color[self.type], (position.x, position.y, size, size))
