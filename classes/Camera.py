@@ -52,6 +52,9 @@ class Camera:
         for entity in self.visible_entities:
             entity.render(surface, self.world_to_screen(entity.pos), self.tilesize)
 
+        if self.game.config["edition"]:
+            self.game.editor.render(surface)
+
     def screen_to_world(self, pos):
         """Converts screen to world coordinates
         @param pos: Vec to convert
