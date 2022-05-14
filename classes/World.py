@@ -33,6 +33,7 @@ class World:
         pass
     
     def get_tiles_in_rect(self, topleft, bottomright):
+        self.modify_tilelistlen(bottomright.max(topleft))
         return self.tiles[bottomright.y:topleft.y+1, topleft.x:bottomright.x+1]
     
     def get_entities_in_rect(self, topleft, bottomright):
