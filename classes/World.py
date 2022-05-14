@@ -23,11 +23,7 @@ class World:
             for y in range(self.HEIGHT):
                 self.tiles[y][x] = Tile(x,y,arr[y][x])
     
-    def render(self):
-        pass
-
     def physics(self, delta):
         pass
     def get_tiles_in_rect(self, topleft, bottomright):
-        print(topleft, bottomright)
         return self.tiles[bottomright.y:topleft.y+1, topleft.x:bottomright.x+1]
