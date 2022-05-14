@@ -20,16 +20,26 @@ class Camera:
         self.coo = Vec(0,0)
         self.game = game
         self.tilesize = self.game.HEIGHT//10
-        self.uptade_visible_tiles()
+        self.update_visible_tiles()
+        self.update_visible_entities()
         
-    def uptade_visible_tiles(self):
-        self.coo = self.coo.max(Vec())
+    def update_visible_tiles(self):
+        self.coo = self.coo.max(Vec()) #clamp to (0;0)
         
         #according to the screen
         bottomright = self.screen_to_world(Vec(self.game.WIDTH,self.game.HEIGHT))
         topleft = self.screen_to_world(Vec(0,0))
         
         self.visible_tiles = self.game.world.get_tiles_in_rect(topleft, bottomright).flatten()
+    
+    def update_visible_entities(self):
+        self.coo = self.coo.max(Vec()) #clamp to (0;0)
+        
+        #according to the screen
+        bottomright = self.screen_to_world(Vec(self.game.WIDTH,self.game.HEIGHT))
+        topleft = self.screen_to_world(Vec(0,0))
+
+        self.visible_entities = self.game.world.get_entities_in_rect(topleft, bottomright)
 
     def render(self, surface):
         """Renders the visible tiles and entities
@@ -37,6 +47,9 @@ class Camera:
         """
         for tile in self.visible_tiles:
             tile.render(surface, self.world_to_screen(tile.coo),self.tilesize)
+        
+        for entity in self.visible_entities:
+            entity.render(surface, self.world_to_screen(entity.pos), self.tilesize)
 
     def screen_to_world(self, pos):
         """Converts screen to world coordinates
