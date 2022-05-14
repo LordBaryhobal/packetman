@@ -6,6 +6,7 @@ from classes.Camera import Camera
 from classes.Logger import Logger
 from classes.Event import Event
 from classes.Animation import Animation
+from classes.Editor import Editor
 import pygame, json
 from .Vec import Vec
 
@@ -35,6 +36,9 @@ class Game:
 
         with open("./config.json", "r") as f:
             self.config = json.loads(f.read())
+            
+        if self.config["edition"]:
+            self.editor = Editor(self)
         
         self.logger.level = self.config["loglevel"]
 
@@ -76,11 +80,14 @@ class Game:
 
         #Pygame events
         events = pygame.event.get()
-
-        for event in events:
-            if event.type == pygame.QUIT:
-                if self.quit():
-                    return
+        
+        if self.config["edition"]:
+            self.editor.handle_events(events)
+        else:
+            for event in events:
+                if event.type == pygame.QUIT:
+                    if self.quit():
+                        return
 
         for animation in self.animations:
             animation.update()
