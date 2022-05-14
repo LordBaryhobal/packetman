@@ -21,8 +21,5 @@ class Rect:
         self.w = bottomright.x - topleft.x
         self.h = bottomright.y - topleft.y
     
-    def render(self,surface,color,fill=True):
-        if fill:
-            pygame.draw.rect(surface,color,(self.x,self.y,self.w,self.h))
-        else:
-            pygame.draw.rect(surface,color,(self.x,self.y,self.w,self.h),1)
+    def render(self,surface,color,thickness=0):
+        pygame.draw.rect(surface,color,(self.x,self.y,self.w,self.h),thickness)
