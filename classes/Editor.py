@@ -36,7 +36,6 @@ class Editor():
         
         
         for event in events:
-            
             if event.type == pygame.MOUSEBUTTONDOWN:
                 
                 if event.button == 1:
@@ -61,7 +60,6 @@ class Editor():
                     self.selecting = True
             
             elif event.type == pygame.MOUSEBUTTONUP:
-                
                 if event.button == 1:
                     self.placing = False
                     if self.selection is not None and self.selecting == False:
@@ -95,12 +93,18 @@ class Editor():
             elif event.type == pygame.KEYDOWN:
                 if event.key in (pygame.K_0,pygame.K_1,pygame.K_2,pygame.K_3,pygame.K_4,pygame.K_5,pygame.K_6,pygame.K_7,pygame.K_8,pygame.K_9):
                     self.current_type = event.key-48
+                
                 elif event.key == pygame.K_f:
                     if self.selection is not None:
                         self.modify_selection(self.current_type)
+                
                 elif event.key == pygame.K_BACKSPACE:
                     if self.selection is not None:
                         self.modify_selection(0)
+                
+                elif event.key == pygame.K_s and event.mod & pygame.KMOD_CTRL:
+                    path = input("Save level as: ")
+                    self.game.world.save(path)
     
     def modify_selection(self,type):
         for x in range(self.selection[0].x,self.selection[1].x+1):

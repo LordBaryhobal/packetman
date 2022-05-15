@@ -150,38 +150,47 @@ class World:
                         self.tiles[y][x] = Tile(x,y,0)
     
     def save(self, filename):
+        print(f"Saving as '{filename}'")
         buf_tiles = bytearray()
         buf_entities = bytearray()
 
-        world_w, world_h = 0, 0
+        max_x, max_y = 0, 0
 
+        print("Saving tiles")
         tiles = self.tiles.flatten()
         for tile in tiles:
+            if tile.type == 0:
+                continue
+            
             buf_tile = bytearray()
-            buf_tile.append(struct.pack(">H", tile.type))
-            buf_tile.append(struct.pack(">H", tile.pos.x))
-            buf_tile.append(struct.pack(">H", tile.pos.y))
-            buf_tile.append(bytearray(tile.__class__.__qualname__, "utf-8"))
+            buf_tile.extend(struct.pack(">H", tile.type))
+            buf_tile.extend(struct.pack(">H", tile.pos.x))
+            buf_tile.extend(struct.pack(">H", tile.pos.y))
+            buf_tile.extend(bytearray(tile.__class__.__qualname__, "utf-8"))
             buf_tile.append(0)
             attrs = tile.__dict__.copy()
             del attrs["type"]
-            del attrs["coo"]
+            del attrs["pos"]
             attrs = pickle.dumps(attrs)
-            buf_tile.append(attrs)
+            buf_tile.extend(attrs)
 
-            buf_tiles.append(struct.pack(">H", len(buf_tile)))
+            buf_tiles.extend(struct.pack(">H", len(buf_tile)))
             buf_tiles += buf_tile
+
+            max_x = max(max_x, tile.pos.x)
+            max_y = max(max_y, tile.pos.y)
         
         entities = self.entities
 
+        print("Saving entities")
         for entity in entities:
             buf_entity = bytearray()
-            buf_entity.append(struct.pack(">H", entity.type))
-            buf_entity.append(struct.pack(">f", entity.pos.x))
-            buf_entity.append(struct.pack(">f", entity.pos.y))
-            buf_entity.append(struct.pack(">f", entity.vel.x))
-            buf_entity.append(struct.pack(">f", entity.vel.y))
-            buf_entity.append(bytearray(entity.__class__.__qualname__, "utf-8"))
+            buf_entity.extend(struct.pack(">H", entity.type))
+            buf_entity.extend(struct.pack(">f", entity.pos.x))
+            buf_entity.extend(struct.pack(">f", entity.pos.y))
+            buf_entity.extend(struct.pack(">f", entity.vel.x))
+            buf_entity.extend(struct.pack(">f", entity.vel.y))
+            buf_entity.extend(bytearray(entity.__class__.__qualname__, "utf-8"))
             buf_entity.append(0)
             attrs = entity.__dict__.copy()
             del attrs["type"]
@@ -190,18 +199,21 @@ class World:
             del attrs["acc"]
             del attrs["box"]
             attrs = pickle.dumps(attrs)
-            buf_entity.append(attrs)
+            buf_entity.extend(attrs)
 
-            buf_entities.append(struct.pack(">H", len(buf_entity)))
+            buf_entities.extend(struct.pack(">H", len(buf_entity)))
             buf_entities += buf_entity
-
-        with open("./levels/"+filename, "wb") as f:
+        
+        print("Writing to file")
+        with open("./levels/"+filename+".dat", "wb") as f:
             f.write(struct.pack(">I", len(buf_tiles) ))
             f.write(struct.pack(">I", len(buf_entities) ))
-            f.write(struct.pack(">H", world_w))
-            f.write(struct.pack(">H", world_h))
+            f.write(struct.pack(">H", max_x+1))
+            f.write(struct.pack(">H", max_y+1))
             f.write(buf_tiles)
             f.write(buf_entities)
+        
+        print("Level saved successfully (maybe)")
 
     
     def place_selection(self,selection,pos,place_empty=False):
