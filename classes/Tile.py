@@ -9,7 +9,7 @@ class Tile:
         self.coo = Vec(x, y)
         self.color = [None,(0,0,0),(255,255,255),(255,0,0),(0,255,0),(0,0,255),(255,255,0),(255,0,255),(0,255,255)]
         self.type = type_ # 0 = empty, 1 = ..., 2 = ..., 3 = ...
-        self.solid = (self.type == 2)
+        self.solid = (self.type in [2,3])
     
     def render(self, surface, position,size):
         if self.type != 0:

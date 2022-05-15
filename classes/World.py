@@ -20,7 +20,7 @@ class World:
         self.create_tilelist()
         self.entities = []
 
-        self.entities.append(Entity(Vec(1.5,5), vel=Vec(1)))
+        self.entities.append(Entity(Vec(1.5,1), vel=Vec(1,5)))
         
     def create_tilelist(self):
         #arr = np.random.randint(0,8,(self.HEIGHT,self.WIDTH))
@@ -44,6 +44,7 @@ class World:
         for entity in self.entities:
             entity.physics(delta)
 
+            entity.on_ground = False
             self.check_collisions(entity, delta)
     
     def get_tiles_in_rect(self, topleft, bottomright):
@@ -56,7 +57,8 @@ class World:
         return list(filter(lambda e: e.box.overlaps(rect), self.entities))
     
     def check_collisions(self, entity, delta):
-        v = entity.vel.length
+        vel = entity.vel - entity.acc*delta
+        v = vel.length
 
         tl = Vec( int(entity.pos.x), int(entity.pos.y+entity.box.h))
         br = Vec( int(entity.pos.x+entity.box.w), int(entity.pos.y))
@@ -64,34 +66,38 @@ class World:
         tiles = self.get_tiles_in_rect(tl,br).flatten()
 
         for tile in tiles:
-            if tile.type != 0 and tile.solid:
-                print(tile.coo)
+            if tile.type != 0 and tile.solid and entity.box.overlaps(Rect(tile.coo.x,tile.coo.y,1,1)):
                 dx, dy = 0, 0
-                if entity.vel.x < 0:
-                    dx = tile.coo.x - entity.pos.x
-                elif entity.vel.x > 0:
+                if vel.x < 0:
+                    dx = tile.coo.x+1 - entity.pos.x
+
+                elif vel.x > 0:
                     dx = entity.pos.x+entity.box.w - tile.coo.x
                 
-                if entity.vel.y < 0:
-                    dy = tile.coo.y - entity.pos.y + entity.box.h
-                elif entity.vel.y > 0:
-                    dy = entity.pos.y - tile.coo.y + 1
+                if vel.y < 0:
+                    dy = tile.coo.y+1 - entity.pos.y
 
-                d1 = -v * dx / entity.vel.x if entity.vel.x != 0 else 0
-                d2 = -v * dy / entity.vel.y if entity.vel.y != 0 else 0
-                print(d1, d2)
-                print(entity.vel)
+                elif vel.y > 0:
+                    dy = entity.pos.y+entity.box.h - tile.coo.y
+                
+
+                d1 = abs(v * dx / vel.x) if vel.x != 0 else 0
+                d2 = abs(v * dy / vel.y) if vel.y != 0 else 0
 
                 d = min(d1, d2) if d1*d2 != 0 else max(d1, d2)
                 
-                entity.pos -= entity.vel.normalize()*d
+                #entity.pos -= vel.normalize()*d
                 
                 if d != 0:
-                    if d1 < d2:
+                    if 0 < d1 < d2:
                         entity.vel.x = 0
+                        entity.pos.x += dx
                     else:
                         entity.vel.y = 0
-                #input()
+                        entity.pos.y += dy
+                        entity.on_ground = True
+                
+                entity.update()
         
     def set_tile(self, pos, type_):
         if pos.x >= self.WIDTH or pos.y >= self.HEIGHT:

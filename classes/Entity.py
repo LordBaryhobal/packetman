@@ -4,6 +4,7 @@
 from .Vec import Vec
 from .Rect import Rect
 import pygame, random
+from math import copysign
 
 class Entity:
     """
@@ -16,22 +17,24 @@ class Entity:
         @param pos: position Vec of bottom-left corner
         @param vel: velocity Vec
         @param acc: acceleration Vec
-        @param type_: type of entity (0 to 7 inc.)
+        @param type_: type of entity (0 to 6 inc.)
         """
 
         if pos is None: pos = Vec()
         if vel is None: vel = Vec()
         if acc is None: acc = Vec()
-        if type_ is None: type_ = random.randint(0,7)
+        if type_ is None: type_ = random.randint(0,6)
 
         self.pos = pos
         self.vel = vel
         self.acc = acc
 
-        self.color = [(100,100,100),(0,0,0),(100,0,0),(0,100,0),(0,0,100),(100,100,0),(100,0,100),(0,100,100)][type_]
+        self.color = [(100,100,100),(100,0,0),(0,100,0),(0,0,100),(100,100,0),(100,0,100),(0,100,100)][type_]
 
-        self.box = Rect(self.pos.x, self.pos.y, 1, 0.5) # width and height in tiles
-    
+        self.box = Rect(self.pos.x, self.pos.y, 0.5, 0.5) # width and height in tiles
+
+        self.on_ground = False
+
     def render(self, surface, pos, size):
         """
         Renders the entity on a given surface at a given position and scale
@@ -45,9 +48,24 @@ class Entity:
     def physics(self, delta):
         """Simulates physics"""
 
-        self.acc = Vec(0,-1)
+        self.acc = Vec(0,-5)
+            
+        if self.on_ground:
+            self.acc -= Vec(copysign(5, self.vel.x), 0)
+            
+            # Don't flip x velocity because of friction
+            self.acc.x = -copysign( min(abs(self.acc.x)*delta, abs(self.vel.x)), self.vel.x) / delta
 
         pos1 = self.pos.copy()
         self.pos += self.vel * delta
         self.vel += self.acc * delta
         
+        self.pos = round(self.pos, 6)
+        self.vel = round(self.vel, 6)
+        self.acc = round(self.acc, 6)
+
+        self.update()
+    
+    def update(self):
+        self.box.x = self.pos.x
+        self.box.y = self.pos.y
