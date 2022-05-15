@@ -48,13 +48,7 @@ class Entity:
     def physics(self, delta):
         """Simulates physics"""
 
-        self.acc = Vec(0,-5)
-            
-        if self.on_ground:
-            self.acc -= Vec(copysign(5, self.vel.x), 0)
-            
-            # Don't flip x velocity because of friction
-            self.acc.x = -copysign( min(abs(self.acc.x)*delta, abs(self.vel.x)), self.vel.x) / delta
+        self.acc = Vec(0,-10)
 
         pos1 = self.pos.copy()
         self.pos += self.vel * delta
