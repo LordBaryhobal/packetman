@@ -99,7 +99,7 @@ class Editor():
                     if self.selection is not None:
                         self.modify_selection(self.current_type)
                 elif event.key == pygame.K_BACKSPACE:
-                    if self.selection is not None:
+                    if self.selection is not None and self.selecting == False:
                         self.modify_selection(0)
     
     def modify_selection(self,type):
