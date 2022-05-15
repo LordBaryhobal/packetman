@@ -95,19 +95,19 @@ class World:
         tiles = self.get_tiles_in_rect(tl,br).flatten()
 
         for tile in tiles:
-            if tile.type != 0 and tile.solid and entity.box.overlaps(Rect(tile.coo.x,tile.coo.y,1,1)):
+            if tile.type != 0 and tile.solid and entity.box.overlaps(Rect(tile.pos.x,tile.pos.y,1,1)):
                 dx, dy = 0, 0
                 if vel.x < 0:
-                    dx = tile.coo.x+1 - entity.pos.x
+                    dx = tile.pos.x+1 - entity.pos.x
 
                 elif vel.x > 0:
-                    dx = tile.coo.x - (entity.pos.x+entity.box.w)
+                    dx = tile.pos.x - (entity.pos.x+entity.box.w)
                 
                 if vel.y < 0:
-                    dy = tile.coo.y+1 - entity.pos.y
+                    dy = tile.pos.y+1 - entity.pos.y
 
                 elif vel.y > 0:
-                    dy = tile.coo.y - (entity.pos.y+entity.box.h)
+                    dy = tile.pos.y - (entity.pos.y+entity.box.h)
                 
 
                 d1 = abs(v * dx / vel.x) if vel.x != 0 else 0
@@ -157,6 +157,6 @@ class World:
                 t = selection[y][x]
                 if t.type == 0 and not place_empty:
                     continue
-                t.coo.x = pos.x + x
-                t.coo.y = pos.y + y
+                t.pos.x = pos.x + x
+                t.pos.y = pos.y + y
                 self.tiles[pos.y+y][pos.x+x] = t

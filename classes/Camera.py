@@ -17,14 +17,14 @@ class Camera:
 
     def __init__(self,game):
         #camera's coordinates are in the bottom left corner of the screen
-        self.coo = Vec(0,0)
+        self.pos = Vec(0,0)
         self.game = game
         self.tilesize = self.game.HEIGHT//10
         self.update_visible_tiles()
         self.update_visible_entities()
         
     def update_visible_tiles(self):
-        self.coo = self.coo.max(Vec()) #clamp to (0;0)
+        self.pos = self.pos.max(Vec()) #clamp to (0;0)
         
         #according to the screen
         bottomright = self.screen_to_world(Vec(self.game.WIDTH,self.game.HEIGHT))
@@ -33,7 +33,7 @@ class Camera:
         self.visible_tiles = self.game.world.get_tiles_in_rect(topleft, bottomright).flatten()
     
     def update_visible_entities(self):
-        self.coo = self.coo.max(Vec()) #clamp to (0;0)
+        self.pos = self.pos.max(Vec()) #clamp to (0;0)
         
         #according to the screen
         bottomright = self.screen_to_world(Vec(self.game.WIDTH,self.game.HEIGHT))
@@ -47,7 +47,7 @@ class Camera:
         """
         surface.fill((0,0,0))
         for tile in self.visible_tiles:
-            tile.render(surface, self.world_to_screen(tile.coo),self.tilesize)
+            tile.render(surface, self.world_to_screen(tile.pos),self.tilesize)
         
         for entity in self.visible_entities:
             entity.render(surface, self.world_to_screen(entity.pos), self.tilesize)
@@ -59,10 +59,10 @@ class Camera:
         """Converts screen to world coordinates
         @param pos: Vec to convert
         """
-        return (Vec(pos.x,self.game.HEIGHT-pos.y) + self.coo)//self.tilesize
+        return (Vec(pos.x,self.game.HEIGHT-pos.y) + self.pos)//self.tilesize
 
     def world_to_screen(self, pos):
         """Converts world to screen coordinates
         @param pos: Vec to convert
         """
-        return Vec(pos.x*self.tilesize,self.game.HEIGHT-pos.y*self.tilesize) + Vec(-self.coo.x,self.coo.y)
+        return Vec(pos.x*self.tilesize,self.game.HEIGHT-pos.y*self.tilesize) + Vec(-self.pos.x,self.pos.y)

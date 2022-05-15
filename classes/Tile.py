@@ -6,7 +6,7 @@ import pygame
 
 class Tile:
     def __init__(self, x=0, y=0, type_=0):
-        self.coo = Vec(x, y)
+        self.pos = Vec(x, y)
         self.color = [None,(50,50,50),(255,255,255),(255,0,0),(0,255,0),(0,0,255),(255,255,0),(255,0,255),(0,255,255)]
         self.type = type_ # 0 = empty, 1 = ..., 2 = ..., 3 = ...
         self.solid = (self.type in [2,3])
