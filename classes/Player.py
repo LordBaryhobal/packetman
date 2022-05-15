@@ -2,6 +2,7 @@
 #Copyright (C) 2022  Louis HEREDERO & Mathéo BENEY
 
 from .Entity import Entity
+from math import copysign
 
 class Player(Entity):
     """
@@ -9,5 +10,16 @@ class Player(Entity):
     and manages interactions
     """
 
-    def __init__(self):
-        super().__init__()
+    SPEED = 2
+    JUMP_SPEED = 5
+    
+    def jump(self):
+        if self.on_ground:
+            self.vel.y = self.JUMP_SPEED
+    
+    def move(self, direction):
+        """Moves the player horizontally
+        @param direction: -1 if moving left, 1 if moving right
+        """
+
+        self.vel.x = copysign(self.SPEED, direction)

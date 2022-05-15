@@ -1,11 +1,14 @@
 #Packetman is a small game created in the scope of a school project
 #Copyright (C) 2022  Louis HEREDERO & Mathéo BENEY
 
+from scipy import isin
 import numpy as np
 from .Tile import Tile
 from .Entity import Entity
 from .Vec import Vec
 from .Rect import Rect
+from .Player import Player
+from math import floor
 
 class World:
     """
@@ -19,6 +22,8 @@ class World:
     def __init__(self):
         self.create_tilelist()
         self.entities = []
+        self.player = Player(Vec(1,1))
+        self.entities.append(self.player)
 
         self.entities.append(Entity(Vec(1.5,1), vel=Vec(1,5)))
         
@@ -44,9 +49,33 @@ class World:
         for entity in self.entities:
             entity.physics(delta)
 
-            entity.on_ground = False
             self.check_collisions(entity, delta)
+            entity.on_ground = False
+            
+            if entity.vel.y <= 0:
+                tiles_below = self.get_tiles_in_rect(
+                    floor( entity.pos+Vec(0,-0.001) ),
+                    floor( entity.pos+Vec(entity.box.w, -0.001) )
+                ).flatten()
+
+                tiles_below = list(filter(lambda t: t is not None and t.type != 0 and t.solid, tiles_below))
+                
+                if len(tiles_below) > 0:
+                    entity.on_ground = True
+                    entity.vel.x = 0
     
+    def get_tile(self, pos):
+        """Get tile at pos
+        @param pos: coordinates of the tile as a Vec
+        @return Tile instance, None if outside of the world
+        """
+        x, y = int(pos.x), int(pos.y)
+
+        if x < 0 or x >= self.WIDTH or y < 0 or y >= self.HEIGHT:
+            return None
+        
+        return self.tiles[y, x]
+
     def get_tiles_in_rect(self, topleft, bottomright):
         self.modify_tilelistlen(bottomright.max(topleft))
         return self.tiles[bottomright.y:topleft.y+1, topleft.x:bottomright.x+1]
@@ -72,13 +101,13 @@ class World:
                     dx = tile.coo.x+1 - entity.pos.x
 
                 elif vel.x > 0:
-                    dx = entity.pos.x+entity.box.w - tile.coo.x
+                    dx = tile.coo.x - (entity.pos.x+entity.box.w)
                 
                 if vel.y < 0:
                     dy = tile.coo.y+1 - entity.pos.y
 
                 elif vel.y > 0:
-                    dy = entity.pos.y+entity.box.h - tile.coo.y
+                    dy = tile.coo.y - (entity.pos.y+entity.box.h)
                 
 
                 d1 = abs(v * dx / vel.x) if vel.x != 0 else 0
@@ -89,13 +118,12 @@ class World:
                 #entity.pos -= vel.normalize()*d
                 
                 if d != 0:
-                    if 0 < d1 < d2:
+                    if d1 != 0 and (d2 == 0 or d1 < d2):
                         entity.vel.x = 0
                         entity.pos.x += dx
                     else:
                         entity.vel.y = 0
                         entity.pos.y += dy
-                        entity.on_ground = True
                 
                 entity.update()
         

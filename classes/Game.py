@@ -85,7 +85,21 @@ class Game:
             if event.type == pygame.QUIT:
                 if self.quit():
                     return
+            
+            elif event.type == pygame.KEYDOWN:
+                if not self.config["edition"]:
+                    if event.key == pygame.K_SPACE:
+                        self.world.player.jump()
         
+        keys = pygame.key.get_pressed()
+
+        if not self.config["edition"]:
+            if keys[pygame.K_d]:
+                self.world.player.move(1)
+            
+            if keys[pygame.K_a]:
+                self.world.player.move(-1)
+
         if self.config["edition"]:
             self.editor.handle_events(events)
 
