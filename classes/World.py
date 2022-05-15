@@ -27,10 +27,10 @@ class World:
         self.entities.append(self.player)
 
         self.entities.append(Entity(Vec(1.5,1), vel=Vec(1,5)))
-        
+
     def create_tilelist(self):
-        #arr = np.random.randint(0,8,(self.HEIGHT,self.WIDTH))
-        arr = np.array([
+        arr = np.random.randint(0,8,(self.HEIGHT,self.WIDTH))
+        """arr = np.array([
             [1,2,1,2,1,2,1,2],
             [3,0,0,0,0,0,0,0],
             [4,0,0,0,0,0,0,0],
@@ -39,7 +39,7 @@ class World:
             [3,0,0,0,0,0,0,0],
             [4,0,0,0,0,0,0,0],
             [3,0,0,0,0,0,0,0]
-        ])
+        ])"""
 
         self.tiles = np.empty([self.HEIGHT,self.WIDTH], dtype='object')
         for x in range(self.WIDTH):
@@ -215,6 +215,74 @@ class World:
         
         print("Level saved successfully (maybe)")
 
+    def load(self, filename):
+        print(f"Loading level '{filename}'")
+
+        with open(f"./levels/{filename}.dat", "rb") as f:
+            size_tiles = struct.unpack(">I", f.read(4))[0]
+            size_entities = struct.unpack(">I", f.read(4))[0]
+            self.WIDTH = struct.unpack(">H", f.read(2))[0]
+            self.HEIGHT = struct.unpack(">H", f.read(2))[0]
+            
+            self.tiles = np.empty([self.HEIGHT,self.WIDTH], dtype='object')
+
+            print("Loading tiles")
+            while f.tell() < size_tiles+12:
+                size = struct.unpack(">H", f.read(2))[0]
+                type_ = struct.unpack(">H", f.read(2))[0]
+                x = struct.unpack(">H", f.read(2))[0]
+                y = struct.unpack(">H", f.read(2))[0]
+
+                cls = b""
+
+                while True:
+                    c = f.read(1)
+                    if c == b"\0": break
+                    cls += c
+
+                attrs = pickle.loads(f.read(size - len(cls) - 7))
+
+                cls = globals()[str(cls, "utf-8")]
+                tile = cls(x, y, type_)
+                for k, v in attrs.items():
+                    setattr(tile, k, v)
+                
+                self.tiles[y, x] = tile
+            
+            for y in range(self.HEIGHT):
+                for x in range(self.WIDTH):
+                    if self.tiles[y,x] is None:
+                        self.tiles[y,x] = Tile(x, y)
+            
+            print("Loading entities")
+            while f.tell() < size_entities+size_tiles+12:
+                size = struct.unpack(">H", f.read(2))[0]
+                type_ = struct.unpack(">H", f.read(2))[0]
+                x = struct.unpack(">f", f.read(4))[0]
+                y = struct.unpack(">f", f.read(4))[0]
+                vx = struct.unpack(">f", f.read(4))[0]
+                vy = struct.unpack(">f", f.read(4))[0]
+
+                cls = b""
+
+                while True:
+                    c = f.read(1)
+                    if c == b"\0": break
+                    cls += c
+                
+                attrs = pickle.loads(f.read(size - len(cls) - 19))
+
+                cls = globals()[str(cls, "utf-8")]
+                entity = cls(pos=Vec(x,y), vel=Vec(vx, vy), type_=type_)
+
+                for k, v in attrs.items():
+                    setattr(entity, k, v)
+                
+                self.entities.append(entity)
+                if cls == Player:
+                    self.player = entity
+        
+        print("Level loaded successfully (maybe)")
     
     def place_selection(self,selection,pos,place_empty=False):
         for y in range(len(selection)):

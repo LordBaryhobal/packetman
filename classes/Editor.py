@@ -105,6 +105,12 @@ class Editor():
                 elif event.key == pygame.K_s and event.mod & pygame.KMOD_CTRL:
                     path = input("Save level as: ")
                     self.game.world.save(path)
+                
+                elif event.key == pygame.K_l and event.mod & pygame.KMOD_CTRL:
+                    path = input("Open level: ")
+                    self.game.world.load(path)
+                    self.game.camera.update_visible_tiles()
+                    self.game.camera.update_visible_entities()
     
     def modify_selection(self,type):
         for x in range(self.selection[0].x,self.selection[1].x+1):
