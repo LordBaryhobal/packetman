@@ -5,6 +5,7 @@ import numpy as np
 from .Tile import Tile
 from .Vec import Vec
 from .Rect import Rect
+from .Entity import Entity
 from .Player import Player
 from .Logger import Logger
 from math import floor
