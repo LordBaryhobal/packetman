@@ -9,6 +9,7 @@ from .Vec import Vec
 from .Rect import Rect
 from .Player import Player
 from math import floor
+import struct, pickle
 
 class World:
     """
@@ -149,7 +150,59 @@ class World:
                         self.tiles[y][x] = Tile(x,y,0)
     
     def save(self, filename):
-        pass
+        buf_tiles = bytearray()
+        buf_entities = bytearray()
+
+        world_w, world_h = 0, 0
+
+        tiles = self.tiles.flatten()
+        for tile in tiles:
+            buf_tile = bytearray()
+            buf_tile.append(struct.pack(">H", tile.type))
+            buf_tile.append(struct.pack(">H", tile.pos.x))
+            buf_tile.append(struct.pack(">H", tile.pos.y))
+            buf_tile.append(bytearray(tile.__class__.__qualname__, "utf-8"))
+            buf_tile.append(0)
+            attrs = tile.__dict__.copy()
+            del attrs["type"]
+            del attrs["coo"]
+            attrs = pickle.dumps(attrs)
+            buf_tile.append(attrs)
+
+            buf_tiles.append(struct.pack(">H", len(buf_tile)))
+            buf_tiles += buf_tile
+        
+        entities = self.entities
+
+        for entity in entities:
+            buf_entity = bytearray()
+            buf_entity.append(struct.pack(">H", entity.type))
+            buf_entity.append(struct.pack(">f", entity.pos.x))
+            buf_entity.append(struct.pack(">f", entity.pos.y))
+            buf_entity.append(struct.pack(">f", entity.vel.x))
+            buf_entity.append(struct.pack(">f", entity.vel.y))
+            buf_entity.append(bytearray(entity.__class__.__qualname__, "utf-8"))
+            buf_entity.append(0)
+            attrs = entity.__dict__.copy()
+            del attrs["type"]
+            del attrs["pos"]
+            del attrs["vel"]
+            del attrs["acc"]
+            del attrs["box"]
+            attrs = pickle.dumps(attrs)
+            buf_entity.append(attrs)
+
+            buf_entities.append(struct.pack(">H", len(buf_entity)))
+            buf_entities += buf_entity
+
+        with open("./levels/"+filename, "wb") as f:
+            f.write(struct.pack(">I", len(buf_tiles) ))
+            f.write(struct.pack(">I", len(buf_entities) ))
+            f.write(struct.pack(">H", world_w))
+            f.write(struct.pack(">H", world_h))
+            f.write(buf_tiles)
+            f.write(buf_entities)
+
     
     def place_selection(self,selection,pos,place_empty=False):
         for y in range(len(selection)):
