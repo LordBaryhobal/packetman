@@ -45,6 +45,7 @@ class Game:
         self.running = True
         pygame.init()
         self.window = pygame.display.set_mode([Game.WIDTH, Game.HEIGHT])
+        self.menu_surf, self.editor_surf, self.hud_surf, self.world_surf = [pygame.Surface([Game.WIDTH, Game.HEIGHT], pygame.SRCALPHA) for i in range(4)]
         self.clock = pygame.time.Clock()
 
         self.events = []
@@ -129,8 +130,13 @@ class Game:
         
         pygame.display.set_caption(f"Packetman - {self.clock.get_fps():.2f}fps")
 
-        surface = self.window
-        self.camera.render(surface)
+        self.menu_surf.fill((0,0,0,0))
+        self.camera.render(self.world_surf, self.hud_surf, self.editor_surf)
+
+        self.window.blit(self.world_surf, [0,0])
+        self.window.blit(self.editor_surf, [0,0])
+        self.window.blit(self.hud_surf, [0,0])
+        self.window.blit(self.menu_surf, [0,0])
 
         pygame.display.flip()
         self.clock.tick(self.MAX_FPS)

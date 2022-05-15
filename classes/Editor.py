@@ -121,14 +121,17 @@ class Editor():
                 self.game.world.set_tile(Vec(x,y),type)
         self.game.camera.update_visible_tiles()
             
-    def render(self,surface):
+    def render(self, hud_surf, editor_surf):
+        hud_surf.fill((0,0,0,0))
+        editor_surf.fill((0,0,0,0))
+
         if self.selecting:
             mousepos = self.game.camera.screen_to_world(Vec(*pygame.mouse.get_pos()))
             v1,v2 = self.game.camera.world_to_screen(self.selection[0]), self.game.camera.world_to_screen(mousepos)
             v1,v2 = v1.min(v2),v1.max(v2)
             
             self.boundingbox.from_vectors(v1-Vec(0,self.game.camera.tilesize),v2+Vec(self.game.camera.tilesize,0))
-            self.boundingbox.render(surface,(100,100,100),5)
+            self.boundingbox.render(editor_surf,(100,100,100),5)
             
         
         elif self.selection is not None:
@@ -137,13 +140,13 @@ class Editor():
             if self.moveselection:
                 displacement = self.game.camera.screen_to_world(Vec(*pygame.mouse.get_pos()))-self.start_selection_pos
                 for tile in self.selected_tiles.flatten():
-                    tile.render(surface, self.game.camera.world_to_screen(tile.pos+displacement),self.game.camera.tilesize)
+                    tile.render(editor_surf, self.game.camera.world_to_screen(tile.pos+displacement),self.game.camera.tilesize)
             
             v1,v2 = self.game.camera.world_to_screen(self.selection[0]+displacement), self.game.camera.world_to_screen(self.selection[1]+displacement)
             v1,v2 = v1.min(v2),v1.max(v2)
             
             self.boundingbox.from_vectors(v1-Vec(0,self.game.camera.tilesize),v2+Vec(self.game.camera.tilesize,0))
-            self.boundingbox.render(surface,(100,100,100),5)
+            self.boundingbox.render(editor_surf,(100,100,100),5)
     
     def place_selection(self,displacement,place_empty=False):
         pos = self.selection[0]+displacement

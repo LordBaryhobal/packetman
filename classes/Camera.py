@@ -36,19 +36,19 @@ class Camera:
 
         self.visible_entities = self.game.world.get_entities_in_rect(topleft, bottomright)
 
-    def render(self, surface):
+    def render(self, world_surf, hud_surf, editor_surf):
         """Renders the visible tiles and entities
         @param surface: pygame surface to render on
         """
-        surface.fill((0,0,0))
+        world_surf.fill((0,0,0))
         for tile in self.visible_tiles:
-            tile.render(surface, self.world_to_screen(tile.pos),self.tilesize)
+            tile.render(world_surf, self.world_to_screen(tile.pos),self.tilesize)
         
         for entity in self.visible_entities:
-            entity.render(surface, self.world_to_screen(entity.pos), self.tilesize)
+            entity.render(world_surf, self.world_to_screen(entity.pos), self.tilesize)
 
         if self.game.config["edition"]:
-            self.game.editor.render(surface)
+            self.game.editor.render(hud_surf, editor_surf)
 
     def screen_to_world(self, pos):
         """Converts screen to world coordinates
