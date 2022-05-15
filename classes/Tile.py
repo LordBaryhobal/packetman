@@ -22,7 +22,8 @@ class Tile:
         cls = self.__class__
         new = cls()
         for k,v in self.__dict__.items():
-            setattr(new, k, v.copy())
+            if hasattr(v, "copy"):
+                v = v.copy()
+            setattr(new, k, v)
         
         return new
-        
