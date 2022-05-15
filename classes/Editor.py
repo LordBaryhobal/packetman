@@ -64,6 +64,20 @@ class Editor():
                 
                 if event.button == 1:
                     self.placing = False
+                    if self.selection is not None and self.selecting == False:
+                        
+                        #calculate displacement of the selection
+                        displacement = self.game.camera.screen_to_world(Vec(*pygame.mouse.get_pos()))-self.start_selection_pos
+                        
+                        #place selection at the new position
+                        ctr_pressed = pygame.key.get_pressed()[pygame.K_LCTRL]
+                        self.place_selection(displacement,place_empty=ctr_pressed)
+                        
+                        #modify selection to the final destination
+                        self.selection[0],self.selection[1] = (self.selection[0]+displacement).max(Vec()),(self.selection[1]+displacement).max(Vec())
+                        
+                        self.moveselection = False
+                        self.selected_tiles = None
                     
                 elif event.button == 2:
                     self.moving = False
@@ -117,4 +131,8 @@ class Editor():
             
             self.boundingbox.from_vectors(v1-Vec(0,self.game.camera.tilesize),v2+Vec(self.game.camera.tilesize,0))
             self.boundingbox.render(surface,(100,100,100),5)
-            
+    
+    def place_selection(self,displacement,place_empty=False):
+        pos = self.selection[0]+displacement
+        self.game.world.place_selection(self.selected_tiles,pos,place_empty)
+        self.game.camera.update_visible_tiles()

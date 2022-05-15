@@ -116,3 +116,13 @@ class World:
     
     def save(self, filename):
         pass
+    
+    def place_selection(self,selection,pos,place_empty=False):
+        for y in range(len(selection)):
+            for x in range(len(selection[0])):
+                t = selection[y][x]
+                if t.type == 0 and not place_empty:
+                    continue
+                t.coo.x = pos.x + x
+                t.coo.y = pos.y + y
+                self.tiles[pos.y+y][pos.x+x] = t
