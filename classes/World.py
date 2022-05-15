@@ -267,6 +267,7 @@ class World:
         print("Level loaded successfully (maybe)")
     
     def place_selection(self,selection,pos,place_empty=False):
+        self.modify_tilelistlen(pos+Vec(len(selection[0]),len(selection)))
         for y in range(len(selection)):
             for x in range(len(selection[0])):
                 t = selection[y][x]
