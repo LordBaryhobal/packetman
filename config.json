@@ -1,4 +1,11 @@
 {
-    "edition": true,
-    "loglevel": 15
+    "edition": false,
+    "loglevel": 15,
+
+    "gui": {
+        "editor": {
+            "scrollbars": false,
+            "hotbar_pos": 0
+        }
+    }
 }
