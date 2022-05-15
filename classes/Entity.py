@@ -4,7 +4,6 @@
 from .Vec import Vec
 from .Rect import Rect
 import pygame, random
-from math import copysign
 
 class Entity:
     """

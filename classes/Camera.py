@@ -1,12 +1,7 @@
 #Packetman is a small game created in the scope of a school project
 #Copyright (C) 2022  Louis HEREDERO & Mathéo BENEY
-from classes.Vec import Vec
 
-#TODO: fix circular import
-try:
-    from .Game import Game
-except ImportError:
-    pass
+from classes.Vec import Vec
 
 class Camera:
     """

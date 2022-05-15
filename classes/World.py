@@ -1,10 +1,8 @@
 #Packetman is a small game created in the scope of a school project
 #Copyright (C) 2022  Louis HEREDERO & Mathéo BENEY
 
-from scipy import isin
 import numpy as np
 from .Tile import Tile
-from .Entity import Entity
 from .Vec import Vec
 from .Rect import Rect
 from .Player import Player

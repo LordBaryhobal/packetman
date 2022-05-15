@@ -1,10 +1,13 @@
+#Packetman is a small game created in the scope of a school project
+#Copyright (C) 2022  Louis HEREDERO & Mathéo BENEY
+
 import pygame
 from .Vec import Vec
 from .Rect import Rect
 
 class Editor():
     """
-    class that handle what to do when in edition mode
+    Class that handles edition mode
     """
     
     def __init__(self,game):
