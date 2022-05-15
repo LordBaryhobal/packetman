@@ -80,3 +80,6 @@ class Vec():
     
     def __round__(self, n):
         return Vec(round(self.x, n), round(self.y, n))
+    
+    def __int__(self):
+        return Vec(int(self.x), int(self.y))
