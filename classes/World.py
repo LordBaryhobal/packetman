@@ -8,6 +8,7 @@ from .Entity import Entity
 from .Vec import Vec
 from .Rect import Rect
 from .Player import Player
+from .Logger import Logger
 from math import floor
 import struct, pickle
 
@@ -132,13 +133,13 @@ class World:
                         self.tiles[y][x] = Tile(x,y,0)
     
     def save(self, filename):
-        print(f"Saving as '{filename}'")
+        Logger.info(f"Saving as '{filename}'")
         buf_tiles = bytearray()
         buf_entities = bytearray()
 
         max_x, max_y = 0, 0
 
-        print("Saving tiles")
+        Logger.info("Saving tiles")
         tiles = self.tiles.flatten()
         for tile in tiles:
             if tile.type == 0:
@@ -164,7 +165,7 @@ class World:
         
         entities = self.entities
 
-        print("Saving entities")
+        Logger.info("Saving entities")
         for entity in entities:
             buf_entity = bytearray()
             buf_entity.extend(struct.pack(">H", entity.type))
@@ -186,7 +187,7 @@ class World:
             buf_entities.extend(struct.pack(">H", len(buf_entity)))
             buf_entities += buf_entity
         
-        print("Writing to file")
+        Logger.info("Writing to file")
         with open("./levels/"+filename+".dat", "wb") as f:
             f.write(struct.pack(">I", len(buf_tiles) ))
             f.write(struct.pack(">I", len(buf_entities) ))
@@ -195,10 +196,10 @@ class World:
             f.write(buf_tiles)
             f.write(buf_entities)
         
-        print("Level saved successfully (maybe)")
+        Logger.info("Level saved successfully (maybe)")
 
     def load(self, filename):
-        print(f"Loading level '{filename}'")
+        Logger.info(f"Loading level '{filename}'")
 
         with open(f"./levels/{filename}.dat", "rb") as f:
             size_tiles = struct.unpack(">I", f.read(4))[0]
@@ -208,7 +209,7 @@ class World:
             
             self.tiles = np.empty([self.HEIGHT,self.WIDTH], dtype='object')
 
-            print("Loading tiles")
+            Logger.info("Loading tiles")
             while f.tell() < size_tiles+12:
                 size = struct.unpack(">H", f.read(2))[0]
                 type_ = struct.unpack(">H", f.read(2))[0]
@@ -236,7 +237,7 @@ class World:
                     if self.tiles[y,x] is None:
                         self.tiles[y,x] = Tile(x, y)
             
-            print("Loading entities")
+            Logger.info("Loading entities")
             while f.tell() < size_entities+size_tiles+12:
                 size = struct.unpack(">H", f.read(2))[0]
                 type_ = struct.unpack(">H", f.read(2))[0]
@@ -264,7 +265,7 @@ class World:
                 if cls == Player:
                     self.player = entity
         
-        print("Level loaded successfully (maybe)")
+        Logger.info("Level loaded successfully (maybe)")
     
     def place_selection(self,selection,pos,place_empty=False):
         self.modify_tilelistlen(pos+Vec(len(selection[0]),len(selection)))

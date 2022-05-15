@@ -5,7 +5,7 @@ import time
 
 class Logger:
     """
-    Utility class used for logging info to the console.
+    Utility static class used for logging info to the console.
     """
 
     INFO = 1
@@ -16,17 +16,12 @@ class Logger:
     DEFAULT = INFO|WARN|ERROR
     ALL = INFO|WARN|ERROR|DEBUG
 
-    def __init__(self, level=DEFAULT):
-        """
-        @param level: Either Logger.ALL or a combination of Logger.INFO, Logger.WARN,
-                      Logger.ERROR, Logger.DEBUG
-                      Indicates which messages should be logged.
-        """
+    _instance = None
 
-        self.level = level
+    level = DEFAULT
     
-    def log(self, msg, level=INFO):
-        if level & self.level == 0:
+    def log(msg, level=INFO):
+        if level & Logger.level == 0:
             return
 
         print(time.strftime("[%Y-%m-%d %H:%M:%S] "), end="")
@@ -42,21 +37,21 @@ class Logger:
         
         print(msg)
 
-    def info(self, msg):
-        self.log(msg, Logger.INFO)
+    def info(msg):
+        Logger.log(msg, Logger.INFO)
     
-    def warn(self, msg):
-        self.log(msg, Logger.WARN)
+    def warn(msg):
+        Logger.log(msg, Logger.WARN)
     
-    def error(self, msg):
-        self.log(msg, Logger.ERROR)
+    def error(msg):
+        Logger.log(msg, Logger.ERROR)
 
-    def debug(self, msg):
-        self.log(msg, Logger.DEBUG)
+    def debug(msg):
+        Logger.log(msg, Logger.DEBUG)
 
 if __name__ == "__main__":
-    log = Logger(Logger.ALL)
-    log.info("Test info")
-    log.warn("Test warn")
-    log.error("Test error")
-    log.debug("Test debug")
+    Logger.level = Logger.ALL
+    Logger.info("Test info")
+    Logger.warn("Test warn")
+    Logger.error("Test error")
+    Logger.debug("Test debug")

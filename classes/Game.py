@@ -32,15 +32,13 @@ class Game:
     def __init__(self):
         """Initializes a Game instance. Should not be called manually"""
 
-        self.logger = Logger()
-
         with open("./config.json", "r") as f:
             self.config = json.loads(f.read())
             
         if self.config["edition"]:
             self.editor = Editor(self)
         
-        self.logger.level = self.config["loglevel"]
+        Logger.level = self.config["loglevel"]
 
         self.world = World()
         self.camera = Camera(self)
