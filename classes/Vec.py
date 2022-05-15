@@ -77,3 +77,6 @@ class Vec():
     
     def copy(self):
         return Vec(self.x, self.y)
+    
+    def __round__(self, n):
+        return Vec(round(self.x, n), round(self.y, n))
