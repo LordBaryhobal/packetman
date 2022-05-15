@@ -123,8 +123,9 @@ class Editor():
             
             if self.moveselection:
                 displacement = self.game.camera.screen_to_world(Vec(*pygame.mouse.get_pos()))-self.start_selection_pos
-                for tile in self.selected_tiles.flatten():
-                    tile.render(surface, self.game.camera.world_to_screen(tile.coo+displacement),self.game.camera.tilesize)
+                for row in self.selected_tiles:
+                    for tile in row:
+                        tile.render(surface, self.game.camera.world_to_screen(tile.coo+displacement),self.game.camera.tilesize)
             
             v1,v2 = self.game.camera.world_to_screen(self.selection[0]+displacement), self.game.camera.world_to_screen(self.selection[1]+displacement)
             v1,v2 = v1.min(v2),v1.max(v2)
