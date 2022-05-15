@@ -16,35 +16,15 @@ class World:
     World class holding world tiles and entities. Also processes physics.
     """
 
-    WIDTH = 8
-    HEIGHT = 8
+    WIDTH = 1
+    HEIGHT = 1
     
 
     def __init__(self):
-        self.create_tilelist()
+        self.tiles = np.array([[Tile()]], dtype='object')
         self.entities = []
         self.player = Player(Vec(1,1))
         self.entities.append(self.player)
-
-        self.entities.append(Entity(Vec(1.5,1), vel=Vec(1,5)))
-
-    def create_tilelist(self):
-        arr = np.random.randint(0,8,(self.HEIGHT,self.WIDTH))
-        """arr = np.array([
-            [1,2,1,2,1,2,1,2],
-            [3,0,0,0,0,0,0,0],
-            [4,0,0,0,0,0,0,0],
-            [3,0,0,0,0,0,0,0],
-            [4,0,0,0,0,0,0,0],
-            [3,0,0,0,0,0,0,0],
-            [4,0,0,0,0,0,0,0],
-            [3,0,0,0,0,0,0,0]
-        ])"""
-
-        self.tiles = np.empty([self.HEIGHT,self.WIDTH], dtype='object')
-        for x in range(self.WIDTH):
-            for y in range(self.HEIGHT):
-                self.tiles[y][x] = Tile(x,y,arr[y][x])
     
     def physics(self, delta):
         for entity in self.entities:
@@ -139,9 +119,11 @@ class World:
         if pos.x >= self.WIDTH:
             xpad = pos.x - self.WIDTH + 1
             self.WIDTH = pos.x + 1
+        
         if pos.y >= self.HEIGHT:
             ypad = pos.y - self.HEIGHT + 1
             self.HEIGHT = pos.y + 1
+        
         if xpad != 0 or ypad != 0:
             self.tiles = np.pad(self.tiles, ((0,ypad),(0,xpad)), "constant", constant_values=0)
             for x in range(self.WIDTH):
