@@ -12,6 +12,8 @@ class Entity:
     Subject to physics
     """
 
+    COLORS = [(100,100,100),(100,0,0),(0,100,0),(0,0,100),(100,100,0),(100,0,100),(0,100,100)]
+
     def __init__(self, pos=None, vel=None, acc=None, type_=None):
         """
         @param pos: position Vec of bottom-left corner
@@ -29,7 +31,7 @@ class Entity:
         self.vel = vel
         self.acc = acc
 
-        self.color = [(100,100,100),(100,0,0),(0,100,0),(0,0,100),(100,100,0),(100,0,100),(0,100,100)][type_]
+        self.type = type_
 
         self.box = Rect(self.pos.x, self.pos.y, 0.5, 0.5) # width and height in tiles
 
@@ -43,7 +45,8 @@ class Entity:
         @param size: size in pixel of a tile
         """
         
-        pygame.draw.rect(surface, self.color, (pos.x, pos.y-self.box.h*size, self.box.w*size, self.box.h*size))
+        color = self.COLORS[self.type]
+        pygame.draw.rect(surface, color, (pos.x, pos.y-self.box.h*size, self.box.w*size, self.box.h*size))
 
     def physics(self, delta):
         """Simulates physics"""

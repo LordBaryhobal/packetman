@@ -5,15 +5,16 @@ from .Vec import Vec
 import pygame
 
 class Tile:
+    COLORS = [None,(50,50,50),(255,255,255),(255,0,0),(0,255,0),(0,0,255),(255,255,0),(255,0,255),(0,255,255)]
+
     def __init__(self, x=0, y=0, type_=0):
         self.pos = Vec(x, y)
-        self.color = [None,(50,50,50),(255,255,255),(255,0,0),(0,255,0),(0,0,255),(255,255,0),(255,0,255),(0,255,255)]
         self.type = type_ # 0 = empty, 1 = ..., 2 = ..., 3 = ...
         self.solid = (self.type in [2,3])
     
     def render(self, surface, position,size):
         if self.type != 0:
-            pygame.draw.rect(surface, self.color[self.type], (position.x, position.y-size, size, size))
+            pygame.draw.rect(surface, self.COLORS[self.type], (position.x, position.y-size, size, size))
     
     def copy(self):
         """
