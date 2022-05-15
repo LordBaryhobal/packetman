@@ -207,6 +207,7 @@ class World:
             self.HEIGHT = struct.unpack(">H", f.read(2))[0]
             
             self.tiles = np.empty([self.HEIGHT,self.WIDTH], dtype='object')
+            self.entities = []
 
             Logger.info("Loading tiles")
             while f.tell() < size_tiles+12:
