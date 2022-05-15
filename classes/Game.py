@@ -50,6 +50,9 @@ class Game:
 
         self.events = []
         self.animations = []
+
+        if not self.config["edition"]:
+            self.world.load("level2")
     
     @classproperty
     def instance(cls):
