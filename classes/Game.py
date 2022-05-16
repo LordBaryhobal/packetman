@@ -8,6 +8,9 @@ from classes.Event import Event
 from classes.Animation import Animation
 from classes.Editor import Editor
 import pygame, json
+from classes.ui.GUI import GUI
+from classes.ui.Button import Button
+from classes.ui.Constraints import *
 
 class classproperty(property):
     """Utility class for annotating class properties. Parallel to `@property`"""
@@ -49,6 +52,18 @@ class Game:
         self.clock = pygame.time.Clock()
 
         self.events = []
+
+        self.gui = GUI()
+        
+        #Test
+        self.gui.add(
+            Button(
+                ConstantConstraint(50),
+                ConstantConstraint(50),
+                RelativeConstraint(self, "WIDTH", 0.5),
+                RelativeConstraint(self, "HEIGHT", 0.25)
+            )
+        )
 
         if not self.config["edition"]:
             self.world.load("level2")
@@ -136,6 +151,9 @@ class Game:
         self.menu_surf.fill((0,0,0,0))
         self.camera.render(self.world_surf, self.hud_surf, self.editor_surf)
 
+        self.gui.render(self.menu_surf)
+
+        #self.editor_surf.set_alpha(200)
         self.window.blit(self.world_surf, [0,0])
         self.window.blit(self.editor_surf, [0,0])
         self.window.blit(self.hud_surf, [0,0])
