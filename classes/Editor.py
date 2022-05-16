@@ -57,6 +57,7 @@ class Editor():
                 elif event.button == 2:
                     self.startmove = Vec(pygame.mouse.get_pos()[0],pygame.mouse.get_pos()[1])
                     self.moving = True
+                    self.hud.show_scrollbars()
 
                 elif event.button == 3:
                     self.selection = [self.game.camera.screen_to_world(Vec(pygame.mouse.get_pos()[0],pygame.mouse.get_pos()[1]))]
@@ -90,6 +91,7 @@ class Editor():
                     
                 elif event.button == 2:
                     self.moving = False
+                    self.hud.hide_scrollbars()
                 
                 elif event.button == 3:
                     self.selection.append(self.game.camera.screen_to_world(Vec(pygame.mouse.get_pos()[0],pygame.mouse.get_pos()[1])))

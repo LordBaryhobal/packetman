@@ -104,7 +104,7 @@ class Game:
             self.editor.handle_events(events)
 
         for animation in Animation.animations:
-            if not animation.start_time is None:
+            if not animation.start_time is None and not animation.finished:
                 animation.update()
         
         Animation.animations = list(filter(lambda a: not a.finished, Animation.animations))

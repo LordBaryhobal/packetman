@@ -4,6 +4,7 @@
 from .Tile import Tile
 from .Vec import Vec
 from .Logger import Logger
+from .Animation import Animation
 import pygame
 
 class Hud:
@@ -20,6 +21,9 @@ class Hud:
         self.hotbars = [
             [Tile(type_=1), Tile(type_=2), Tile(type_=3), Tile(type_=4), Tile(type_=5), Tile(type_=7), Tile(type_=8)]
         ]
+
+        self.sb_opacity_anim = None
+        self.sb_opacity = 0
     
     def get_type(self):
         if self.hotbar < len(self.hotbars) and self.slot < len(self.hotbars[self.hotbar]):
@@ -80,12 +84,30 @@ class Hud:
             x = rx*(self.game.WIDTH-x_thumb_w)
             y = (1-ry)*(self.game.HEIGHT-y_thumb_h)
 
-            pygame.draw.rect(surface, (255,255,255), [x, HEIGHT-5, x_thumb_w,5])
-            pygame.draw.rect(surface, (255,255,255), [0, y, 5, y_thumb_h])
+            pygame.draw.rect(surface, (255,255,255, self.sb_opacity), [x, HEIGHT-5, x_thumb_w,5])
+            pygame.draw.rect(surface, (255,255,255, self.sb_opacity), [0, y, 5, y_thumb_h])
     
     def set_hotbar(self, i):
+        """Set which hotbar is currently selected
+        @param i: index of the hotbar to select
+        """
+        
         if i < len(self.hotbars):
             self.hotbar = i
         
         else:
             Logger.warn(f"Tried to set hotbar of index {i} but only {len(self.hotbars)} are defined")
+    
+    def show_scrollbars(self):
+        if not self.sb_opacity_anim is None:
+            self.sb_opacity_anim.finished = True
+        
+        self.sb_opacity_anim = None
+        self.sb_opacity = 255
+    
+    def hide_scrollbars(self):
+        if not self.sb_opacity_anim is None:
+            self.sb_opacity_anim.finished = True
+        
+        self.sb_opacity_anim = Animation(self, "sb_opacity", 255, 0, 1, type_=Animation.INT)
+        Animation.animations.append(self.sb_opacity_anim)
