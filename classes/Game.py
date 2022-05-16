@@ -49,7 +49,6 @@ class Game:
         self.clock = pygame.time.Clock()
 
         self.events = []
-        self.animations = []
 
         if not self.config["edition"]:
             self.world.load("level2")
@@ -104,10 +103,11 @@ class Game:
         if self.config["edition"]:
             self.editor.handle_events(events)
 
-        for animation in self.animations:
-            animation.update()
+        for animation in Animation.animations:
+            if not animation.start_time is None:
+                animation.update()
         
-        self.animations = list(filter(lambda a: not a.finished, self.animations))
+        Animation.animations = list(filter(lambda a: not a.finished, Animation.animations))
 
         #Custom events
         events = self.events
@@ -148,4 +148,4 @@ class Game:
         self.running = False
     
     def animate(self, obj, attr_, val_a, val_b, duration, start=True, loop=None, type_=Animation.FLOAT):
-        self.animations.append(Animation(obj, attr_, val_a, val_b, duration, start, loop, type_))
+        Animation.animations.append(Animation(obj, attr_, val_a, val_b, duration, start, loop, type_))
