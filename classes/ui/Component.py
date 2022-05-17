@@ -12,7 +12,7 @@ class Component:
         self._w = w
         self._h = h
 
-    def render(self, surface):
+    def render(self, surface, x, y, w, h):
         pass
     
     @property

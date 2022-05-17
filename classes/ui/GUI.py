@@ -10,7 +10,7 @@ class GUI:
 
     def render(self, surface):
         for child in self.children:
-            child.render(surface)
+            child.render(surface, child.x, child.y, child.w, child.h)
     
     def add(self, child):
         self.children.append(child)
