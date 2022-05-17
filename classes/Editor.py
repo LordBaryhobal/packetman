@@ -47,6 +47,7 @@ class Editor():
                     if  pygame.key.get_pressed()[pygame.K_LCTRL]:
                         self.startmove = Vec(pygame.mouse.get_pos()[0],pygame.mouse.get_pos()[1])
                         self.moving = True
+                        self.hud.show_scrollbars()
                     else:
 
                         self.placing = True
@@ -100,6 +101,7 @@ class Editor():
                 if event.button == 1:
                     if self.moving:
                         self.moving = False
+                        self.hud.hide_scrollbars()
                     self.placing = False
                     if self.selection is not None and self.selecting == False and self.placing_paste == False and self.moveselection:
                         
