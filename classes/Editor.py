@@ -41,11 +41,25 @@ class Editor():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 
                 if event.button == 1:
-                    if  pygame.key.get_pressed()[pygame.K_LCTRL]:
+                    if  pygame.key.get_pressed()[pygame.K_LCTRL] and self.placing_paste == False:
                         self.startmove = Vec(pygame.mouse.get_pos()[0],pygame.mouse.get_pos()[1])
                         self.moving = True
-                    else:
+                    elif self.placing_paste:
+                        self.placing_paste = False
+                        #place selection at the new position
+                        ctr_pressed = pygame.key.get_pressed()[pygame.K_LCTRL]
+                        pos = self.game.camera.screen_to_world(Vec(*pygame.mouse.get_pos()))
+                        self.game.world.place_selection(self.copied_tiles,pos,place_empty=ctr_pressed)
+                        for y,row in enumerate(self.copied_tiles):
+                            for x,tile in enumerate(row):
+                                self.copied_tiles[y][x] = tile.copy()
+                        
+                        self.game.camera.update_visible_tiles()
 
+                        #set selection at the placement location:
+                        otherpos = pos +Vec(len(self.copied_tiles[0])-1,len(self.copied_tiles)-1)
+                        self.selection = [pos.max(Vec()),otherpos.max(Vec())]
+                    else:
                         self.placing = True
                         if self.selection is not None and self.selecting == False and self.placing_paste == False:
                             self.moveselection = True
@@ -57,22 +71,6 @@ class Editor():
                             self.modify_selection(0)
                             
                             self.start_selection_pos = self.game.camera.screen_to_world(Vec(*pygame.mouse.get_pos()))
-                        
-                        elif self.placing_paste:
-                            self.placing_paste = False
-                            #place selection at the new position
-                            ctr_pressed = pygame.key.get_pressed()[pygame.K_LCTRL]
-                            pos = self.game.camera.screen_to_world(Vec(*pygame.mouse.get_pos()))
-                            self.game.world.place_selection(self.copied_tiles,pos,place_empty=ctr_pressed)
-                            for y,row in enumerate(self.copied_tiles):
-                                for x,tile in enumerate(row):
-                                    self.copied_tiles[y][x] = tile.copy()
-                            
-                            self.game.camera.update_visible_tiles()
-
-                            #set selection at the placement location:
-                            otherpos = pos +Vec(len(self.copied_tiles[0])-1,len(self.copied_tiles)-1)
-                            self.selection = [pos.max(Vec()),otherpos.max(Vec())]
                         
                 
                 if event.button == 2:
@@ -155,6 +153,7 @@ class Editor():
                 elif event.key == pygame.K_v and event.mod & pygame.KMOD_CTRL and self.placing_paste == False:
                     if self.copied_tiles is not None:
                         self.placing_paste = True
+                        self.selection = None
                     
                     
                     
@@ -194,3 +193,10 @@ class Editor():
             for y,row in enumerate(self.copied_tiles):
                 for x,tile in enumerate(row):
                     tile.render(surface,self.game.camera.world_to_screen(pos+Vec(x,y)),self.game.camera.tilesize)
+
+            
+            v1,v2 = self.game.camera.world_to_screen(pos), self.game.camera.world_to_screen(pos+Vec(len(self.copied_tiles[0])-1,len(self.copied_tiles)-1))
+            v1,v2 = v1.min(v2),v1.max(v2)
+            
+            self.boundingbox.from_vectors(v1-Vec(0,self.game.camera.tilesize),v2+Vec(self.game.camera.tilesize,0))
+            self.boundingbox.render(surface,(100,100,100),5)
