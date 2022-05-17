@@ -130,6 +130,9 @@ class Editor():
                 elif event.key == pygame.K_BACKSPACE:
                     if self.selection is not None and self.selecting == False:
                         self.modify_selection(0)
+                    if self.placing_paste:
+                        self.placing_paste = False
+                        self.selection = None
                 
                 elif event.key == pygame.K_s and event.mod & pygame.KMOD_CTRL:
                     path = input("Save level as: ")
