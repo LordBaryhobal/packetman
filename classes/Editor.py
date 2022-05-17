@@ -124,7 +124,7 @@ class Editor():
                     self.hud.hide_scrollbars()
                 
                 elif event.button == 3:
-                    if self.placing_paste == False and self.moveselection == False:
+                    if self.placing_paste == False and self.moveselection == False and not self.selection is None:
                         self.selection.append(self.game.camera.screen_to_world(Vec(pygame.mouse.get_pos()[0],pygame.mouse.get_pos()[1])))
                         if self.selection[0] == self.selection[1]:
                             self.selection = None

@@ -14,8 +14,8 @@ class Button(Label):
         pygame.draw.rect(surface, color, [x, y, w, h])
         super().render(surface, x, y, w, h)
     
-    def on_clicked(self, button):
-        if button == 1:
+    def on_release(self, event):
+        if event.button == 1:
             return self.callback(self)
         
         return False

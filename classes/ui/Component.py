@@ -16,12 +16,17 @@ class Component:
         self.parent = None
         self.children = []
 
+        self.bg_color = None
+
         self.pressed = False
         self.hover = False
         self.visible = True
 
     def render(self, surface, x, y, w, h):
         if self.visible:
+            if not self.bg_color is None:
+                pygame.draw.rect(surface, self.bg_color, [x, y, w, h])
+            
             for child in self.children:
                 child.render(surface, x+child.x, y+child.y, child.w, child.h)
     
@@ -63,33 +68,48 @@ class Component:
         
         if event.type == pygame.MOUSEBUTTONDOWN:
             if x <= event.pos[0] < x+w and y <= event.pos[1] < y+h:
-                if self.on_clicked(event.button):
+                if self.on_click(event):
                     handled = True
+                
+                self.pressed = True
         
         elif event.type == pygame.MOUSEBUTTONUP:
+            if self.on_mouse_up(event):
+                handled = True
+
             if self.pressed:
                 self.pressed = False
-                self.on_release(event.button)
+                if self.on_release(event):
+                    handled = True
         
         elif event.type == pygame.MOUSEMOTION:
             if x <= event.pos[0] < x+w and y <= event.pos[1] < y+h:
                 if not self.hover:
                     self.hover = True
-                    self.on_enter()
+                    if self.on_enter(event):
+                        handled = True
+                    
             elif self.hover:
                 self.hover = False
-                self.on_exit()
+                if self.on_exit(event):
+                    handled = True
 
         return handled
     
-    def on_clicked(self, button):
+    def on_click(self, event):
         return False
     
-    def on_release(self, button):
+    def on_release(self, event):
         return False
     
-    def on_enter(self):
+    def on_enter(self, event):
         return False
     
-    def on_exit(self):
+    def on_exit(self, event):
+        return False
+    
+    def on_mouse_down(self, event):
+        return False
+    
+    def on_mouse_up(self, event):
         return False

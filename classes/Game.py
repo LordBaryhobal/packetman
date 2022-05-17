@@ -48,6 +48,7 @@ class Game:
         self.camera = Camera(self)
 
         self.running = True
+        self.paused = False
         pygame.init()
         self.window = pygame.display.set_mode([Game.WIDTH, Game.HEIGHT])
         self.menu_surf, self.editor_surf, self.hud_surf, self.world_surf = [pygame.Surface([Game.WIDTH, Game.HEIGHT], pygame.SRCALPHA) for i in range(4)]
@@ -87,7 +88,7 @@ class Game:
         while self.running:
             self.handle_events()
 
-            if not self.config["edition"]:
+            if not self.config["edition"] and not self.paused:
                 self.physics()
             
             self.render()
@@ -107,30 +108,39 @@ class Game:
                     return
             
             elif event.type == pygame.KEYDOWN:
-                if not self.config["edition"]:
+                if event.key == pygame.K_ESCAPE:
+                    if self.paused and self.pause_menu.visible:
+                        self.resume(None)
+                    else:
+                        self.pause()
+
+                elif not self.config["edition"]:
                     if event.key == pygame.K_SPACE:
                         self.world.player.jump()
+
             
         keys = pygame.key.get_pressed()
 
         self.gui.handle_events(events)
         events = list(filter(lambda e: not (hasattr(e, "handled") and e.handled), events))
 
-        if not self.config["edition"]:
-            if keys[pygame.K_d]:
-                self.world.player.move(1)
+        if not self.paused:
+            if not self.config["edition"]:
+                if keys[pygame.K_d]:
+                    self.world.player.move(1)
+                
+                if keys[pygame.K_a]:
+                    self.world.player.move(-1)
+
+            if self.config["edition"]:
+                self.editor.handle_events(events)
+
             
-            if keys[pygame.K_a]:
-                self.world.player.move(-1)
-
-        if self.config["edition"]:
-            self.editor.handle_events(events)
-
-        for animation in Animation.animations:
-            if not animation.start_time is None and not animation.finished:
-                animation.update()
-        
-        Animation.animations = list(filter(lambda a: not a.finished, Animation.animations))
+            for animation in Animation.animations:
+                if not animation.start_time is None and not animation.finished:
+                    animation.update()
+            
+            Animation.animations = list(filter(lambda a: not a.finished, Animation.animations))
 
         #Custom events
         events = self.events
@@ -170,7 +180,7 @@ class Game:
         pygame.display.flip()
         self.clock.tick(self.MAX_FPS)
     
-    def quit(self):
+    def quit(self, *args, **kwargs):
         self.running = False
     
     def animate(self, obj, attr_, val_a, val_b, duration, start=True, loop=None, type_=Animation.FLOAT):
@@ -178,10 +188,39 @@ class Game:
     
     def init_gui(self):
         Const, Rel = ConstantConstraint, RelativeConstraint
-        main = Component(Const(0), Const(0), Const(self.WIDTH), Const(self.HEIGHT)).add(
-            Label(Const(0), Const(0), Const(self.WIDTH), Rel(self, "HEIGHT", 0.1), "Menu")
+        self.main_menu = Component(Const(0), Const(0), Const(self.WIDTH), Const(self.HEIGHT)).add(
+            Label(Const(0), Const(0), Const(self.WIDTH), Rel(self, "HEIGHT", 0.1), "Packetman")
         )
-        main.visible = False
+
+        self.pause_menu = Component(Const(0), Const(0), Const(self.WIDTH), Const(self.HEIGHT)).add(
+            Label(Const(0), Const(0), Const(self.WIDTH), Rel(self, "HEIGHT", 0.1), "Pause")
+        ).add(
+            Button(Rel(self, "WIDTH", 0.25), Rel(self, "HEIGHT", 0.15), Rel(self, "WIDTH", 0.5), Rel(self, "HEIGHT", 0.1), "Resume", self.resume)
+        ).add(
+            Button(Rel(self, "WIDTH", 0.25), Rel(self, "HEIGHT", 0.3), Rel(self, "WIDTH", 0.5), Rel(self, "HEIGHT", 0.1), "Quit", self.quit)
+        )
+
+        self.main_menu.visible = False
+        self.pause_menu.visible = False
+
+        self.pause_menu.bg_color = (100,100,100,200)
+
+        f = lambda *args, **kwargs: True
+        self.main_menu.on_click = f
+        self.pause_menu.on_click = f
+        self.main_menu.on_release = f
+        self.pause_menu.on_release = f
+        self.main_menu.on_mouse_down = f
+        self.pause_menu.on_mouse_up = f
 
 
-        self.gui.add(main)
+        self.gui.add(self.main_menu)
+        self.gui.add(self.pause_menu)
+    
+    def resume(self, button):
+        self.pause_menu.visible = False
+        self.paused = False
+    
+    def pause(self):
+        self.paused = True
+        self.pause_menu.visible = True
