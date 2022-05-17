@@ -41,33 +41,38 @@ class Editor():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 
                 if event.button == 1:
-                    self.placing = True
-                    if self.selection is not None and self.selecting == False and self.placing_paste == False:
-                        self.moveselection = True
-                        
-                        v1 = Vec(min(self.selection[0].x,self.selection[1].x),max(self.selection[0].y,self.selection[1].y))
-                        v2 = Vec(max(self.selection[0].x,self.selection[1].x),min(self.selection[0].y,self.selection[1].y))
-                        
-                        self.selected_tiles = self.game.world.get_tiles_in_rect(v1,v2).copy()
-                        self.modify_selection(0)
-                        
-                        self.start_selection_pos = self.game.camera.screen_to_world(Vec(*pygame.mouse.get_pos()))
-                    
-                    elif self.placing_paste:
-                        self.placing_paste = False
-                        #place selection at the new position
-                        ctr_pressed = pygame.key.get_pressed()[pygame.K_LCTRL]
-                        pos = self.game.camera.screen_to_world(Vec(*pygame.mouse.get_pos()))
-                        self.game.world.place_selection(self.copied_tiles,pos,place_empty=ctr_pressed)
-                        for y,row in enumerate(self.copied_tiles):
-                            for x,tile in enumerate(row):
-                                self.copied_tiles[y][x] = tile.copy()
-                        
-                        self.game.camera.update_visible_tiles()
+                    if  pygame.key.get_pressed()[pygame.K_LCTRL]:
+                        self.startmove = Vec(pygame.mouse.get_pos()[0],pygame.mouse.get_pos()[1])
+                        self.moving = True
+                    else:
 
-                        #set selection at the placement location:
-                        otherpos = pos +Vec(len(self.copied_tiles[0])-1,len(self.copied_tiles)-1)
-                        self.selection = [pos.max(Vec()),otherpos.max(Vec())]
+                        self.placing = True
+                        if self.selection is not None and self.selecting == False and self.placing_paste == False:
+                            self.moveselection = True
+                            
+                            v1 = Vec(min(self.selection[0].x,self.selection[1].x),max(self.selection[0].y,self.selection[1].y))
+                            v2 = Vec(max(self.selection[0].x,self.selection[1].x),min(self.selection[0].y,self.selection[1].y))
+                            
+                            self.selected_tiles = self.game.world.get_tiles_in_rect(v1,v2).copy()
+                            self.modify_selection(0)
+                            
+                            self.start_selection_pos = self.game.camera.screen_to_world(Vec(*pygame.mouse.get_pos()))
+                        
+                        elif self.placing_paste:
+                            self.placing_paste = False
+                            #place selection at the new position
+                            ctr_pressed = pygame.key.get_pressed()[pygame.K_LCTRL]
+                            pos = self.game.camera.screen_to_world(Vec(*pygame.mouse.get_pos()))
+                            self.game.world.place_selection(self.copied_tiles,pos,place_empty=ctr_pressed)
+                            for y,row in enumerate(self.copied_tiles):
+                                for x,tile in enumerate(row):
+                                    self.copied_tiles[y][x] = tile.copy()
+                            
+                            self.game.camera.update_visible_tiles()
+
+                            #set selection at the placement location:
+                            otherpos = pos +Vec(len(self.copied_tiles[0])-1,len(self.copied_tiles)-1)
+                            self.selection = [pos.max(Vec()),otherpos.max(Vec())]
                         
                 
                 if event.button == 2:
@@ -83,6 +88,8 @@ class Editor():
             
             elif event.type == pygame.MOUSEBUTTONUP:
                 if event.button == 1:
+                    if self.moving:
+                        self.moving = False
                     self.placing = False
                     if self.selection is not None and self.selecting == False and self.placing_paste == False and self.moveselection:
                         
