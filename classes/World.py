@@ -21,6 +21,7 @@ class World:
     
 
     def __init__(self, game):
+        self.game = game
         self.tiles = np.array([[Tile()]], dtype='object')
         self.entities = []
         self.player = Player(Vec(1,1))

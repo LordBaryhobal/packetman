@@ -10,8 +10,12 @@ class Button(Label):
         self.callback = callback
     
     def render(self, surface, x, y, w, h):
-        pygame.draw.rect(surface, (255,150,50), [x, y, w, h])
+        color = (255,150,50) if self.hover else (200, 100, 0)
+        pygame.draw.rect(surface, color, [x, y, w, h])
         super().render(surface, x, y, w, h)
     
-    def click(self):
-        self.callback(self)
+    def on_clicked(self, button):
+        if button == 1:
+            return self.callback(self)
+        
+        return False

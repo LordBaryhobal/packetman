@@ -11,6 +11,8 @@ import pygame, json
 from classes.ui.GUI import GUI
 from classes.ui.Button import Button
 from classes.ui.Constraints import *
+from classes.ui.Component import Component
+from classes.ui.Label import Label
 
 class classproperty(property):
     """Utility class for annotating class properties. Parallel to `@property`"""
@@ -53,21 +55,23 @@ class Game:
 
         self.events = []
 
-        self.gui = GUI()
-        
+        self.gui = GUI(self)
+        self.init_gui()
+
         #Test
-        self.gui.add(
+        """self.gui.add(
             Button(
                 ConstantConstraint(50),
                 ConstantConstraint(50),
-                RelativeConstraint(self, "WIDTH", 0.5),
-                RelativeConstraint(self, "HEIGHT", 0.25),
-                text="Button 1"
+                RelativeConstraint(self, "WIDTH", 0.25),
+                RelativeConstraint(self, "HEIGHT", 0.1),
+                text="Button 1",
+                callback=lambda *args, **kwargs: print("Clicked button 1") or True
             )
-        )
+        )"""
 
         if not self.config["edition"]:
-            self.world.load("level2")
+            self.world.load("level1")
     
     @classproperty
     def instance(cls):
@@ -106,8 +110,11 @@ class Game:
                 if not self.config["edition"]:
                     if event.key == pygame.K_SPACE:
                         self.world.player.jump()
-        
+            
         keys = pygame.key.get_pressed()
+
+        self.gui.handle_events(events)
+        events = list(filter(lambda e: not (hasattr(e, "handled") and e.handled), events))
 
         if not self.config["edition"]:
             if keys[pygame.K_d]:
@@ -168,3 +175,13 @@ class Game:
     
     def animate(self, obj, attr_, val_a, val_b, duration, start=True, loop=None, type_=Animation.FLOAT):
         Animation.animations.append(Animation(obj, attr_, val_a, val_b, duration, start, loop, type_))
+    
+    def init_gui(self):
+        Const, Rel = ConstantConstraint, RelativeConstraint
+        main = Component(Const(0), Const(0), Const(self.WIDTH), Const(self.HEIGHT)).add(
+            Label(Const(0), Const(0), Const(self.WIDTH), Rel(self, "HEIGHT", 0.1), "Menu")
+        )
+        main.visible = False
+
+
+        self.gui.add(main)
