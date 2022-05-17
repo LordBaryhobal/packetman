@@ -42,7 +42,7 @@ class Game:
         
         Logger.level = self.config["loglevel"]
 
-        self.world = World()
+        self.world = World(self)
         self.camera = Camera(self)
 
         self.running = True
@@ -56,14 +56,14 @@ class Game:
         self.gui = GUI()
         
         #Test
-        self.gui.add(
+        """self.gui.add(
             Button(
                 ConstantConstraint(50),
                 ConstantConstraint(50),
                 RelativeConstraint(self, "WIDTH", 0.5),
                 RelativeConstraint(self, "HEIGHT", 0.25)
             )
-        )
+        )"""
 
         if not self.config["edition"]:
             self.world.load("level2")

@@ -20,7 +20,7 @@ class World:
     HEIGHT = 1
     
 
-    def __init__(self):
+    def __init__(self, game):
         self.tiles = np.array([[Tile()]], dtype='object')
         self.entities = []
         self.player = Player(Vec(1,1))
@@ -266,6 +266,9 @@ class World:
                     self.player = entity
         
         Logger.info("Level loaded successfully (maybe)")
+
+        self.game.camera.update_visible_tiles()
+        self.game.camera.update_visible_entities()
     
     def place_selection(self,selection,pos,place_empty=False):
         self.modify_tilelistlen(pos+Vec(len(selection[0]),len(selection)))

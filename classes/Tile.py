@@ -28,3 +28,6 @@ class Tile:
             setattr(new, k, v)
         
         return new
+    
+    def __repr__(self) -> str:
+        return f"<Tile of type {self.type} at ({self.pos.x}, {self.pos.y})>"
