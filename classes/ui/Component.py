@@ -23,6 +23,19 @@ class Component:
         self.hover = False
         self.visible = True
 
+    def copy(self):
+        """
+        Creates a new copy of this component. Keeps class and all properties
+        """
+        cls = self.__class__
+        new = cls(self._x, self._y, self._w, self._h, self.name)
+        for k,v in self.__dict__.items():
+            if hasattr(v, "copy"):
+                v = v.copy()
+            setattr(new, k, v)
+        
+        return new
+
     def render(self, surface, x, y, w, h):
         if self.visible:
             if not self.bg_color is None:
