@@ -32,7 +32,7 @@
             ]
         },
         {
-            "class": "Button",
+            "class": "Checkbox",
             "params": [
                 {
                     "constraint": "rel",
@@ -45,6 +45,44 @@
                     "obj": "${game}",
                     "attr": "HEIGHT",
                     "ratio": 0.15
+                },
+                {
+                    "constraint": "rel",
+                    "obj": "${game}",
+                    "attr": "WIDTH",
+                    "ratio": 0.5
+                },
+                {
+                    "constraint": "rel",
+                    "obj": "${game}",
+                    "attr": "HEIGHT",
+                    "ratio": 0.1
+                },
+                "Test checkbox",
+                "${game.cb_checkbox}",
+                [
+                    "test_checkbox"
+                ],
+                {
+                    "name": "name",
+                    "val": "test_checkbox"
+                }
+            ]
+        },
+        {
+            "class": "Button",
+            "params": [
+                {
+                    "constraint": "rel",
+                    "obj": "${game}",
+                    "attr": "WIDTH",
+                    "ratio": 0.25
+                },
+                {
+                    "constraint": "rel",
+                    "obj": "${game}",
+                    "attr": "HEIGHT",
+                    "ratio": 0.30
                 },
                 {
                     "constraint": "rel",

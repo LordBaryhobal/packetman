@@ -188,36 +188,9 @@ class Game:
         Animation.animations.append(Animation(obj, attr_, val_a, val_b, duration, start, loop, type_))
     
     def init_gui(self):
-        Const, Rel = ConstantConstraint, RelativeConstraint
-        
-        """self.main_menu = Menu(self).add(
-            Label(Const(0), Const(0), Const(self.WIDTH), Rel(self, "HEIGHT", 0.1), "Packetman")
-        ).add(
-            Button(
-                Rel(self, "WIDTH", 0.25), Rel(self, "HEIGHT", 0.15), Rel(self, "WIDTH", 0.5), Rel(self, "HEIGHT", 0.1), "Choose level", self.cb_choose_lvl)
-        ).add(
-            Button(Rel(self, "WIDTH", 0.25), Rel(self, "HEIGHT", 0.3), Rel(self, "WIDTH", 0.5), Rel(self, "HEIGHT", 0.1), "Settings", self.cb_settings)
-        ).add(
-            Button(Rel(self, "WIDTH", 0.25), Rel(self, "HEIGHT", 0.45), Rel(self, "WIDTH", 0.5), Rel(self, "HEIGHT", 0.1), "Quit", self.cb_quit)
-        )"""
-
         self.main_menu = Parser(self).parse("main")
         self.pause_menu = Parser(self).parse("pause")
         self.settings_menu = Parser(self).parse("settings")
-
-        """self.pause_menu = Menu(self).add(
-            Label(Const(0), Const(0), Const(self.WIDTH), Rel(self, "HEIGHT", 0.1), "Pause")
-        ).add(
-            Button(Rel(self, "WIDTH", 0.25), Rel(self, "HEIGHT", 0.15), Rel(self, "WIDTH", 0.5), Rel(self, "HEIGHT", 0.1), "Resume", self.cb_resume)
-        ).add(
-            Button(Rel(self, "WIDTH", 0.25), Rel(self, "HEIGHT", 0.3), Rel(self, "WIDTH", 0.5), Rel(self, "HEIGHT", 0.1), "Return to main menu", self.cb_exit_pause)
-        )"""
-
-        """self.settings_menu = Menu(self).add(
-            Label(Const(0), Const(0), Const(self.WIDTH), Rel(self, "HEIGHT", 0.1), "Settings")
-        ).add(
-            Button(Rel(self, "WIDTH", 0.25), Rel(self, "HEIGHT", 0.3), Rel(self, "WIDTH", 0.5), Rel(self, "HEIGHT", 0.1), "Return to main menu", self.cb_exit_settings)
-        )"""
 
         self.main_menu.visible = True
 
@@ -261,3 +234,6 @@ class Game:
     def cb_exit_settings(self, button):
         self.main_menu.visible = True
         self.settings_menu.visible = False
+    
+    def cb_checkbox(self, checkbox, *args, **kwargs):
+        pass

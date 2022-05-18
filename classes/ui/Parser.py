@@ -6,6 +6,7 @@ from classes.ui.Component import Component
 from classes.ui.Menu import Menu
 from classes.ui.Label import Label
 from classes.ui.Button import Button
+from classes.ui.Checkbox import Checkbox
 from classes.Logger import Logger
 import json
 
@@ -29,13 +30,14 @@ class Parser:
         kwargs = {}
 
         for param in params:
-            val = self.parse_param(param, parent)
-            Logger.debug(f"Param: {param} | val: {val}")
-
             if isinstance(param, dict) and "name" in param.keys():
+                val = self.parse_param(param["val"], parent)
                 kwargs[param["name"]] = val
             else:
+                val = self.parse_param(param, parent)
                 args.append(val)
+            
+            Logger.debug(f"Param: {param} | val: {val}")
 
         comp = globals()[cls](*args, **kwargs)
         comp.parent = parent
@@ -70,6 +72,9 @@ class Parser:
 
         elif isinstance(param, (int, float, bool)):
             return param
+        
+        elif isinstance(param, list):
+            return [self.parse_param(p, parent) for p in param]
         
         elif isinstance(param, dict):
             keys = param.keys()
