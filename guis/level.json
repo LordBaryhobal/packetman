@@ -1,0 +1,11 @@
+{
+    "class": "Button",
+    "params": [
+        { "constraint": "const", "val": 0},
+        { "constraint": "const", "val": 0},
+        { "constraint": "rel", "obj": "${parent}", "attr": "w", "ratio": 1.0 },
+        { "constraint": "rel", "obj": "${parent}", "attr": "h", "ratio": 0.1 },
+        "",
+        "${game.cb_lvl}"
+    ]
+}

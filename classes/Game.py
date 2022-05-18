@@ -14,6 +14,7 @@ from classes.ui.Constraints import *
 from classes.ui.Menu import Menu
 from classes.ui.Label import Label
 from classes.ui.Parser import Parser
+import os
 
 class classproperty(property):
     """Utility class for annotating class properties. Parallel to `@property`"""
@@ -112,7 +113,7 @@ class Game:
                 if event.key == pygame.K_ESCAPE:
                     if self.paused and self.pause_menu.visible:
                         self.resume()
-                    else:
+                    elif not self.paused:
                         self.pause()
 
                 elif not self.config["edition"]:
@@ -191,6 +192,8 @@ class Game:
         self.main_menu = Parser(self).parse("main")
         self.pause_menu = Parser(self).parse("pause")
         self.settings_menu = Parser(self).parse("settings")
+        self.levels_menu = Parser(self).parse("levels")
+        self.level_comp = Parser(self).parse("level")
 
         self.main_menu.visible = True
 
@@ -199,6 +202,7 @@ class Game:
         self.gui.add(self.main_menu)
         self.gui.add(self.pause_menu)
         self.gui.add(self.settings_menu)
+        self.gui.add(self.levels_menu)
     
     def resume(self):
         self.pause_menu.visible = False
@@ -207,6 +211,15 @@ class Game:
     def pause(self):
         self.paused = True
         self.pause_menu.visible = True
+    
+    def load_settings(self):
+        #menu = self.settings_menu
+        #menu.get_by_name("")
+        pass
+
+    def save_settings(self):
+        #self.config[""]
+        pass
 
     def cb_resume(self, button):
         self.resume()
@@ -215,15 +228,37 @@ class Game:
         self.quit()
 
     def cb_choose_lvl(self, button):
-        path = input("Open level: ")
+        levels = os.listdir("./levels")
+        container = self.levels_menu.get_by_name("levels")
+        container.children = []
+
+        y = 0
+
+        for l in levels:
+            if l.endswith(".dat"):
+                level = self.level_comp.copy()
+                level._w.obj = container
+                level._h.obj = container
+                level.args = (l[:-4], )
+                level.text = l[:-4]
+                level._y = ConstantConstraint(y)
+                y += level.h+5
+                container.add(level)
+
+        self.levels_menu.visible = True
+        self.main_menu.visible = False
+    
+    def cb_lvl(self, button, path):
+        Logger.debug(f"Selected level {path}")
         self.world.load(path)
         self.camera.update_visible_tiles()
         self.camera.update_visible_entities()
-
-        self.main_menu.visible = False
+        
+        self.levels_menu.visible = False
         self.paused = False
 
     def cb_settings(self, button):
+        self.load_settings()
         self.main_menu.visible = False
         self.settings_menu.visible = True
     
@@ -232,8 +267,13 @@ class Game:
         self.pause_menu.visible = False
     
     def cb_exit_settings(self, button):
+        self.save_settings()
         self.main_menu.visible = True
         self.settings_menu.visible = False
+    
+    def cb_exit_levels(self, button):
+        self.main_menu.visible = True
+        self.levels_menu.visible = False
     
     def cb_checkbox(self, checkbox, *args, **kwargs):
         pass
