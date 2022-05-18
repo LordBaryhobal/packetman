@@ -77,11 +77,11 @@ class Component:
         self.children.append(child)
         return self
     
-    def handle_event(self, event):
+    def handle_event(self, event, x=0, y=0):
         if not self.visible:
             return False
         
-        x, y = self.x, self.y
+        x, y = x+self.x, y+self.y
         w, h = self.w, self.h
 
         handled = False
@@ -90,7 +90,7 @@ class Component:
             if handled:
                 break
             
-            handled = child.handle_event(event)
+            handled = child.handle_event(event, x, y)
         
         if event.type == pygame.MOUSEBUTTONDOWN:
             if x <= event.pos[0] < x+w and y <= event.pos[1] < y+h:
