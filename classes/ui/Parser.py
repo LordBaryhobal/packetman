@@ -7,6 +7,7 @@ from classes.ui.Menu import Menu
 from classes.ui.Label import Label
 from classes.ui.Button import Button
 from classes.ui.Checkbox import Checkbox
+from classes.ui.Slider import Slider
 from classes.Logger import Logger
 import json
 
@@ -21,7 +22,6 @@ class Parser:
         return self.parse_child(desc)
 
     def parse_child(self, desc, parent=None):
-        Logger.debug(f"Parsing child: parent={parent} | child={desc}")
         cls = desc["class"]
 
         params = desc["params"]
@@ -36,8 +36,6 @@ class Parser:
             else:
                 val = self.parse_param(param, parent)
                 args.append(val)
-            
-            Logger.debug(f"Param: {param} | val: {val}")
 
         comp = globals()[cls](*args, **kwargs)
         comp.parent = parent
@@ -52,8 +50,6 @@ class Parser:
         if isinstance(param, str):
             if param.startswith("${") and param.endswith("}"):
                 path = param[2:-1].split(".")
-                
-                Logger.debug(f"path: {path}")
 
                 obj = None
                 root = path.pop(0)
