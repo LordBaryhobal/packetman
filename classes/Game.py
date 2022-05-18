@@ -11,8 +11,9 @@ import pygame, json
 from classes.ui.GUI import GUI
 from classes.ui.Button import Button
 from classes.ui.Constraints import *
-from classes.ui.Component import Component
+from classes.ui.Menu import Menu
 from classes.ui.Label import Label
+from classes.ui.Parser import Parser
 
 class classproperty(property):
     """Utility class for annotating class properties. Parallel to `@property`"""
@@ -48,7 +49,7 @@ class Game:
         self.camera = Camera(self)
 
         self.running = True
-        self.paused = False
+        self.paused = True
         pygame.init()
         self.window = pygame.display.set_mode([Game.WIDTH, Game.HEIGHT])
         self.menu_surf, self.editor_surf, self.hud_surf, self.world_surf = [pygame.Surface([Game.WIDTH, Game.HEIGHT], pygame.SRCALPHA) for i in range(4)]
@@ -110,7 +111,7 @@ class Game:
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     if self.paused and self.pause_menu.visible:
-                        self.resume(None)
+                        self.resume()
                     else:
                         self.pause()
 
@@ -180,7 +181,7 @@ class Game:
         pygame.display.flip()
         self.clock.tick(self.MAX_FPS)
     
-    def quit(self, *args, **kwargs):
+    def quit(self):
         self.running = False
     
     def animate(self, obj, attr_, val_a, val_b, duration, start=True, loop=None, type_=Animation.FLOAT):
@@ -188,39 +189,75 @@ class Game:
     
     def init_gui(self):
         Const, Rel = ConstantConstraint, RelativeConstraint
-        self.main_menu = Component(Const(0), Const(0), Const(self.WIDTH), Const(self.HEIGHT)).add(
+        
+        """self.main_menu = Menu(self).add(
             Label(Const(0), Const(0), Const(self.WIDTH), Rel(self, "HEIGHT", 0.1), "Packetman")
-        )
+        ).add(
+            Button(
+                Rel(self, "WIDTH", 0.25), Rel(self, "HEIGHT", 0.15), Rel(self, "WIDTH", 0.5), Rel(self, "HEIGHT", 0.1), "Choose level", self.cb_choose_lvl)
+        ).add(
+            Button(Rel(self, "WIDTH", 0.25), Rel(self, "HEIGHT", 0.3), Rel(self, "WIDTH", 0.5), Rel(self, "HEIGHT", 0.1), "Settings", self.cb_settings)
+        ).add(
+            Button(Rel(self, "WIDTH", 0.25), Rel(self, "HEIGHT", 0.45), Rel(self, "WIDTH", 0.5), Rel(self, "HEIGHT", 0.1), "Quit", self.cb_quit)
+        )"""
 
-        self.pause_menu = Component(Const(0), Const(0), Const(self.WIDTH), Const(self.HEIGHT)).add(
+        self.main_menu = Parser(self).parse("main")
+        self.pause_menu = Parser(self).parse("pause")
+        self.settings_menu = Parser(self).parse("settings")
+
+        """self.pause_menu = Menu(self).add(
             Label(Const(0), Const(0), Const(self.WIDTH), Rel(self, "HEIGHT", 0.1), "Pause")
         ).add(
-            Button(Rel(self, "WIDTH", 0.25), Rel(self, "HEIGHT", 0.15), Rel(self, "WIDTH", 0.5), Rel(self, "HEIGHT", 0.1), "Resume", self.resume)
+            Button(Rel(self, "WIDTH", 0.25), Rel(self, "HEIGHT", 0.15), Rel(self, "WIDTH", 0.5), Rel(self, "HEIGHT", 0.1), "Resume", self.cb_resume)
         ).add(
-            Button(Rel(self, "WIDTH", 0.25), Rel(self, "HEIGHT", 0.3), Rel(self, "WIDTH", 0.5), Rel(self, "HEIGHT", 0.1), "Quit", self.quit)
-        )
+            Button(Rel(self, "WIDTH", 0.25), Rel(self, "HEIGHT", 0.3), Rel(self, "WIDTH", 0.5), Rel(self, "HEIGHT", 0.1), "Return to main menu", self.cb_exit_pause)
+        )"""
 
-        self.main_menu.visible = False
-        self.pause_menu.visible = False
+        """self.settings_menu = Menu(self).add(
+            Label(Const(0), Const(0), Const(self.WIDTH), Rel(self, "HEIGHT", 0.1), "Settings")
+        ).add(
+            Button(Rel(self, "WIDTH", 0.25), Rel(self, "HEIGHT", 0.3), Rel(self, "WIDTH", 0.5), Rel(self, "HEIGHT", 0.1), "Return to main menu", self.cb_exit_settings)
+        )"""
+
+        self.main_menu.visible = True
 
         self.pause_menu.bg_color = (100,100,100,200)
 
-        f = lambda *args, **kwargs: True
-        self.main_menu.on_click = f
-        self.pause_menu.on_click = f
-        self.main_menu.on_release = f
-        self.pause_menu.on_release = f
-        self.main_menu.on_mouse_down = f
-        self.pause_menu.on_mouse_up = f
-
-
         self.gui.add(self.main_menu)
         self.gui.add(self.pause_menu)
+        self.gui.add(self.settings_menu)
     
-    def resume(self, button):
+    def resume(self):
         self.pause_menu.visible = False
         self.paused = False
     
     def pause(self):
         self.paused = True
         self.pause_menu.visible = True
+
+    def cb_resume(self, button):
+        self.resume()
+    
+    def cb_quit(self, button):
+        self.quit()
+
+    def cb_choose_lvl(self, button):
+        path = input("Open level: ")
+        self.world.load(path)
+        self.camera.update_visible_tiles()
+        self.camera.update_visible_entities()
+
+        self.main_menu.visible = False
+        self.paused = False
+
+    def cb_settings(self, button):
+        self.main_menu.visible = False
+        self.settings_menu.visible = True
+    
+    def cb_exit_pause(self, button):
+        self.main_menu.visible = True
+        self.pause_menu.visible = False
+    
+    def cb_exit_settings(self, button):
+        self.main_menu.visible = True
+        self.settings_menu.visible = False

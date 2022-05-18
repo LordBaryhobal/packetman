@@ -1,0 +1,66 @@
+{
+    "class": "Menu",
+    "params": [
+        "${game}"
+    ],
+
+    "children": [
+        {
+            "class": "Label",
+            "params": [
+                {
+                    "constraint": "const",
+                    "val": 0
+                },
+                {
+                    "constraint": "const",
+                    "val": 0
+                },
+                {
+                    "constraint": "rel",
+                    "obj": "${game}",
+                    "attr": "WIDTH",
+                    "ratio": 1.0
+                },
+                {
+                    "constraint": "rel",
+                    "obj": "${game}",
+                    "attr": "HEIGHT",
+                    "ratio": 0.1
+                },
+                "Settings"
+            ]
+        },
+        {
+            "class": "Button",
+            "params": [
+                {
+                    "constraint": "rel",
+                    "obj": "${game}",
+                    "attr": "WIDTH",
+                    "ratio": 0.25
+                },
+                {
+                    "constraint": "rel",
+                    "obj": "${game}",
+                    "attr": "HEIGHT",
+                    "ratio": 0.15
+                },
+                {
+                    "constraint": "rel",
+                    "obj": "${game}",
+                    "attr": "WIDTH",
+                    "ratio": 0.5
+                },
+                {
+                    "constraint": "rel",
+                    "obj": "${game}",
+                    "attr": "HEIGHT",
+                    "ratio": 0.1
+                },
+                "Return to main menu",
+                "${game.cb_exit_settings}"
+            ]
+        }
+    ]
+}

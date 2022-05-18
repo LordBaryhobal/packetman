@@ -270,6 +270,10 @@ class World:
 
         self.game.camera.update_visible_tiles()
         self.game.camera.update_visible_entities()
+
+        #Call twice to have correct physics
+        self.game.clock.tick()
+        self.game.clock.tick()
     
     def place_selection(self,selection,pos,place_empty=False):
         self.modify_tilelistlen(pos+Vec(len(selection[0]),len(selection)))
