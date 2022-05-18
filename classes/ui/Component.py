@@ -7,11 +7,12 @@ from .Constraints import *
 class Component:
     """Basic UI component extend by all other UI elements"""
 
-    def __init__(self, x, y, w, h):
+    def __init__(self, x, y, w, h, name):
         self._x = x
         self._y = y
         self._w = w
         self._h = h
+        self.name = name
 
         self.parent = None
         self.children = []
@@ -45,6 +46,18 @@ class Component:
     @property
     def h(self):
         return self._h.val
+
+    def get_by_name(self, name):
+        if self.name == name:
+            return self
+        
+        elmt = None
+        for child in self.children:
+            elmt = child.get_by_name(name)
+            if elmt:
+                break
+        
+        return elmt
     
     def add(self, child):
         child.parent = self
@@ -68,10 +81,10 @@ class Component:
         
         if event.type == pygame.MOUSEBUTTONDOWN:
             if x <= event.pos[0] < x+w and y <= event.pos[1] < y+h:
+                self.pressed = True
+
                 if self.on_click(event):
                     handled = True
-                
-                self.pressed = True
         
         elif event.type == pygame.MOUSEBUTTONUP:
             if self.on_mouse_up(event):
@@ -83,6 +96,9 @@ class Component:
                     handled = True
         
         elif event.type == pygame.MOUSEMOTION:
+            if self.on_mouse_move(event):
+                handled = True
+
             if x <= event.pos[0] < x+w and y <= event.pos[1] < y+h:
                 if not self.hover:
                     self.hover = True
@@ -112,4 +128,7 @@ class Component:
         return False
     
     def on_mouse_up(self, event):
+        return False
+    
+    def on_mouse_move(self, event):
         return False

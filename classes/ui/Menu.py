@@ -5,13 +5,14 @@ from .Component import Component
 from .Constraints import *
 
 class Menu(Component):
-    def __init__(self, game):
+    def __init__(self, game, name=None):
         self.game = game
         super().__init__(
             ConstantConstraint(0),
             ConstantConstraint(0),
             ConstantConstraint(self.game.WIDTH),
-            ConstantConstraint(self.game.HEIGHT)
+            ConstantConstraint(self.game.HEIGHT),
+            name
         )
         
         self.visible = False

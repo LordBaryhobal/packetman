@@ -10,7 +10,7 @@ class Label(Component):
     color = (255,255,255)
 
     def __init__(self, x, y, w, h, text="", halign="center", valign="center", font_size=30, name=None):
-        super().__init__(x, y, w, h)
+        super().__init__(x, y, w, h, name)
         self.text = text
         self.halign = halign
         self.valign = valign
@@ -19,7 +19,6 @@ class Label(Component):
             Label.fonts[font_size] = pygame.font.SysFont(self.font_family, font_size)
         
         self.font = Label.fonts[font_size]
-        self.name = name
     
     def render(self, surface, x, y, w, h):
         super().render(surface, x, y, w, h)
