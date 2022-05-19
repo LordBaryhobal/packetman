@@ -157,6 +157,8 @@ class Game:
 
         self.events = []
 
+        self.camera.update()
+
     def physics(self):
         """Processes physic simulation"""
 
