@@ -45,6 +45,9 @@ class World:
                 if len(tiles_below) > 0:
                     entity.on_ground = True
                     entity.vel.x = 0
+            
+            if isinstance(entity, Player):
+                entity.vel.x *= 0.95
     
     def get_tile(self, pos):
         """Get tile at pos
