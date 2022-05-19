@@ -59,6 +59,8 @@ class World:
         return self.tiles[y, x]
 
     def get_tiles_in_rect(self, topleft, bottomright):
+        topleft = floor(topleft)
+        bottomright = floor(bottomright)
         self.modify_tilelistlen(bottomright.max(topleft))
         return self.tiles[bottomright.y:topleft.y+1, topleft.x:bottomright.x+1]
     
@@ -116,6 +118,7 @@ class World:
         
     def modify_tilelistlen(self,pos):
         xpad,ypad = 0,0
+        pos = floor(pos)
         
         if pos.x >= self.WIDTH:
             xpad = pos.x - self.WIDTH + 1
