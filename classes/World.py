@@ -36,7 +36,7 @@ class World:
             if entity.vel.y <= 0:
                 tiles_below = self.get_tiles_in_rect(
                     floor( entity.pos+Vec(0,-0.001) ),
-                    floor( entity.pos+Vec(entity.box.w, -0.001) )
+                    floor( entity.pos+Vec(entity.box.w-0.001, -0.001) )
                 ).flatten()
 
                 tiles_below = list(filter(lambda t: t is not None and t.type != 0 and t.solid, tiles_below))
