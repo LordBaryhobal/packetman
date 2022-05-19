@@ -4,6 +4,7 @@
 import pygame
 from .Vec import Vec
 from .Rect import Rect
+from .Hud import Hud
 
 class Editor():
     """
@@ -12,7 +13,6 @@ class Editor():
     
     def __init__(self,game):
        self.game = game
-       self.current_type = 0
        self.startmove = None
        self.moving = False
        self.placing = False
@@ -24,7 +24,7 @@ class Editor():
        self.selected_tiles = []
        self.copied_tiles = []
        self.moveselection = False
-       
+       self.hud = Hud(self.game)
     
     def handle_events(self,events):
         
@@ -36,7 +36,7 @@ class Editor():
             self.game.camera.update_visible_tiles()
             
         if self.placing and self.selection is None:
-            self.game.world.set_tile(self.game.camera.screen_to_world(Vec(pygame.mouse.get_pos()[0],pygame.mouse.get_pos()[1])),self.current_type)
+            self.game.world.set_tile(self.game.camera.screen_to_world(Vec(pygame.mouse.get_pos()[0],pygame.mouse.get_pos()[1])),self.hud.get_type())
             self.game.camera.update_visible_tiles()
         
         
@@ -47,6 +47,7 @@ class Editor():
                     if  pygame.key.get_pressed()[pygame.K_LCTRL]:
                         self.startmove = Vec(pygame.mouse.get_pos()[0],pygame.mouse.get_pos()[1])
                         self.moving = True
+                        self.hud.show_scrollbars()
                     else:
 
                         self.placing = True
@@ -78,21 +79,29 @@ class Editor():
                             self.selection = [pos.max(Vec()),otherpos.max(Vec())]
                         
                 
-                if event.button == 2:
+                elif event.button == 2:
                     self.startmove = Vec(pygame.mouse.get_pos()[0],pygame.mouse.get_pos()[1])
                     self.moving = True
+                    self.hud.show_scrollbars()
 
-                if event.button == 3:
+                elif event.button == 3:
                     if self.placing_paste == False and self.moveselection == False:
                         self.selection = [self.game.camera.screen_to_world(Vec(*pygame.mouse.get_pos()))]
                         self.selecting = True
                 
+                elif event.button == 4:
+                    self.hud.slot -= 1
+                    self.hud.slot %= 9
                 
+                elif event.button == 5:
+                    self.hud.slot += 1
+                    self.hud.slot %= 9
             
             elif event.type == pygame.MOUSEBUTTONUP:
                 if event.button == 1:
                     if self.moving:
                         self.moving = False
+                        self.hud.hide_scrollbars()
                     self.placing = False
                     if self.selection is not None and self.selecting == False and self.placing_paste == False and self.moveselection:
                         
@@ -112,9 +121,10 @@ class Editor():
                     
                 elif event.button == 2:
                     self.moving = False
+                    self.hud.hide_scrollbars()
                 
                 elif event.button == 3:
-                    if self.placing_paste == False and self.moveselection == False:
+                    if self.placing_paste == False and self.moveselection == False and not self.selection is None:
                         self.selection.append(self.game.camera.screen_to_world(Vec(pygame.mouse.get_pos()[0],pygame.mouse.get_pos()[1])))
                         if self.selection[0] == self.selection[1]:
                             self.selection = None
@@ -125,12 +135,12 @@ class Editor():
                         self.selecting = False
             
             elif event.type == pygame.KEYDOWN:
-                if event.key in (pygame.K_0,pygame.K_1,pygame.K_2,pygame.K_3,pygame.K_4,pygame.K_5,pygame.K_6,pygame.K_7,pygame.K_8,pygame.K_9):
-                    self.current_type = event.key-48
+                if pygame.K_0 <= event.key <= pygame.K_9:
+                    self.hud.set_hotbar(event.key-pygame.K_0)
                 
                 elif event.key == pygame.K_f:
                     if self.selection is not None:
-                        self.modify_selection(self.current_type)
+                        self.modify_selection(self.hud.get_type())
                 
                 elif event.key == pygame.K_BACKSPACE:
                     if self.selection is not None and self.selecting == False:
@@ -172,6 +182,8 @@ class Editor():
     def render(self, hud_surf, editor_surf):
         hud_surf.fill((0,0,0,0))
         editor_surf.fill((0,0,0,0))
+
+        self.hud.render(hud_surf)
 
         if self.selecting:
             mousepos = self.game.camera.screen_to_world(Vec(*pygame.mouse.get_pos()))

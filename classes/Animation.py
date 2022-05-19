@@ -18,6 +18,8 @@ class Animation:
     FORWARDS = 0
     ALTERNATE = 1
 
+    animations = []
+
     def __init__(self, obj, attr_, val_a, val_b, duration, start=True, loop=None, type_=FLOAT):
         """Initializes an Animation object
         @param obj: object to animate
@@ -47,6 +49,8 @@ class Animation:
 
         if start:
             self.start()
+        
+        Animation.animations.append(self)
     
     def start(self):
         """Starts the animation. Returns True if successful, False otherwise"""

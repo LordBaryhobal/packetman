@@ -1,0 +1,24 @@
+<Menu>
+    <params>
+        <_game />
+    </params>
+    <children>
+        <Label>
+            <params>
+                <const val=0 />
+                <const val=0 />
+                <rel obj="_game" attr="WIDTH" ratio=1.0/>
+                <rel obj="_game" attr="HEIGHT" ratio=0.1/>
+            </params>
+        </Label>
+        
+        <Checkbox>
+        </Checkbox>
+        
+        <Slider>
+        </Slider>
+        
+        <Button>
+        </Button>
+    </children>
+</Menu>

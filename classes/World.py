@@ -20,7 +20,8 @@ class World:
     HEIGHT = 1
     
 
-    def __init__(self):
+    def __init__(self, game):
+        self.game = game
         self.tiles = np.array([[Tile()]], dtype='object')
         self.entities = []
         self.player = Player(Vec(1,1))
@@ -207,6 +208,7 @@ class World:
             self.HEIGHT = struct.unpack(">H", f.read(2))[0]
             
             self.tiles = np.empty([self.HEIGHT,self.WIDTH], dtype='object')
+            self.entities = []
 
             Logger.info("Loading tiles")
             while f.tell() < size_tiles+12:
@@ -265,6 +267,13 @@ class World:
                     self.player = entity
         
         Logger.info("Level loaded successfully (maybe)")
+
+        self.game.camera.update_visible_tiles()
+        self.game.camera.update_visible_entities()
+
+        #Call twice to have correct physics
+        self.game.clock.tick()
+        self.game.clock.tick()
     
     def place_selection(self,selection,pos,place_empty=False):
         self.modify_tilelistlen(pos+Vec(len(selection[0]),len(selection)))
