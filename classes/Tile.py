@@ -12,7 +12,7 @@ class Tile:
         self.pos = Vec(x, y)
         self.type = type_ # 0 = empty, 1 = ..., 2 = ..., 3 = ...
         self.solid = (self.type in [2,3])
-        self.texture = Texture("metal", 1)
+        self.neighbors = 0
     
     def render(self, surface, position,size):
         if self.type == 0:
