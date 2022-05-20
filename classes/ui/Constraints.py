@@ -68,9 +68,9 @@ class Manager:
         if self.y:
             cm.set_y(self.y.copy())
         if self.w:
-            cm.set_w(self.x.copy())
+            cm.set_w(self.w.copy())
         if self.h:
-            cm.set_h(self.x.copy())
+            cm.set_h(self.h.copy())
 
         return cm
     
