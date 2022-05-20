@@ -1,5 +1,6 @@
 #Packetman is a small game created in the scope of a school project
 #Copyright (C) 2022  Louis HEREDERO & Mathéo BENEY
+
 import pygame
 
 class Rect:
@@ -23,3 +24,6 @@ class Rect:
     
     def render(self,surface,color,thickness=0):
         pygame.draw.rect(surface,color,(self.x,self.y,self.w,self.h),thickness)
+    
+    def __repr__(self):
+        return f"Rect[{self.x}, {self.y}, {self.w}, {self.h}]"

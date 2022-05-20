@@ -1,12 +1,7 @@
 #Packetman is a small game created in the scope of a school project
 #Copyright (C) 2022  Louis HEREDERO & Mathéo BENEY
-from classes.Vec import Vec
 
-#TODO: fix circular import
-try:
-    from .Game import Game
-except ImportError:
-    pass
+from classes.Vec import Vec
 
 class Camera:
     """
@@ -19,9 +14,31 @@ class Camera:
         #camera's coordinates are in the bottom left corner of the screen
         self.pos = Vec(0,0)
         self.game = game
+        self.follow_player = True
         self.tilesize = self.game.HEIGHT//10
         self.update_visible_tiles()
         self.update_visible_entities()
+    
+    def update(self):
+        if self.follow_player:
+            player = self.game.world.player
+            player_tl = self.world_to_screen(Vec(player.pos.x, player.pos.y+player.box.h))
+            player_br = self.world_to_screen(Vec(player.pos.x+player.box.w, player.pos.y))
+            
+            W, H = self.game.WIDTH, self.game.HEIGHT
+            W4, H4 = W/4, H/4
+
+            if player_tl.x < W4:                # left
+                self.pos.x -= W4-player_tl.x
+            elif player_br.x > W-W4:            # right
+                self.pos.x += player_br.x-W+W4
+            
+            if player_tl.y < H4:                # bottom
+                self.pos.y += H4-player_tl.y
+            elif player_br.y > H-H4:            # top
+                self.pos.y -= player_br.y-H+H4
+            
+            self.pos = self.pos.max(Vec(0,0))
         
     def update_visible_tiles(self):
         self.pos = self.pos.max(Vec()) #clamp to (0;0)
@@ -41,19 +58,19 @@ class Camera:
 
         self.visible_entities = self.game.world.get_entities_in_rect(topleft, bottomright)
 
-    def render(self, surface):
+    def render(self, world_surf, hud_surf, editor_surf):
         """Renders the visible tiles and entities
         @param surface: pygame surface to render on
         """
-        surface.fill((0,0,0))
+        world_surf.fill((0,0,0))
         for tile in self.visible_tiles:
-            tile.render(surface, self.world_to_screen(tile.pos),self.tilesize)
+            tile.render(world_surf, self.world_to_screen(tile.pos),self.tilesize)
         
         for entity in self.visible_entities:
-            entity.render(surface, self.world_to_screen(entity.pos), self.tilesize)
+            entity.render(world_surf, self.world_to_screen(entity.pos), self.tilesize)
 
         if self.game.config["edition"]:
-            self.game.editor.render(surface)
+            self.game.editor.render(hud_surf, editor_surf)
 
     def screen_to_world(self, pos):
         """Converts screen to world coordinates

@@ -3,9 +3,9 @@
 
 import numpy as np
 from .Tile import Tile
-from .Entity import Entity
 from .Vec import Vec
 from .Rect import Rect
+from .Entity import Entity
 from .Player import Player
 from .Logger import Logger
 from math import floor
@@ -20,7 +20,8 @@ class World:
     HEIGHT = 1
     
 
-    def __init__(self):
+    def __init__(self, game):
+        self.game = game
         self.tiles = np.array([[Tile()]], dtype='object')
         self.entities = []
         self.player = Player(Vec(1,1))
@@ -36,7 +37,7 @@ class World:
             if entity.vel.y <= 0:
                 tiles_below = self.get_tiles_in_rect(
                     floor( entity.pos+Vec(0,-0.001) ),
-                    floor( entity.pos+Vec(entity.box.w, -0.001) )
+                    floor( entity.pos+Vec(entity.box.w-0.001, -0.001) )
                 ).flatten()
 
                 tiles_below = list(filter(lambda t: t is not None and t.type != 0 and t.solid, tiles_below))
@@ -44,6 +45,9 @@ class World:
                 if len(tiles_below) > 0:
                     entity.on_ground = True
                     entity.vel.x = 0
+            
+            if isinstance(entity, Player):
+                entity.vel.x *= 0.95
     
     def get_tile(self, pos):
         """Get tile at pos
@@ -58,6 +62,8 @@ class World:
         return self.tiles[y, x]
 
     def get_tiles_in_rect(self, topleft, bottomright):
+        topleft = floor(topleft)
+        bottomright = floor(bottomright)
         self.modify_tilelistlen(bottomright.max(topleft))
         return self.tiles[bottomright.y:topleft.y+1, topleft.x:bottomright.x+1]
     
@@ -115,6 +121,7 @@ class World:
         
     def modify_tilelistlen(self,pos):
         xpad,ypad = 0,0
+        pos = floor(pos)
         
         if pos.x >= self.WIDTH:
             xpad = pos.x - self.WIDTH + 1
@@ -207,6 +214,7 @@ class World:
             self.HEIGHT = struct.unpack(">H", f.read(2))[0]
             
             self.tiles = np.empty([self.HEIGHT,self.WIDTH], dtype='object')
+            self.entities = []
 
             Logger.info("Loading tiles")
             while f.tell() < size_tiles+12:
@@ -265,6 +273,13 @@ class World:
                     self.player = entity
         
         Logger.info("Level loaded successfully (maybe)")
+
+        self.game.camera.update_visible_tiles()
+        self.game.camera.update_visible_entities()
+
+        #Call twice to have correct physics
+        self.game.clock.tick()
+        self.game.clock.tick()
     
     def place_selection(self,selection,pos,place_empty=False):
         self.modify_tilelistlen(pos+Vec(len(selection[0]),len(selection)))

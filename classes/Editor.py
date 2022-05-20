@@ -1,15 +1,18 @@
+#Packetman is a small game created in the scope of a school project
+#Copyright (C) 2022  Louis HEREDERO & Mathéo BENEY
+
 import pygame
 from .Vec import Vec
 from .Rect import Rect
+from .Hud import Hud
 
 class Editor():
     """
-    class that handle what to do when in edition mode
+    Class that handles edition mode
     """
     
     def __init__(self,game):
        self.game = game
-       self.current_type = 0
        self.startmove = None
        self.moving = False
        self.placing = False
@@ -21,7 +24,7 @@ class Editor():
        self.selected_tiles = []
        self.copied_tiles = []
        self.moveselection = False
-       
+       self.hud = Hud(self.game)
     
     def handle_events(self,events):
         
@@ -33,7 +36,7 @@ class Editor():
             self.game.camera.update_visible_tiles()
             
         if self.placing and self.selection is None:
-            self.game.world.set_tile(self.game.camera.screen_to_world(self.get_mousepos()),self.current_type)
+            self.game.world.set_tile(self.game.camera.screen_to_world(Vec(pygame.mouse.get_pos()[0],pygame.mouse.get_pos()[1])),self.hud.get_type())
             self.game.camera.update_visible_tiles()
         
         
@@ -44,6 +47,8 @@ class Editor():
                     if  pygame.key.get_pressed()[pygame.K_LCTRL] and self.placing_paste == False:
                         self.startmove = self.get_mousepos()
                         self.moving = True
+                        self.hud.show_scrollbars()
+
                     elif self.placing_paste:
                         self.placing_paste = False
                         #place selection at the new position
@@ -73,21 +78,30 @@ class Editor():
                             self.start_selection_pos = self.game.camera.screen_to_world(self.get_mousepos())
                         
                 
+
                 if event.button == 2:
                     self.startmove = self.get_mousepos()
                     self.moving = True
+                    self.hud.show_scrollbars()
 
-                if event.button == 3:
+                elif event.button == 3:
                     if self.placing_paste == False and self.moveselection == False:
                         self.selection = [self.game.camera.screen_to_world(self.get_mousepos())]
                         self.selecting = True
                 
+                elif event.button == 4:
+                    self.hud.slot -= 1
+                    self.hud.slot %= 9
                 
+                elif event.button == 5:
+                    self.hud.slot += 1
+                    self.hud.slot %= 9
             
             elif event.type == pygame.MOUSEBUTTONUP:
                 if event.button == 1:
                     if self.moving:
                         self.moving = False
+                        self.hud.hide_scrollbars()
                     self.placing = False
                     if self.selection is not None and self.selecting == False and self.placing_paste == False and self.moveselection:
                         
@@ -107,6 +121,7 @@ class Editor():
                     
                 elif event.button == 2:
                     self.moving = False
+                    self.hud.hide_scrollbars()
                 
                 elif event.button == 3:
                     if self.placing_paste == False and self.moveselection == False:
@@ -120,12 +135,12 @@ class Editor():
                         self.selecting = False
             
             elif event.type == pygame.KEYDOWN:
-                if event.key in (pygame.K_0,pygame.K_1,pygame.K_2,pygame.K_3,pygame.K_4,pygame.K_5,pygame.K_6,pygame.K_7,pygame.K_8,pygame.K_9):
-                    self.current_type = event.key-48
+                if pygame.K_0 <= event.key <= pygame.K_9:
+                    self.hud.set_hotbar(event.key-pygame.K_0)
                 
                 elif event.key == pygame.K_f:
                     if self.selection is not None:
-                        self.modify_selection(self.current_type)
+                        self.modify_selection(self.hud.get_type())
                 
                 elif event.key == pygame.K_BACKSPACE:
                     if self.selection is not None and self.selecting == False:
@@ -168,14 +183,19 @@ class Editor():
                 self.game.world.set_tile(Vec(x,y),type)
         self.game.camera.update_visible_tiles()
             
-    def render(self,surface):
+    def render(self, hud_surf, editor_surf):
+        hud_surf.fill((0,0,0,0))
+        editor_surf.fill((0,0,0,0))
+
+        self.hud.render(hud_surf)
+
         if self.selecting:
             mousepos = self.game.camera.screen_to_world(self.get_mousepos())
             v1,v2 = self.game.camera.world_to_screen(self.selection[0]), self.game.camera.world_to_screen(mousepos)
             v1,v2 = v1.min(v2),v1.max(v2)
             
             self.boundingbox.from_vectors(v1-Vec(0,self.game.camera.tilesize),v2+Vec(self.game.camera.tilesize,0))
-            self.boundingbox.render(surface,(100,100,100),5)
+            self.boundingbox.render(editor_surf,(100,100,100),5)
             
         
         elif self.selection is not None:
@@ -184,24 +204,26 @@ class Editor():
             if self.moveselection:
                 displacement = self.game.camera.screen_to_world(self.get_mousepos())-self.start_selection_pos
                 for tile in self.selected_tiles.flatten():
-                    tile.render(surface, self.game.camera.world_to_screen(tile.pos+displacement),self.game.camera.tilesize)
+                    tile.render(editor_surf, self.game.camera.world_to_screen(tile.pos+displacement),self.game.camera.tilesize)
             
             v1,v2 = self.game.camera.world_to_screen(self.selection[0]+displacement), self.game.camera.world_to_screen(self.selection[1]+displacement)
             v1,v2 = v1.min(v2),v1.max(v2)
             
             self.boundingbox.from_vectors(v1-Vec(0,self.game.camera.tilesize),v2+Vec(self.game.camera.tilesize,0))
-            self.boundingbox.render(surface,(100,100,100),5)
+            self.boundingbox.render(editor_surf,(100,100,100),5)
+
         if self.placing_paste:
             pos = self.game.camera.screen_to_world(self.get_mousepos())
             for y,row in enumerate(self.copied_tiles):
                 for x,tile in enumerate(row):
-                    tile.render(surface,self.game.camera.world_to_screen(pos+Vec(x,y)),self.game.camera.tilesize)
+                    tile.render(editor_surf,self.game.camera.world_to_screen(pos+Vec(x,y)),self.game.camera.tilesize)
 
             
             v1,v2 = self.game.camera.world_to_screen(pos), self.game.camera.world_to_screen(pos+Vec(len(self.copied_tiles[0])-1,len(self.copied_tiles)-1))
             v1,v2 = v1.min(v2),v1.max(v2)
             
             self.boundingbox.from_vectors(v1-Vec(0,self.game.camera.tilesize),v2+Vec(self.game.camera.tilesize,0))
-            self.boundingbox.render(surface,(100,100,100),5)
+            self.boundingbox.render(editor_surf,(100,100,100),5)
+
     def get_mousepos(self):
         return Vec(*pygame.mouse.get_pos())
