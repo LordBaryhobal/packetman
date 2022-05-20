@@ -168,6 +168,7 @@ class World:
             attrs = tile.__dict__.copy()
             del attrs["type"]
             del attrs["pos"]
+            del attrs["texture"]
             attrs = pickle.dumps(attrs)
             buf_tile.extend(attrs)
 

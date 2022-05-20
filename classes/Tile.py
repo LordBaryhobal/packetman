@@ -12,7 +12,14 @@ class Tile:
         self.pos = Vec(x, y)
         self.type = type_ # 0 = empty, 1 = ..., 2 = ..., 3 = ...
         self.solid = (self.type in [2,3])
+        self.texture = Texture("metal", 0)
         self.neighbors = 0
+    
+    def __setattr__(self, name, value):
+        if name == "neighbors":
+            self.texture = Texture(self.texture.name, value)
+        
+        super().__setattr__(name, value)
     
     def render(self, surface, position,size):
         if self.type == 0:

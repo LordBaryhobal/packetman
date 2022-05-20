@@ -24,7 +24,7 @@ class Texture:
         if self.id is None:
             img = pygame.transform.scale(self.img, (size, size))
         else:
-            img = pygame.transform.scale(self.img, (size*4, size*4))
+            img = pygame.transform.scale(self.img, (int(size*4), int(size*4)))
         
         x, y = 0, 0
         if not self.id is None:
