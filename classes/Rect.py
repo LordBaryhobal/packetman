@@ -27,3 +27,11 @@ class Rect:
     
     def __repr__(self):
         return f"Rect[{self.x}, {self.y}, {self.w}, {self.h}]"
+    
+    """The following methods make this class compatible with pygame"""
+
+    def __getitem__(self, i):
+        return [self.x, self.y, self.w, self.h][i]
+    
+    def __len__(self):
+        return 4
