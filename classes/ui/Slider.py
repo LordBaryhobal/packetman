@@ -12,8 +12,8 @@ def round_step(val, step, min_, max_):
     return min(max_, max(min_, round(val/step)*step ))
 
 class Slider(Component):
-    def __init__(self, x, y, w, h, min_, max_, step=1, callback=lambda *args, **kwargs: None, args=(), name=None):
-        super().__init__(x, y, w, h, name)
+    def __init__(self, min_, max_, step=1, callback=lambda *args, **kwargs: None, args=(), name=None):
+        super().__init__(name)
         
         self.callback = callback
         self.args = args
@@ -26,13 +26,14 @@ class Slider(Component):
         self.thumb = 0.5
         self.value = round_step((min_+max_)/2, self.step, self.min, self.max)
     
-    def render(self, surface, x, y, w, h):
+    def render(self, surface):
+        x, y, w, h = self.get_shape()
         X = x+w*self.thumb
 
         pygame.draw.rect(surface, (200,200,200), [x, y+h*0.25, w, h*0.5])
         pygame.draw.rect(surface, (100,100,100), [X-10, y, 20, h])
 
-        super().render(surface, x, y, w, h)
+        super().render(surface)
 
     def on_click(self, event):
         self.on_mouse_move(event)
@@ -41,7 +42,7 @@ class Slider(Component):
 
     def on_mouse_move(self, event):
         if self.pressed:
-            self.thumb = (event.pos[0]-self.x)/self.w
+            self.thumb = (event.pos[0]-self.get_x())/self.get_w()
             value = round_step(self.min + self.thumb*self.range, self.step, self.min, self.max)
             
             if self.value != value:

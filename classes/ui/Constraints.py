@@ -6,26 +6,30 @@ from classes.Rect import Rect
 
 class Manager:
     def __init__(self):
-        self.x = None
-        self.y = None
-        self.w = None
-        self.h = None
+        self.x = Absolute(0, "x")
+        self.y = Absolute(0, "y")
+        self.w = Absolute(0, "w")
+        self.h = Absolute(0, "h")
     
     def set_x(self, constr):
-        constr.setType("x")
+        constr.set_type("x")
         self.x = constr
+        return self
     
     def set_y(self, constr):
-        constr.setType("y")
+        constr.set_type("y")
         self.y = constr
+        return self
     
     def set_w(self, constr):
-        constr.setType("w")
+        constr.set_type("w")
         self.w = constr
+        return self
     
     def set_h(self, constr):
-        constr.setType("h")
+        constr.set_type("h")
         self.h = constr
+        return self
     
     def get_x(self, parent):
         val = self.x.get_val(self, parent)
@@ -56,13 +60,29 @@ class Manager:
     def get_shape(self, parent):
         return Rect(self.get_x(parent), self.get_y(parent), self.get_w(parent), self.get_h(parent))
 
+    def copy(self):
+        cm = Manager()
+        
+        if self.x:
+            cm.set_x(self.x.copy())
+        if self.y:
+            cm.set_y(self.y.copy())
+        if self.w:
+            cm.set_w(self.x.copy())
+        if self.h:
+            cm.set_h(self.x.copy())
+        
+        return cm
 
 class Constraint:
-    def __init__(self, type_):
+    def __init__(self, type_=None):
         self.type = type_
 
     def set_type(self, type_):
         self.type = type_
+    
+    def copy(self):
+        return self.__class__(self.type)
 
 class Center(Constraint):
     def get_val(self, manager, parent):
@@ -78,6 +98,9 @@ class Absolute(Constraint):
     
     def get_val(self, manager, parent):
         return self.val
+    
+    def copy(self):
+        return self.__class__(self.val, self.type)
 
 class Relative(Constraint):
     def __init__(self, val, rel_type=None, type_=None):
@@ -102,6 +125,9 @@ class Relative(Constraint):
             val = parent.get_h()
         
         return self.val * val
+    
+    def copy(self):
+        return self.__class__(self.val, self.rel_type, self.type)
 
 class Aspect(Constraint):
     def __init__(self, val, type_):
@@ -112,6 +138,9 @@ class Aspect(Constraint):
         val = manager.get_w(parent) if self.type == "h" else manager.get_h(parent)
         
         return self.val * val
+    
+    def copy(self):
+        return self.__class__(self.val, self.type)
 
 class Math(Constraint):
     def __init__(self, val1, val2, op):
@@ -134,3 +163,6 @@ class Math(Constraint):
         super().set_type(type_)
         self.val1.set_type(type_)
         self.val2.set_type(type_)
+    
+    def copy(self):
+        return self.__class__(self.val1, self.val2, self.op)

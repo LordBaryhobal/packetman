@@ -7,13 +7,11 @@ from .Constraints import *
 class Menu(Component):
     def __init__(self, game, name=None):
         self.game = game
-        super().__init__(
-            ConstantConstraint(0),
-            ConstantConstraint(0),
-            ConstantConstraint(self.game.WIDTH),
-            ConstantConstraint(self.game.HEIGHT),
-            name
-        )
+        super().__init__(name)
+        self.cm.set_x(Absolute(0))
+        self.cm.set_y(Absolute(0))
+        self.cm.set_w(Absolute(self.game.WIDTH))
+        self.cm.set_h(Absolute(self.game.HEIGHT))
         
         self.visible = False
         self.bg_color = (0,0,0)
