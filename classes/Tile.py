@@ -2,6 +2,7 @@
 #Copyright (C) 2022  Louis HEREDERO & Mathéo BENEY
 
 from .Vec import Vec
+from .Texture import Texture
 import pygame
 
 class Tile:
@@ -11,9 +12,16 @@ class Tile:
         self.pos = Vec(x, y)
         self.type = type_ # 0 = empty, 1 = ..., 2 = ..., 3 = ...
         self.solid = (self.type in [2,3])
+        self.texture = Texture("metal", 1)
     
     def render(self, surface, position,size):
-        if self.type != 0:
+        if self.type == 0:
+            return
+        
+        if self.type == 2:
+            self.texture.render(surface, position, size)
+        
+        else:
             pygame.draw.rect(surface, self.COLORS[self.type], (position.x, position.y-size, size, size))
     
     def copy(self):
