@@ -15,7 +15,8 @@
                 {
                     "class": "Label",
                     "params": [
-                        "Packetman"
+                        "Packetman",
+                        {"name": "font_size", "val": 100}
                     ],
                     "x": {"type": "Absolute", "val": 0},
                     "w": {"type": "Relative", "val": 1.0, "rel_type": "w"},

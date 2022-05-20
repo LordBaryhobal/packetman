@@ -86,6 +86,9 @@ class Constraint:
     
     def copy(self):
         return self.__class__(self.type)
+    
+    def __repr__(self):
+        return f"<{self.__class__.__qualname__} Constraint>"
 
 class Center(Constraint):
     def get_val(self, manager, parent):
