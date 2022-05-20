@@ -3,44 +3,55 @@
     "params": [ "${game}" ],
     "children": [
         {
-            "class": "Label",
+            "class": "Flex",
             "params": [
-                "Packetman"
+                {"name":"justify", "val": "space-evenly"}
             ],
             "x": {"type": "Absolute", "val": 0},
             "y": {"type": "Absolute", "val": 0},
-            "w": {"type": "Relative", "val": 1.0, "rel_type": "w"},
-            "h": {"type": "Relative", "val": 0.1, "rel_type": "h"}
-        },
-        {
-            "class": "Button",
-            "params": [
-                "Choose level",
-                "${game.cb_choose_lvl}"
-            ],
-            "x": {"type": "Center"},
-            "w": {"type": "Relative", "val": 0.5},
-            "h": {"type": "Relative", "val": 0.1}
-        },
-        {
-            "class": "Button",
-            "params": [
-                "Settings",
-                "${game.cb_settings}"
-            ],
-            "x": {"type": "Center"},
-            "w": {"type": "Relative", "val": 0.5},
-            "h": {"type": "Relative", "val": 0.1}
-        },
-        {
-            "class": "Button",
-            "params": [
-                "Quit",
-                "${game.cb_quit}"
-            ],
-            "x": {"type": "Center"},
-            "w": {"type": "Relative", "val": 0.5},
-            "h": {"type": "Relative", "val": 0.1}
+            "w": {"type": "Relative", "val": 1.0},
+            "h": {"type": "Relative", "val": 1.0},
+            "children": [
+                {
+                    "class": "Label",
+                    "params": [
+                        "Packetman"
+                    ],
+                    "x": {"type": "Absolute", "val": 0},
+                    "w": {"type": "Relative", "val": 1.0, "rel_type": "w"},
+                    "h": {"type": "Relative", "val": 0.1, "rel_type": "h"}
+                },
+                {
+                    "class": "Button",
+                    "params": [
+                        "Choose level",
+                        "${game.cb_choose_lvl}"
+                    ],
+                    "x": {"type": "Center"},
+                    "w": {"type": "Relative", "val": 0.5},
+                    "h": {"type": "Relative", "val": 0.1}
+                },
+                {
+                    "class": "Button",
+                    "params": [
+                        "Settings",
+                        "${game.cb_settings}"
+                    ],
+                    "x": {"type": "Center"},
+                    "w": {"type": "Relative", "val": 0.5},
+                    "h": {"type": "Relative", "val": 0.1}
+                },
+                {
+                    "class": "Button",
+                    "params": [
+                        "Quit",
+                        "${game.cb_quit}"
+                    ],
+                    "x": {"type": "Center"},
+                    "w": {"type": "Relative", "val": 0.5},
+                    "h": {"type": "Relative", "val": 0.1}
+                }
+            ]
         }
     ]
 }

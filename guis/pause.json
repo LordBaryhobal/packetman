@@ -3,35 +3,44 @@
     "params": [ "${game}" ],
     "children": [
         {
-            "class": "Label",
+            "class": "Flex",
             "params": [
-                { "constraint": "const", "val": 0 },
-                { "constraint": "const", "val": 0 },
-                { "constraint": "rel", "obj": "${game}", "attr": "WIDTH", "ratio": 1.0 },
-                { "constraint": "rel", "obj": "${game}", "attr": "HEIGHT", "ratio": 0.1 },
-                "Pause"
-            ]
-        },
-        {
-            "class": "Button",
-            "params": [
-                { "constraint": "rel", "obj": "${game}", "attr": "WIDTH", "ratio": 0.25 },
-                { "constraint": "rel", "obj": "${game}", "attr": "HEIGHT", "ratio": 0.15 },
-                { "constraint": "rel", "obj": "${game}", "attr": "WIDTH", "ratio": 0.5 },
-                { "constraint": "rel", "obj": "${game}", "attr": "HEIGHT", "ratio": 0.1 },
-                "Resume",
-                "${game.cb_resume}"
-            ]
-        },
-        {
-            "class": "Button",
-            "params": [
-                { "constraint": "rel", "obj": "${game}", "attr": "WIDTH", "ratio": 0.25 },
-                { "constraint": "rel", "obj": "${game}", "attr": "HEIGHT", "ratio": 0.30 },
-                { "constraint": "rel", "obj": "${game}", "attr": "WIDTH", "ratio": 0.5 },
-                { "constraint": "rel", "obj": "${game}", "attr": "HEIGHT", "ratio": 0.1 },
-                "Return to main menu",
-                "${game.cb_exit_pause}"
+                {"name":"justify", "val": "space-evenly"}
+            ],
+            "x": {"type": "Absolute", "val": 0},
+            "y": {"type": "Absolute", "val": 0},
+            "w": {"type": "Relative", "val": 1.0},
+            "h": {"type": "Relative", "val": 1.0},
+            "children": [
+                {
+                    "class": "Label",
+                    "params": [
+                        "Pause"
+                    ],
+                    "x": { "type": "Absolute", "val": 0},
+                    "w": { "type": "Relative", "val": 1.0},
+                    "h": { "type": "Relative", "val": 0.1}
+                },
+                {
+                    "class": "Button",
+                    "params": [
+                        "Resume",
+                        "${game.cb_resume}"
+                    ],
+                    "x": {"type": "Center"},
+                    "w": {"type": "Relative", "val": 0.5},
+                    "h": {"type": "Relative", "val": 0.1}
+                },
+                {
+                    "class": "Button",
+                    "params": [
+                        "Return to main menu",
+                        "${game.cb_exit_pause}"
+                    ],
+                    "x": {"type": "Center"},
+                    "w": {"type": "Relative", "val": 0.5},
+                    "h": {"type": "Relative", "val": 0.1}
+                }
             ]
         }
     ]

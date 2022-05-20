@@ -234,17 +234,11 @@ class Game:
         container = self.levels_menu.get_by_name("levels")
         container.children = []
 
-        y = 0
-
         for l in levels:
             if l.endswith(".dat"):
                 level = self.level_comp.copy()
-                level._w.obj = container
-                level._h.obj = container
                 level.args = (l[:-4], )
                 level.text = l[:-4]
-                level._y = ConstantConstraint(y)
-                y += level.h+5
                 container.add(level)
 
         self.levels_menu.visible = True

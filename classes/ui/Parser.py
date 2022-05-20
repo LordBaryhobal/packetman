@@ -8,6 +8,7 @@ from classes.ui.Label import Label
 from classes.ui.Button import Button
 from classes.ui.Checkbox import Checkbox
 from classes.ui.Slider import Slider
+from classes.ui.Flex import Flex
 from classes.Logger import Logger
 import json
 
