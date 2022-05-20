@@ -17,7 +17,6 @@ class Texture:
         if not name in Texture._cache:
             Texture._cache[name] = pygame.image.load(f"./assets/textures/{name}.png")
         
-            print(Texture._cache[name])
         return Texture._cache[name]
 
     def render(self, surface, pos, size):
