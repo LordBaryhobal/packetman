@@ -1,5 +1,5 @@
 {
-    "edition": false,
+    "edition": true,
     "loglevel": 15,
 
     "gui": {
