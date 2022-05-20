@@ -71,8 +71,11 @@ class Manager:
             cm.set_w(self.x.copy())
         if self.h:
             cm.set_h(self.x.copy())
-        
+
         return cm
+    
+    def __repr__(self):
+        return f"[{self.x}, {self.y}, {self.w}, {self.h}]"
 
 class Constraint:
     def __init__(self, type_=None):

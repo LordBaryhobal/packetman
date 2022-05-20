@@ -33,6 +33,14 @@ class Component:
             setattr(new, k, v)
         
         return new
+    
+    def __repr__(self) -> str:
+        return f"<{self.__class__.__qualname__} \"{self.name}\" {self.cm}>"
+    
+    def print_tree(self, level=0):
+        print("| "*level + "+-+" + str(self))
+        for child in self.children:
+            child.print_tree(level+1)
 
     def render(self, surface):
         if self.visible:
