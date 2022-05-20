@@ -157,7 +157,8 @@ class Game:
 
         self.events = []
 
-        self.camera.update()
+        if not self.config["edition"]:
+            self.camera.update()
 
     def physics(self):
         """Processes physic simulation"""
