@@ -13,7 +13,7 @@ class Entity:
 
     COLORS = [(100,100,100),(100,0,0),(0,100,0),(0,0,100),(100,100,0),(100,0,100),(0,100,100)]
 
-    def __init__(self, pos=None, vel=None, acc=None, type_=None):
+    def __init__(self, pos=None, vel=None, acc=None, type_=None, highlight=True):
         """
         @param pos: position Vec of bottom-left corner
         @param vel: velocity Vec
@@ -35,6 +35,8 @@ class Entity:
         self.box = Rect(self.pos.x, self.pos.y, 0.5, 0.5) # width and height in tiles
 
         self.on_ground = False
+        
+        self.highlight = highlight
 
     def render(self, surface, pos, size):
         """
@@ -46,13 +48,15 @@ class Entity:
         
         color = self.COLORS[self.type]
         pygame.draw.rect(surface, color, (pos.x, pos.y-self.box.h*size, self.box.w*size, self.box.h*size))
+        if self.highlight:
+            pygame.draw.rect(surface, (255,255,255), (pos.x, pos.y-self.box.h*size, self.box.w*size, self.box.h*size), 2)
+            
 
     def physics(self, delta):
         """Simulates physics"""
 
         self.acc = Vec(0,-10)
 
-        pos1 = self.pos.copy()
         self.pos += self.vel * delta
         self.vel += self.acc * delta
         
