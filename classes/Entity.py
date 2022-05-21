@@ -69,3 +69,16 @@ class Entity:
     def update(self):
         self.box.x = self.pos.x
         self.box.y = self.pos.y
+    
+    def copy(self):
+        """
+        Creates a new copy of this entity. Keeps class and all properties
+        """
+        cls = self.__class__
+        new = cls()
+        for k,v in self.__dict__.items():
+            if hasattr(v, "copy"):
+                v = v.copy()
+            setattr(new, k, v)
+        
+        return new
