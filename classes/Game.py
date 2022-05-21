@@ -65,6 +65,7 @@ class Game:
     @classproperty
     def instance(cls):
         """Returns the unique Game instance, initializing one if none already exists"""
+
         if cls._instance is None:
             cls._instance = Game()
 
@@ -177,12 +178,33 @@ class Game:
         self.clock.tick(self.MAX_FPS)
     
     def quit(self):
+        """Stops the game"""
+
         self.running = False
     
     def animate(self, obj, attr_, val_a, val_b, duration, start=True, loop=None, type_=Animation.FLOAT):
+        """Initializes an Animation instance and adds it to the list of animations
+
+        Arguments:
+            obj {object} -- object to animate
+            attr_ {str} -- name of the attribute to animate
+            val_a {float} -- value at the start of the animation
+            val_b {float} -- value at the end of the animation
+            duration {float} -- duration in seconds of the animation
+
+        Keyword Arguments:
+            start {bool} -- True if animation should start automatically (default: {True})
+            loop {int} -- type of looping (default: {None})
+                          One of: None, Animation.FORWARDS, Animation.ALTERNATE
+            type_ {int} -- type of the animated value (default: {FLOAT})
+                           One of: Animation.FLOAT, Animation.INT
+        """
+
         Animation.animations.append(Animation(obj, attr_, val_a, val_b, duration, start, loop, type_))
     
     def init_gui(self):
+        """Loads and initializes the GUI"""
+
         self.main_menu = Parser(self).parse("main")
         self.pause_menu = Parser(self).parse("pause")
         self.settings_menu = Parser(self).parse("settings")
@@ -199,10 +221,14 @@ class Game:
         self.gui.add(self.levels_menu)
     
     def resume(self):
+        """Closes pause menu and resumes the game"""
+
         self.pause_menu.visible = False
         self.paused = False
     
     def pause(self):
+        """Pauses the game and opens pause menu"""
+
         self.paused = True
         self.pause_menu.visible = True
     

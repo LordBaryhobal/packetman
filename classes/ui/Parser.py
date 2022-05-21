@@ -14,15 +14,42 @@ import json
 
 class Parser:
     def __init__(self, game):
+        """Initializes a Parser instance
+
+        Arguments:
+            game {Game} -- game instance
+        """
+
         self.game = game
     
     def parse(self, name):
+        """Parses a gui file
+
+        Arguments:
+            name {str} -- gui name
+
+        Returns:
+            Component -- parsed component
+        """
+
         with open("./guis/"+name+".json", "r") as f:
             desc = json.loads(f.read())
         
         return self.parse_child(desc)
 
     def parse_child(self, desc, parent=None):
+        """Parses a component's child
+
+        Arguments:
+            desc {dict} -- dictionary of properties
+
+        Keyword Arguments:
+            parent {Component} -- parent component (default: {None})
+
+        Returns:
+            Component -- parsed component
+        """
+
         cls = desc["class"]
 
         params = desc["params"]
@@ -52,6 +79,16 @@ class Parser:
         return comp
     
     def parse_param(self, param, parent):
+        """Parses a value
+
+        Arguments:
+            param {Any} -- value to parse
+            parent {Component} -- parent component
+
+        Returns:
+            Any -- parsed value
+        """
+        
         if isinstance(param, str):
             if param.startswith("${") and param.endswith("}"):
                 path = param[2:-1].split(".")

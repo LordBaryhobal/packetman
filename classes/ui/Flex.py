@@ -8,6 +8,15 @@ import pygame
 
 class Flex(Component):
     def __init__(self, name=None, dir_="col", justify="space-evenly", gap=0):
+        """Initializes a Flex instance
+
+        Keyword Arguments:
+            name {str} -- component's name (default: {None})
+            dir_ {str} -- flex direction, one of: "col","row" (default: {"col"})
+            justify {str} -- flex justification, one of: "space-between","space-around","space-evenly" (default: {"space-evenly"})
+            gap {int} -- minimum gap between children in pixels (default: {0})
+        """
+
         super().__init__(name)
         
         self.dir = dir_
@@ -17,6 +26,12 @@ class Flex(Component):
         self.gap = gap
     
     def render(self, surface):
+        """Renders the component
+
+        Arguments:
+            surface {pygame.Surface} -- surface to render the component on
+        """
+
         if self.visible:
             tmp_surf = surface.copy()
             x, y, w, h = self.get_shape()
@@ -91,6 +106,15 @@ class Flex(Component):
             surface.blit(tmp_surf, [x,y], [x,y,w,h])
     
     def on_click(self, event):
+        """Callback called when the component is scrolled
+
+        Arguments:
+            event {pygame.Event} -- pygame MOUSEBUTTONDOWN event
+
+        Returns:
+            bool -- True if event has been handled and shouldn't be passed further, False otherwise
+        """
+
         if event.button == 4:
             self.scroll -= 10
             self.scroll = max(0, min(self.max_scroll, self.scroll))
@@ -100,3 +124,5 @@ class Flex(Component):
             self.scroll += 10
             self.scroll = max(0, min(self.max_scroll, self.scroll))
             return True
+        
+        return False

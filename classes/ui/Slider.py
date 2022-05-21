@@ -13,6 +13,19 @@ def round_step(val, step, min_, max_):
 
 class Slider(Component):
     def __init__(self, min_, max_, step=1, callback=lambda *args, **kwargs: None, args=(), name=None):
+        """Initializes a Slider instance
+
+        Arguments:
+            min_ {float} -- minimum value
+            max_ {float} -- maximum value
+
+        Keyword Arguments:
+            step {float} -- step size (default: {1})
+            callback {function} -- callback to call when value is updated (default: {nop})
+            args {tuple} -- arguments to pass to callback (default: {()})
+            name {str} -- component's name (default: {None})
+        """
+
         super().__init__(name)
         
         self.callback = callback
@@ -27,6 +40,12 @@ class Slider(Component):
         self.value = round_step((min_+max_)/2, self.step, self.min, self.max)
     
     def render(self, surface):
+        """Renders the component
+
+        Arguments:
+            surface {pygame.Surface} -- surface to render the component on
+        """
+
         x, y, w, h = self.get_shape()
         X = x+w*self.thumb
 
@@ -36,11 +55,34 @@ class Slider(Component):
         super().render(surface)
 
     def on_click(self, event):
+        """Callback (can be overwritten by subclasses)
+
+        Called when this component's pressed state changes to True
+        Always returns True to catch events
+
+        Arguments:
+            event {pygame.Event} -- MOUSEBUTTONDOWN event
+
+        Returns:
+            bool -- wether this event has been handled and shouldn't be passed further
+        """
+
         self.on_mouse_move(event)
         
         return True
 
     def on_mouse_move(self, event):
+        """Callback (can be overwritten by subclasses)
+
+        Called when the mouse cursor moves in this component's bounding box
+
+        Arguments:
+            event {pygame.Event} -- MOUSEMOTION event
+
+        Returns:
+            bool -- wether this event has been handled and shouldn't be passed further
+        """
+        
         if self.pressed:
             self.thumb = (event.pos[0]-self.get_x())/self.get_w()
             value = round_step(self.min + self.thumb*self.range, self.step, self.min, self.max)
@@ -52,4 +94,15 @@ class Slider(Component):
             self.thumb = (self.value-self.min)/self.range
 
     def on_change(self, value):
+        """Callback (can be overwritten by subclasses)
+
+        Called when the slider's value is changed
+
+        Arguments:
+            value {float} -- new value
+
+        Returns:
+            bool -- wether this event has been handled and shouldn't be passed further
+        """
+        
         return True

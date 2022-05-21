@@ -14,6 +14,12 @@ class Editor():
     """
     
     def __init__(self,game):
+        """Initializes an Editor instance
+
+        Arguments:
+            game {Game} -- Game instance
+        """
+
         self.game = game
         self.move = [0,None] #0 = not moving, 1 = moving camera
         self.placing = 0 #0 = not placing, 1 = placing tiles, 2 = placing pasted tiles
@@ -32,7 +38,11 @@ class Editor():
         self.hud = Hud(self.game)
     
     def handle_events(self,events):
-        
+        """Handles events
+
+        Arguments:
+            events {list[pygame.Event]} -- list of pygame events
+        """
         
         if self.move[0] == 1:
             newpos = self.get_mousepos()
@@ -267,12 +277,14 @@ class Editor():
                         self.selected_entity.highlight = True
                         self.game.world.entities.append(self.selected_entity)
                         self.game.camera.update_visible_entities()
-                    
-                    
-                    
-                    
     
     def modify_selection(self,type):
+        """Fills selection with certain tile type
+
+        Arguments:
+            type {int} -- tile type to fill
+        """
+
         for x in range(self.selection[1].x,self.selection[2].x+1):
             for y in range(self.selection[1].y,self.selection[2].y+1):
                 pos = Vec(x,y)
@@ -281,6 +293,13 @@ class Editor():
         self.game.camera.update_visible_tiles()
             
     def render(self, hud_surf, editor_surf):
+        """Renders the editor
+
+        Arguments:
+            hud_surf {pygame.Surface} -- surface to render the hud on
+            editor_surf {pygame.Surface} -- surface to render the selections on
+        """
+        
         hud_surf.fill((0,0,0,0))
         editor_surf.fill((0,0,0,0))
 

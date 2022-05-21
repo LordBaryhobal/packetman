@@ -14,12 +14,16 @@ class Player(Entity):
     JUMP_SPEED = 7
     
     def jump(self):
+        """Makes the player jump if on the ground"""
+
         if self.on_ground:
             self.vel.y = self.JUMP_SPEED
     
     def move(self, direction):
         """Moves the player horizontally
-        @param direction: -1 if moving left, 1 if moving right
+
+        Arguments:
+            direction {int} -- negative if moving left, positive if moving right
         """
 
         self.vel.x = copysign(self.SPEED, direction)

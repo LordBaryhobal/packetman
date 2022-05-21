@@ -14,11 +14,13 @@ class Entity:
     COLORS = [(100,100,100),(100,0,0),(0,100,0),(0,0,100),(100,100,0),(100,0,100),(0,100,100)]
 
     def __init__(self, pos=None, vel=None, acc=None, type_=None, highlight=False):
-        """
-        @param pos: position Vec of bottom-left corner
-        @param vel: velocity Vec
-        @param acc: acceleration Vec
-        @param type_: type of entity (0 to 6 inc.)
+        """Initializes an Entity instance
+
+        Keyword Arguments:
+            pos {Vec} -- position of entity in world coordinates (default: {None})
+            vel {Vec} -- velocity of entity in world units (default: {None})
+            acc {Vec} -- acceleration of entity in world units (default: {None})
+            type_ {int} -- entity type (default: {None})
         """
 
         if pos is None: pos = Vec()
@@ -39,11 +41,14 @@ class Entity:
         self.highlight = highlight
 
     def render(self, surface, pos, size):
-        """
+        """Renders the entity
+
         Renders the entity on a given surface at a given position and scale
-        @param surface: pygame.Surface to render on
-        @param pos: Vec instance containing the relative position of the entity on the surface
-        @param size: size in pixel of a tile
+
+        Arguments:
+            surface {pygame.Surface} -- surface to render the entity on
+            pos {Vec} -- pixel coordinates where to render on the surface
+            size {int} -- size of a tile in pixels
         """
         
         color = self.COLORS[self.type]
@@ -53,7 +58,11 @@ class Entity:
             
 
     def physics(self, delta):
-        """Simulates physics"""
+        """Simulates physics
+
+        Arguments:
+            delta {float} -- time elapsed in last fram in seconds
+        """
 
         self.acc = Vec(0,-20)
 
@@ -67,6 +76,8 @@ class Entity:
         self.update()
     
     def update(self):
+        """Updates the entity's hitbox"""
+        
         self.box.x = self.pos.x
         self.box.y = self.pos.y
     

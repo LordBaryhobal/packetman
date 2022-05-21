@@ -21,20 +21,21 @@ class Animation:
     animations = []
 
     def __init__(self, obj, attr_, val_a, val_b, duration, start=True, loop=None, type_=FLOAT):
-        """Initializes an Animation object
-        @param obj: object to animate
-        @param attr_: name of the attribute to animate
-        @param val_a: value at the start of the animation
-        @param val_b: value at the end of the animation
-        @param duration: duration in seconds of the animation
-        @param start: (default: True) True if animation should start automatically
-        @param loop: (default: None) type of looping. One of:
-            - None: no loop
-            - Animation.FORWARDS: loops back to beginning when reaching the end
-            - Animation.ALTERNATE: loops back and forth
-        @param type_: (default: Animation.FLOAT) type of the animated value. One of:
-            - Animation.FLOAT
-            - Animation.INT
+        """Initializes an Animation instance
+
+        Arguments:
+            obj {object} -- object to animate
+            attr_ {str} -- name of the attribute to animate
+            val_a {float} -- value at the start of the animation
+            val_b {float} -- value at the end of the animation
+            duration {float} -- duration in seconds of the animation
+
+        Keyword Arguments:
+            start {bool} -- True if animation should start automatically (default: {True})
+            loop {int} -- type of looping (default: {None})
+                          One of: None, Animation.FORWARDS, Animation.ALTERNATE
+            type_ {int} -- type of the animated value (default: {FLOAT})
+                           One of: Animation.FLOAT, Animation.INT
         """
 
         self.obj = obj
@@ -53,7 +54,11 @@ class Animation:
         Animation.animations.append(self)
     
     def start(self):
-        """Starts the animation. Returns True if successful, False otherwise"""
+        """Starts the animation.
+
+        Returns:
+            bool -- True if successful, False otherwise
+        """
 
         if self.start_time is None:
             self.finished = False
@@ -62,10 +67,10 @@ class Animation:
         
         return False
     
-    def update(self):
-        """
-        Updates the value at the current time,
-        stopping the animation if completed
+    def update(self): 
+        """Updates the value at the current time
+
+        Updates the value at current time, stopping the animation if completed
         """
 
         t = time.time()
