@@ -75,12 +75,38 @@ class World:
         self.update_tile(pos)
 
     def get_tiles_in_rect(self, topleft, bottomright):
+        """Get tiles overlapping with rectangle
+
+        Returns a 2D numpy array of tiles which overlap with the rectangle
+        delimited by its top-left and bottom-right corners
+
+        Args:
+            topleft (Vec): top-left world coordinates of the rectangle
+            bottomright (Vec): bottom-right world coordinates of the rectangle
+        
+        Returns:
+            np.array: 2D array of Tiles
+        """
+
         topleft = floor(topleft)
         bottomright = floor(bottomright)
         self.modify_tilelistlen(bottomright.max(topleft))
         return self.tiles[bottomright.y:topleft.y+1, topleft.x:bottomright.x+1]
     
     def get_entities_in_rect(self, topleft, bottomright):
+        """Get entities overlapping with rectangle
+
+        Returns a list of entities which overlap with the rectangle
+        delimited by its top-left and bottom-right corners
+
+        Args:
+            topleft (Vec): top-left world coordinates of the rectangle
+            bottomright (Vec): bottom-right world coordinates of the rectangle
+        
+        Returns:
+            list: array of entities
+        """
+
         rect = Rect(topleft.x, bottomright.y, bottomright.x-topleft.x, topleft.y-bottomright.y)
 
         return list(filter(lambda e: e.box.overlaps(rect), self.entities))
