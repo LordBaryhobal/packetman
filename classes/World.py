@@ -293,6 +293,7 @@ class World:
         
         Logger.info("Level loaded successfully (maybe)")
 
+        self.game.camera.update()
         self.game.camera.update_visible_tiles()
         self.game.camera.update_visible_entities()
 
