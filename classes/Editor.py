@@ -6,6 +6,7 @@ from .Vec import Vec
 from .Rect import Rect
 from .Hud import Hud
 from .Tile import Tile
+from .Player import Player
 
 class Editor():
     """
@@ -67,6 +68,17 @@ class Editor():
                         
                         self.game.camera.update_visible_tiles()
 
+                        if len(self.copied_entities) != 0:
+                            for entity in self.copied_entities:
+                                newentity = entity.copy()
+                                newentity.pos = pos+entity.pos
+                                newentity.update()
+                                self.game.world.entities.append(newentity)
+                                self.selected_entities.append(newentity)
+                                self.game.camera.update_visible_entities()
+                        
+                        
+
                         #set selection at the placement location:
                         otherpos = pos + Vec(len(self.copied_tiles[0])-1,len(self.copied_tiles)-1)
                         self.selection = [2,pos.max(Vec()),otherpos.max(Vec())]
@@ -97,6 +109,8 @@ class Editor():
                     if self.placing == 0 and self.moveselection == 0:
                         self.selection = [1,self.game.camera.screen_to_world(self.get_mousepos()),None]
                         self.select_entities = pygame.key.get_pressed()[pygame.K_LALT]
+                        
+                        self.highlight_entities(self.selected_entities,hightlight=False)
                             
                 elif event.button == 4:
                     self.hud.slot -= 1
@@ -143,8 +157,8 @@ class Editor():
                         if self.selection[1] == self.selection[2]:
                             self.selection = [0,None,None]
                             self.select_entities = 0
-                            for entity in self.selected_entities:
-                                entity.highlight = False
+                            self.highlight_entities(self.selected_entities,hightlight=False)
+                            
                         else:
                             v1 = self.selection[1].min(self.selection[2])
                             v2 = self.selection[1].max(self.selection[2])
@@ -155,8 +169,8 @@ class Editor():
                                 v1 = Vec(min(self.selection[1].x,self.selection[2].x),max(self.selection[1].y,self.selection[2].y)+1)
                                 v2 = Vec(max(self.selection[1].x,self.selection[2].x)+1,min(self.selection[1].y,self.selection[2].y))
                                 self.selected_entities = self.game.world.get_entities_in_rect(v1,v2)
-                                for entity in self.selected_entities:
-                                    entity.highlight = True
+                                self.highlight_entities(self.selected_entities,hightlight=True)
+                                
             
             elif event.type == pygame.KEYDOWN:
                 if pygame.K_0 <= event.key <= pygame.K_9:
@@ -172,6 +186,15 @@ class Editor():
                     if self.placing == 2:
                         self.placing = 0
                         self.selection = [0,None,None]
+                    if event.mod & pygame.KMOD_ALT:
+                        v1 = Vec(min(self.selection[1].x,self.selection[2].x),max(self.selection[1].y,self.selection[2].y)+1)
+                        v2 = Vec(max(self.selection[1].x,self.selection[2].x)+1,min(self.selection[1].y,self.selection[2].y))
+                        entities = self.game.world.get_entities_in_rect(v1,v2)
+                        for entity in entities:
+                            if not isinstance(entity,Player):
+                                self.game.world.remove_entity(entity)
+                        self.game.camera.update_visible_entities()
+                            
                 
                 elif event.key == pygame.K_s and event.mod & pygame.KMOD_CTRL:
                     path = input("Save level as: ")
@@ -191,26 +214,31 @@ class Editor():
                     for y,row in enumerate(self.copied_tiles):
                         for x,tile in enumerate(row):
                             self.copied_tiles[y][x] = tile.copy()
-                    if self.select_entities:
-                        self.copied_entities = []
+                    
+                    self.copied_entities = []
+                    if len(self.selected_entities) != 0:
                         for entity in self.selected_entities:
-                            self.copied_entities.append(entity.copy())
-                        # tranform the pos to be the relative pos to the topleft corner of the selection
-                        for entity in self.selected_entities:
-                            entity.pos = v1-entity.pos
+                            if not isinstance(entity,Player):
+                                self.copied_entities.append(entity.copy())
+                        
+                        for entity in self.copied_entities:
+                            entity.pos = entity.pos-self.selection[1]
                 
                 elif event.key == pygame.K_v and event.mod & pygame.KMOD_CTRL and self.placing == 0:
-                    if len(self.copied_tiles) != 0:
+                    if len(self.copied_tiles) != 0 or len(self.copied_entities) != 0:
                         self.placing = 2
                         self.selection = [0,None,None]
+                        self.select_entities = 0
+                        self.highlight_entities(self.selected_entities,hightlight=False)
+                        self.selected_entities = []
                     
                     
                     
                     
     
     def modify_selection(self,type):
-        for x in range(self.selection[0].x,self.selection[1].x+1):
-            for y in range(self.selection[0].y,self.selection[1].y+1):
+        for x in range(self.selection[1].x,self.selection[2].x+1):
+            for y in range(self.selection[1].y,self.selection[2].y+1):
                 pos = Vec(x,y)
                 tile = Tile(x, y, type)
                 self.game.world.set_tile(tile, pos)
@@ -239,7 +267,7 @@ class Editor():
                 for tile in self.selected_tiles.flatten():
                     tile.render(editor_surf, self.game.camera.world_to_screen(tile.pos+displacement),self.game.camera.tilesize)
                 
-                if self.select_entities:
+                if self.select_entities: #TODO fix entity rendering layer
                     for entity,start_pos in zip(self.selected_entities,self.entity_start_move_pos):
                         entity.pos = start_pos + displacement
                         entity.update()
@@ -273,3 +301,7 @@ class Editor():
 
     def get_mousepos(self):
         return Vec(*pygame.mouse.get_pos())
+
+    def highlight_entities(self,entities,hightlight):
+        for entity in entities:
+            entity.highlight = hightlight
