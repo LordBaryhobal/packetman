@@ -26,6 +26,8 @@ class Editor():
         
         self.select_entities = 0
         self.selected_entities = []
+        self.move_selected_entity = 0
+        self.selected_entity = None
         self.copied_entities = []
         self.hud = Hud(self.game)
     
@@ -55,6 +57,20 @@ class Editor():
                     if  pygame.key.get_pressed()[pygame.K_LCTRL]:
                         self.move = [1,self.get_mousepos()]
                         self.hud.show_scrollbars()
+                    
+                    elif pygame.key.get_pressed()[pygame.K_LALT]:
+                        if self.selected_entity is not None:
+                            self.selected_entity.highlight = False
+                        pos = self.game.camera.screen_to_world(self.get_mousepos())
+                        entity = self.game.world.get_entities_in_rect(pos+Vec(0,1),pos+Vec(1,0))
+                        if len(entity) != 0:
+                            self.selected_entity = entity[0]
+                            self.selected_entity.highlight = True
+                        else:
+                            self.selected_entity = None
+                    
+                    elif self.selected_entity is not None:
+                        self.move_selected_entity = 1
 
                     elif self.placing == 2:
                         self.placing = 0
@@ -106,9 +122,10 @@ class Editor():
                     self.hud.show_scrollbars()
 
                 elif event.button == 3:
-                    if self.placing == 0 and self.moveselection == 0:
+                    if self.placing == 0 and self.moveselection == 0 and self.move_selected_entity == 0:
                         self.selection = [1,self.game.camera.screen_to_world(self.get_mousepos()),None]
                         self.select_entities = pygame.key.get_pressed()[pygame.K_LALT]
+                        self.selected_entity = None
                         
                         self.highlight_entities(self.selected_entities,hightlight=False)
                             
@@ -122,6 +139,9 @@ class Editor():
             
             elif event.type == pygame.MOUSEBUTTONUP:
                 if event.button == 1:
+                    if self.move_selected_entity == 1:
+                        self.move_selected_entity = 0
+                    
                     if self.move[0] == 1:
                         self.move[0] = 0
                         self.hud.hide_scrollbars()
@@ -149,7 +169,7 @@ class Editor():
                     self.hud.hide_scrollbars()
                 
                 elif event.button == 3:
-                    if self.placing == 0 and self.moveselection == 0:
+                    if self.placing == 0 and self.moveselection == 0 and self.selection[0] == 1:
                         
                         self.select_entities = pygame.key.get_pressed()[pygame.K_LALT]
                         
@@ -181,11 +201,18 @@ class Editor():
                         self.modify_selection(self.hud.get_type())
                 
                 elif event.key == pygame.K_BACKSPACE:
+                    if self.selected_entity is not None:
+                        self.game.world.remove_entity(self.selected_entity)
+                        self.game.camera.update_visible_entities()
+                        self.selected_entity = None
+                    
                     if self.selection[0] == 2:
                         self.modify_selection(0)
+                    
                     if self.placing == 2:
                         self.placing = 0
                         self.selection = [0,None,None]
+                    
                     if event.mod & pygame.KMOD_ALT:
                         v1 = Vec(min(self.selection[1].x,self.selection[2].x),max(self.selection[1].y,self.selection[2].y)+1)
                         v2 = Vec(max(self.selection[1].x,self.selection[2].x)+1,min(self.selection[1].y,self.selection[2].y))
@@ -296,6 +323,10 @@ class Editor():
             if len(self.copied_entities) != 0:
                 for entity in self.copied_entities:
                     entity.render(editor_surf,self.game.camera.world_to_screen(pos+entity.pos),self.game.camera.tilesize)
+        if self.move_selected_entity:
+            pos = self.game.camera.screen_to_world(self.get_mousepos(),round_=False)
+            self.selected_entity.pos = pos
+            self.selected_entity.update()
         
         
 
