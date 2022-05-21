@@ -1,9 +1,10 @@
 #Packetman is a small game created in the scope of a school project
 #Copyright (C) 2022  Louis HEREDERO & Mathéo BENEY
 
+from classes.Copyable import Copyable
 import pygame
 
-class Rect:
+class Rect(Copyable):
     def __init__(self, x=0, y=0, w=0, h=0):
         """Initializes a Rect instance
 
@@ -64,19 +65,6 @@ class Rect:
     
     def __repr__(self):
         return f"Rect[{self.x}, {self.y}, {self.w}, {self.h}]"
-    
-    def copy(self):
-        """
-        Creates a new copy of this rect. Keeps class and all properties
-        """
-        cls = self.__class__
-        new = cls()
-        for k,v in self.__dict__.items():
-            if hasattr(v, "copy"):
-                v = v.copy()
-            setattr(new, k, v)
-        
-        return new
     
     """The following methods make this class compatible with pygame"""
 

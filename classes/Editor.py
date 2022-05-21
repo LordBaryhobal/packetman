@@ -137,7 +137,7 @@ class Editor():
                         self.select_entities = pygame.key.get_pressed()[pygame.K_LALT]
                         self.selected_entity = None
                         
-                        self.highlight_entities(self.selected_entities, hightlight=False)
+                        self.highlight_entities(self.selected_entities, highlight=False)
                             
                 elif event.button == 4:
                     self.hud.slot -= 1
@@ -187,7 +187,7 @@ class Editor():
                         if self.selection[1] == self.selection[2]:
                             self.selection = [0, None, None]
                             self.select_entities = 0
-                            self.highlight_entities(self.selected_entities, hightlight=False)
+                            self.highlight_entities(self.selected_entities, highlight=False)
                             
                         else:
                             v1 = self.selection[1].min(self.selection[2])
@@ -199,7 +199,7 @@ class Editor():
                                 v1 = Vec(min(self.selection[1].x,self.selection[2].x),max(self.selection[1].y,self.selection[2].y)+1)
                                 v2 = Vec(max(self.selection[1].x,self.selection[2].x)+1,min(self.selection[1].y,self.selection[2].y))
                                 self.selected_entities = self.game.world.get_entities_in_rect(v1,v2)
-                                self.highlight_entities(self.selected_entities, hightlight=True)
+                                self.highlight_entities(self.selected_entities, highlight=True)
                                 
             
             elif event.type == pygame.KEYDOWN:
@@ -266,7 +266,7 @@ class Editor():
                         self.placing = 2
                         self.selection = [0, None, None]
                         self.select_entities = 0
-                        self.highlight_entities(self.selected_entities, hightlight=False)
+                        self.highlight_entities(self.selected_entities, highlight=False)
                         self.selected_entities = []
                 
                 

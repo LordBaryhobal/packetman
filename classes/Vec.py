@@ -3,7 +3,9 @@
 
 import math
 
-class Vec():
+from classes.Copyable import Copyable
+
+class Vec(Copyable):
     """
     Simple vector class
     """
@@ -140,15 +142,6 @@ class Vec():
     
     def __repr__(self):
         return f"Vec({self.x}, {self.y})"
-    
-    def copy(self):
-        """Creates a new copy of this vector
-
-        Returns:
-            Vec -- copy of this vector
-        """
-        
-        return Vec(self.x, self.y)
     
     def __round__(self, n):
         return Vec(round(self.x, n), round(self.y, n))
