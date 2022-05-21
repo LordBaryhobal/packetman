@@ -13,22 +13,32 @@ class Editor():
     """
     
     def __init__(self,game):
-       self.game = game
-       self.startmove = None
-       self.moving = False
-       self.placing = False
-       self.selecting = False
-       self.placing_paste = False
-       self.selection = None
-       self.boundingbox = Rect()
-       
-       self.selected_tiles = []
-       self.copied_tiles = []
-       self.moveselection = False
-       self.hud = Hud(self.game)
+        """Initializes an Editor instance
+
+        Arguments:
+            game {Game} -- Game instance
+        """
+
+        self.game = game
+        self.startmove = None
+        self.moving = False
+        self.placing = False
+        self.selecting = False
+        self.placing_paste = False
+        self.selection = None
+        self.boundingbox = Rect()
+        
+        self.selected_tiles = []
+        self.copied_tiles = []
+        self.moveselection = False
+        self.hud = Hud(self.game)
     
     def handle_events(self,events):
-        
+        """Handles events
+
+        Arguments:
+            events {list[pygame.Event]} -- list of pygame events
+        """
         
         if self.moving:
             newpos = Vec(pygame.mouse.get_pos()[0],pygame.mouse.get_pos()[1])
@@ -174,12 +184,14 @@ class Editor():
                     if self.copied_tiles is not None:
                         self.placing_paste = True
                         self.selection = None
-                    
-                    
-                    
-                    
     
     def modify_selection(self,type):
+        """Fills selection with certain tile type
+
+        Arguments:
+            type {int} -- tile type to fill
+        """
+
         for x in range(self.selection[0].x,self.selection[1].x+1):
             for y in range(self.selection[0].y,self.selection[1].y+1):
                 pos = Vec(x,y)
@@ -188,6 +200,13 @@ class Editor():
         self.game.camera.update_visible_tiles()
             
     def render(self, hud_surf, editor_surf):
+        """Renders the editor
+
+        Arguments:
+            hud_surf {pygame.Surface} -- surface to render the hud on
+            editor_surf {pygame.Surface} -- surface to render the selections on
+        """
+        
         hud_surf.fill((0,0,0,0))
         editor_surf.fill((0,0,0,0))
 

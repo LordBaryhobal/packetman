@@ -21,6 +21,12 @@ class World:
     
 
     def __init__(self, game):
+        """Initializes a World instance
+
+        Arguments:
+            game {Game} -- Game instance
+        """
+
         self.game = game
         self.tiles = np.array([[Tile()]], dtype='object')
         self.entities = []
@@ -28,6 +34,12 @@ class World:
         self.entities.append(self.player)
     
     def physics(self, delta):
+        """Simulates physics
+
+        Arguments:
+            delta {float} -- time elapsed in last frame in seconds
+        """
+
         for entity in self.entities:
             entity.physics(delta)
 
@@ -50,10 +62,15 @@ class World:
                 entity.vel.x *= 0.95
     
     def get_tile(self, pos):
-        """Get tile at pos
-        @param pos: coordinates of the tile as a Vec
-        @return Tile instance, None if outside of the world
+        """Returns the tile at a given position
+
+        Arguments:
+            pos {Vec} -- world coordinates of the tile
+
+        Returns:
+            Tile -- tile if pos is in the world, None otherwise
         """
+        
         x, y = int(pos.x), int(pos.y)
 
         if x < 0 or x >= self.WIDTH or y < 0 or y >= self.HEIGHT:
@@ -62,9 +79,11 @@ class World:
         return self.tiles[y, x]
     
     def set_tile(self, tile, pos):
-        """Set tile at pos
-        @param tile: the Tile to set
-        @param pos: coordinates of the tile as a Vec
+        """Sets the tile at a given pos
+
+        Arguments:
+            tile {Tile} -- tile to set
+            pos {Vec} -- world coordinates of the tile
         """
 
         if pos.x >= self.WIDTH or pos.y >= self.HEIGHT:
@@ -80,17 +99,18 @@ class World:
         Returns a 2D numpy array of tiles which overlap with the rectangle
         delimited by its top-left and bottom-right corners
 
-        Args:
-            topleft (Vec): top-left world coordinates of the rectangle
-            bottomright (Vec): bottom-right world coordinates of the rectangle
-        
+        Arguments:
+            topleft {Vec} -- top-left world coordinates of the rectangle
+            bottomright {Vec} -- bottom-right world coordinates of the rectangle
+
         Returns:
-            np.array: 2D array of Tiles
+            np.array[Tile] -- 2D array of tiles
         """
 
         topleft = floor(topleft)
         bottomright = floor(bottomright)
         self.modify_tilelistlen(bottomright.max(topleft))
+
         return self.tiles[bottomright.y:topleft.y+1, topleft.x:bottomright.x+1]
     
     def get_entities_in_rect(self, topleft, bottomright):
@@ -99,12 +119,12 @@ class World:
         Returns a list of entities which overlap with the rectangle
         delimited by its top-left and bottom-right corners
 
-        Args:
-            topleft (Vec): top-left world coordinates of the rectangle
-            bottomright (Vec): bottom-right world coordinates of the rectangle
-        
+        Arguments:
+            topleft {Vec} -- top-left world coordinates of the rectangle
+            bottomright {Vec} -- bottom-right world coordinates of the rectangle
+
         Returns:
-            list: array of entities
+            list[Entity] -- array of entities
         """
 
         rect = Rect(topleft.x, bottomright.y, bottomright.x-topleft.x, topleft.y-bottomright.y)
@@ -112,6 +132,13 @@ class World:
         return list(filter(lambda e: e.box.overlaps(rect), self.entities))
     
     def check_collisions(self, entity, delta):
+        """Checks and handles collisions for a given entity
+
+        Arguments:
+            entity {Entity} -- entity to process
+            delta {float} -- time elapsed in last frame in seconds
+        """
+
         vel = entity.vel - entity.acc*delta
         v = vel.length
 
@@ -164,6 +191,12 @@ class World:
                 entity.update()
         
     def modify_tilelistlen(self,pos):
+        """Updates world size to include a given position
+
+        Arguments:
+            pos {Vec} -- world coordinates of position to include
+        """
+
         xpad,ypad = 0,0
         pos = floor(pos)
         
@@ -183,6 +216,12 @@ class World:
                         self.tiles[y][x] = Tile(x,y,0)
     
     def save(self, filename):
+        """Saves the current level
+
+        Arguments:
+            filename {str} -- level name
+        """
+
         Logger.info(f"Saving as '{filename}'")
         buf_tiles = bytearray()
         buf_entities = bytearray()
@@ -250,6 +289,12 @@ class World:
         Logger.info("Level saved successfully (maybe)")
 
     def load(self, filename):
+        """Loads a level
+
+        Arguments:
+            filename {str} -- level name
+        """
+
         Logger.info(f"Loading level '{filename}'")
 
         with open(f"./levels/{filename}.dat", "rb") as f:
@@ -327,19 +372,36 @@ class World:
         self.game.clock.tick()
         self.game.clock.tick()
     
-    def place_selection(self,selection,pos,place_empty=False):
+    def place_selection(self, selection, pos, place_empty=False):
+        """Places tiles from a selection in the world
+
+        Arguments:
+            selection {np.array[Tile]} -- 2D array of tiles to place
+            pos {Vec} -- bottom-left corner's world coordinates
+
+        Keyword Arguments:
+            place_empty {bool} -- wether to override if placing empty tiles (default: {False})
+        """
+
         self.modify_tilelistlen(pos+Vec(len(selection[0]),len(selection)))
+
         for y in range(len(selection)):
             for x in range(len(selection[0])):
                 t = selection[y][x]
                 if t.type == 0 and not place_empty:
                     continue
-                #t.pos.x = pos.x + x
-                #t.pos.y = pos.y + y
-                #self.tiles[pos.y+y][pos.x+x] = t
+                
                 self.set_tile(t, pos+Vec(x,y))
     
     def update_tile(self, pos):
+        """Updates a tile
+
+        Updates the tile's neighbor count and of neighboring tiles
+
+        Arguments:
+            pos {Vec} -- world coordinates of the tile to update
+        """
+        
         tile = self.get_tile(pos)
         offsets = [Vec(0,1),Vec(1,0),Vec(0,-1),Vec(-1,0)]
         

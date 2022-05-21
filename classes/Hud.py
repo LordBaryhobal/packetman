@@ -15,6 +15,12 @@ class Hud:
     SLOT_INDICATOR_COL = (200,80,80)
 
     def __init__(self, game):
+        """Initializes a Hud instance
+
+        Arguments:
+            game {Game} -- game instance
+        """
+
         self.game = game
         self.slot = 0
         self.hotbar = 0
@@ -26,12 +32,24 @@ class Hud:
         self.sb_opacity = 0
     
     def get_type(self):
+        """Returns the selected tile/entity type
+
+        Returns:
+            int -- selected type
+        """
+
         if self.hotbar < len(self.hotbars) and self.slot < len(self.hotbars[self.hotbar]):
             return self.hotbars[self.hotbar][self.slot].type
         
         return 0
 
     def render(self, surface):
+        """Renders the hud
+
+        Arguments:
+            surface {pygame.Surface} -- surface to render the hud on
+        """
+
         # Hotbar
         hotbar_pos = self.game.config["gui"]["editor"]["hotbar_pos"]
 
@@ -88,8 +106,10 @@ class Hud:
             pygame.draw.rect(surface, (255,255,255, self.sb_opacity), [0, y, 5, y_thumb_h])
     
     def set_hotbar(self, i):
-        """Set which hotbar is currently selected
-        @param i: index of the hotbar to select
+        """Sets which hotbar is currently selected
+
+        Arguments:
+            i {int} -- index of the hotbar to select
         """
         
         if i < len(self.hotbars):
@@ -99,6 +119,8 @@ class Hud:
             Logger.warn(f"Tried to set hotbar of index {i} but only {len(self.hotbars)} are defined")
     
     def show_scrollbars(self):
+        """Shows the panning scrollbars"""
+
         if not self.sb_opacity_anim is None:
             self.sb_opacity_anim.finished = True
         
@@ -106,6 +128,8 @@ class Hud:
         self.sb_opacity = 255
     
     def hide_scrollbars(self):
+        """Hides the panning scrollbars"""
+
         if not self.sb_opacity_anim is None:
             self.sb_opacity_anim.finished = True
         

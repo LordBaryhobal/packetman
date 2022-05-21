@@ -21,6 +21,15 @@ class Logger:
     level = DEFAULT
     
     def log(msg, level=INFO):
+        """Logs a message with a given log level
+
+        Arguments:
+            msg {str} -- message to log
+
+        Keyword Arguments:
+            level {int} -- level of logging (default: {INFO})
+        """
+
         if level & Logger.level == 0:
             return
 
@@ -38,15 +47,39 @@ class Logger:
         print(msg)
 
     def info(msg):
+        """Logs a message with level INFO
+
+        Arguments:
+            msg {str} -- message to log
+        """
+
         Logger.log(msg, Logger.INFO)
     
     def warn(msg):
+        """Logs a message with level WARN
+
+        Arguments:
+            msg {str} -- message to log
+        """
+        
         Logger.log(msg, Logger.WARN)
     
     def error(msg):
+        """Logs a message with level ERROR
+
+        Arguments:
+            msg {str} -- message to log
+        """
+        
         Logger.log(msg, Logger.ERROR)
 
     def debug(msg):
+        """Logs a message with level DEBUG
+
+        Arguments:
+            msg {str} -- message to log
+        """
+        
         Logger.log(msg, Logger.DEBUG)
 
 if __name__ == "__main__":

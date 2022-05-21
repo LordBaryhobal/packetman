@@ -10,4 +10,10 @@ class Event:
     NONE = 0
 
     def __init__(self, type_):
+        """Initializes an Event instance
+
+        Arguments:
+            type_ {int} -- event type
+        """
+        
         self.type = type_

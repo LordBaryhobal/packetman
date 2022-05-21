@@ -11,6 +11,12 @@ class Camera:
     """
 
     def __init__(self,game):
+        """Initializes a Camera instance
+
+        Arguments:
+            game {Game} -- Game instance
+        """
+
         #camera's coordinates are in the bottom left corner of the screen
         self.pos = Vec(0,0)
         self.game = game
@@ -20,6 +26,11 @@ class Camera:
         self.update_visible_entities()
     
     def update(self):
+        """Updates the position of the camera
+
+        If activated, the camera will follow the player so that it stays in the screen
+        """
+
         if self.follow_player:
             player = self.game.world.player
             player_tl = self.world_to_screen(Vec(player.pos.x, player.pos.y+player.box.h))
@@ -41,6 +52,8 @@ class Camera:
             self.pos = self.pos.max(Vec(0,0))
         
     def update_visible_tiles(self):
+        """Updates the list of visible tiles"""
+
         self.pos = self.pos.max(Vec()) #clamp to (0;0)
         
         #according to the screen
@@ -50,6 +63,8 @@ class Camera:
         self.visible_tiles = self.game.world.get_tiles_in_rect(topleft, bottomright).flatten()
     
     def update_visible_entities(self):
+        """Updates the list of visible entities"""
+
         self.pos = self.pos.max(Vec()) #clamp to (0;0)
         
         #according to the screen
@@ -60,8 +75,13 @@ class Camera:
 
     def render(self, world_surf, hud_surf, editor_surf):
         """Renders the visible tiles and entities
-        @param surface: pygame surface to render on
+
+        Arguments:
+            world_surf {pygame.Surface} -- surface to render the world on
+            hud_surf {pygame.Surface} -- surface to render the hud on
+            editor_surf {pygame.Surface} -- surface to render selections on
         """
+        
         world_surf.fill((0,0,0))
         for tile in self.visible_tiles:
             tile.render(world_surf, self.world_to_screen(tile.pos),self.tilesize)
@@ -74,12 +94,24 @@ class Camera:
 
     def screen_to_world(self, pos):
         """Converts screen to world coordinates
-        @param pos: Vec to convert
+
+        Arguments:
+            pos {Vec} -- screen coordinates
+
+        Returns:
+            Vec -- world coordinates
         """
+
         return (Vec(pos.x,self.game.HEIGHT-pos.y) + self.pos)//self.tilesize
 
     def world_to_screen(self, pos):
         """Converts world to screen coordinates
-        @param pos: Vec to convert
+
+        Arguments:
+            pos {Vec} -- world coordinates
+
+        Returns:
+            Vec -- screen coordinates
         """
+
         return Vec(pos.x*self.tilesize,self.game.HEIGHT-pos.y*self.tilesize) + Vec(-self.pos.x,self.pos.y)
