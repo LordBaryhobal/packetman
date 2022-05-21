@@ -52,6 +52,7 @@ class Game:
         self.running = True
         self.paused = True
         pygame.init()
+        pygame.display.set_icon(pygame.image.load("./logo.png"))
         self.window = pygame.display.set_mode([Game.WIDTH, Game.HEIGHT])
         self.menu_surf, self.editor_surf, self.hud_surf, self.world_surf = [pygame.Surface([Game.WIDTH, Game.HEIGHT], pygame.SRCALPHA) for i in range(4)]
         self.clock = pygame.time.Clock()
