@@ -361,3 +361,7 @@ class World:
                     tile.neighbors &= ~bit
             elif tile2:
                 tile2.neighbors &= ~bit2
+    
+    def remove_entity(self,entity):
+        self.entities.remove(entity)
+        del entity
