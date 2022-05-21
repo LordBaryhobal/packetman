@@ -5,6 +5,7 @@ import pygame
 from .Vec import Vec
 from .Rect import Rect
 from .Hud import Hud
+from .Tile import Tile
 
 class Editor():
     """
@@ -36,7 +37,9 @@ class Editor():
             self.game.camera.update_visible_tiles()
             
         if self.placing and self.selection is None:
-            self.game.world.set_tile(self.game.camera.screen_to_world(Vec(pygame.mouse.get_pos()[0],pygame.mouse.get_pos()[1])),self.hud.get_type())
+            pos = self.game.camera.screen_to_world(Vec(pygame.mouse.get_pos()[0],pygame.mouse.get_pos()[1]))
+            tile = Tile(pos.x, pos.y, self.hud.get_type())
+            self.game.world.set_tile(tile, pos)
             self.game.camera.update_visible_tiles()
         
         
@@ -179,7 +182,9 @@ class Editor():
     def modify_selection(self,type):
         for x in range(self.selection[0].x,self.selection[1].x+1):
             for y in range(self.selection[0].y,self.selection[1].y+1):
-                self.game.world.set_tile(Vec(x,y),type)
+                pos = Vec(x,y)
+                tile = Tile(x, y, type)
+                self.game.world.set_tile(tile, pos)
         self.game.camera.update_visible_tiles()
             
     def render(self, hud_surf, editor_surf):
