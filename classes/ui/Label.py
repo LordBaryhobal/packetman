@@ -10,6 +10,16 @@ class Label(Component):
     color = (255,255,255)
 
     def __init__(self, text="", halign="center", valign="center", font_size=30, name=None):
+        """Initializes a Label instance
+
+        Keyword Arguments:
+            text {str} -- text content (default: {""})
+            halign {str} -- horizontal alignment, one of: "left","center","right" (default: {"center"})
+            valign {str} -- vertical alignment, one of: "top","center","bottom" (default: {"center"})
+            font_size {int} -- font size (default: {30})
+            name {str} -- component's name (default: {None})
+        """
+
         super().__init__(name)
         self.text = text
         self.halign = halign
@@ -21,6 +31,12 @@ class Label(Component):
         self.font = Label.fonts[font_size]
     
     def render(self, surface):
+        """Renders the component
+
+        Arguments:
+            surface {pygame.Surface} -- surface to render the component on
+        """
+        
         super().render(surface)
 
         text = self.font.render(self.text, True, self.color)
