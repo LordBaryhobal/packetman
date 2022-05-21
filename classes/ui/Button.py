@@ -5,15 +5,15 @@ from .Label import Label
 import pygame
 
 class Button(Label):
-    def __init__(self, x, y, w, h, text="", callback=lambda *args, **kwargs: None, args=(), halign="center", valign="center", font_size=30, name=None):
-        super().__init__(x, y, w, h, text, halign, valign, font_size, name)
+    def __init__(self, text="", callback=lambda *args, **kwargs: None, args=(), halign="center", valign="center", font_size=30, name=None):
+        super().__init__(text, halign, valign, font_size, name)
         self.callback = callback
         self.args = args
     
-    def render(self, surface, x, y, w, h):
+    def render(self, surface):
         color = (255,150,50) if self.hover else (200, 100, 0)
-        pygame.draw.rect(surface, color, [x, y, w, h])
-        super().render(surface, x, y, w, h)
+        pygame.draw.rect(surface, color, self.get_shape())
+        super().render(surface)
     
     def on_release(self, event):
         if event.button == 1:

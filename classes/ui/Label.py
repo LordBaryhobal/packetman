@@ -9,8 +9,8 @@ class Label(Component):
     fonts = {}
     color = (255,255,255)
 
-    def __init__(self, x, y, w, h, text="", halign="center", valign="center", font_size=30, name=None):
-        super().__init__(x, y, w, h, name)
+    def __init__(self, text="", halign="center", valign="center", font_size=30, name=None):
+        super().__init__(name)
         self.text = text
         self.halign = halign
         self.valign = valign
@@ -20,11 +20,12 @@ class Label(Component):
         
         self.font = Label.fonts[font_size]
     
-    def render(self, surface, x, y, w, h):
-        super().render(surface, x, y, w, h)
+    def render(self, surface):
+        super().render(surface)
 
         text = self.font.render(self.text, True, self.color)
-        X, Y = x,y
+        x, y, w, h = self.get_shape()
+        X, Y = x, y
 
         if self.halign == "center":
             X = x+w/2 - text.get_width()/2

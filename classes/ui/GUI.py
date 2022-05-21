@@ -7,17 +7,15 @@ from .Constraints import *
 class GUI(Component):
     def __init__(self, game, name=None):
         self.game = game
-        super().__init__(
-            ConstantConstraint(0),
-            ConstantConstraint(0),
-            ConstantConstraint(self.game.WIDTH),
-            ConstantConstraint(self.game.HEIGHT),
-            name
-        )
+        super().__init__(name)
+        self.cm.set_x(Absolute(0))
+        self.cm.set_y(Absolute(0))
+        self.cm.set_w(Absolute(self.game.WIDTH))
+        self.cm.set_h(Absolute(self.game.HEIGHT))
 
     def render(self, surface):
         for child in self.children:
-            child.render(surface, child.x, child.y, child.w, child.h)
+            child.render(surface)
     
     def handle_events(self, events):
         for event in events:

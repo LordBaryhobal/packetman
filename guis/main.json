@@ -3,46 +3,55 @@
     "params": [ "${game}" ],
     "children": [
         {
-            "class": "Label",
+            "class": "Flex",
             "params": [
-                { "constraint": "const", "val": 0 },
-                { "constraint": "const", "val": 0 },
-                { "constraint": "rel", "obj": "${game}", "attr": "WIDTH", "ratio": 1.0 },
-                { "constraint": "rel", "obj": "${game}", "attr": "HEIGHT", "ratio": 0.1 },
-                "Packetman"
-            ]
-        },
-        {
-            "class": "Button",
-            "params": [
-                { "constraint": "rel", "obj": "${game}", "attr": "WIDTH", "ratio": 0.25 },
-                { "constraint": "rel", "obj": "${game}", "attr": "HEIGHT", "ratio": 0.15 },
-                { "constraint": "rel", "obj": "${game}", "attr": "WIDTH", "ratio": 0.5 },
-                { "constraint": "rel", "obj": "${game}", "attr": "HEIGHT", "ratio": 0.1 },
-                "Choose level",
-                "${game.cb_choose_lvl}"
-            ]
-        },
-        {
-            "class": "Button",
-            "params": [
-                { "constraint": "rel", "obj": "${game}", "attr": "WIDTH", "ratio": 0.25 },
-                { "constraint": "rel", "obj": "${game}", "attr": "HEIGHT", "ratio": 0.30 },
-                { "constraint": "rel", "obj": "${game}", "attr": "WIDTH", "ratio": 0.5 },
-                { "constraint": "rel", "obj": "${game}", "attr": "HEIGHT", "ratio": 0.1 },
-                "Settings",
-                "${game.cb_settings}"
-            ]
-        },
-        {
-            "class": "Button",
-            "params": [
-                { "constraint": "rel", "obj": "${game}", "attr": "WIDTH", "ratio": 0.25 },
-                { "constraint": "rel", "obj": "${game}", "attr": "HEIGHT", "ratio": 0.45 },
-                { "constraint": "rel", "obj": "${game}", "attr": "WIDTH", "ratio": 0.5 },
-                { "constraint": "rel", "obj": "${game}", "attr": "HEIGHT", "ratio": 0.1 },
-                "Quit",
-                "${game.cb_quit}"
+                {"name":"justify", "val": "space-evenly"}
+            ],
+            "x": {"type": "Absolute", "val": 0},
+            "y": {"type": "Absolute", "val": 0},
+            "w": {"type": "Relative", "val": 1.0},
+            "h": {"type": "Relative", "val": 1.0},
+            "children": [
+                {
+                    "class": "Label",
+                    "params": [
+                        "Packetman",
+                        {"name": "font_size", "val": 100}
+                    ],
+                    "x": {"type": "Absolute", "val": 0},
+                    "w": {"type": "Relative", "val": 1.0, "rel_type": "w"},
+                    "h": {"type": "Relative", "val": 0.1, "rel_type": "h"}
+                },
+                {
+                    "class": "Button",
+                    "params": [
+                        "Choose level",
+                        "${game.cb_choose_lvl}"
+                    ],
+                    "x": {"type": "Center"},
+                    "w": {"type": "Relative", "val": 0.5},
+                    "h": {"type": "Relative", "val": 0.1}
+                },
+                {
+                    "class": "Button",
+                    "params": [
+                        "Settings",
+                        "${game.cb_settings}"
+                    ],
+                    "x": {"type": "Center"},
+                    "w": {"type": "Relative", "val": 0.5},
+                    "h": {"type": "Relative", "val": 0.1}
+                },
+                {
+                    "class": "Button",
+                    "params": [
+                        "Quit",
+                        "${game.cb_quit}"
+                    ],
+                    "x": {"type": "Center"},
+                    "w": {"type": "Relative", "val": 0.5},
+                    "h": {"type": "Relative", "val": 0.1}
+                }
             ]
         }
     ]

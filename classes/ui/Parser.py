@@ -1,13 +1,14 @@
 #Packetman is a small game created in the scope of a school project
 #Copyright (C) 2022  Louis HEREDERO & Mathéo BENEY
 
-from classes.ui.Constraints import ConstantConstraint, RelativeConstraint
+from classes.ui.Constraints import *
 from classes.ui.Component import Component
 from classes.ui.Menu import Menu
 from classes.ui.Label import Label
 from classes.ui.Button import Button
 from classes.ui.Checkbox import Checkbox
 from classes.ui.Slider import Slider
+from classes.ui.Flex import Flex
 from classes.Logger import Logger
 import json
 
@@ -39,6 +40,10 @@ class Parser:
 
         comp = globals()[cls](*args, **kwargs)
         comp.parent = parent
+
+        for c in ["x","y","w","h"]:
+            if c in desc:
+                getattr(comp.cm, f"set_{c}")(self.parse_param(desc[c], parent))
 
         if "children" in desc.keys():
             for child in desc["children"]:
@@ -74,16 +79,21 @@ class Parser:
         
         elif isinstance(param, dict):
             keys = param.keys()
-            if "constraint" in keys:
-                if param["constraint"] == "const":
-                    return ConstantConstraint(self.parse_param(param["val"], parent))
+            if "type" in keys:
+                cls = param["type"]
+                args = list(param.values())
+                args.remove(cls)
 
-                elif param["constraint"] == "rel":
-                    return RelativeConstraint(
-                        self.parse_param(param["obj"], parent),
-                        self.parse_param(param["attr"], parent),
-                        self.parse_param(param["ratio"], parent)
-                    )
+                constr = globals()[cls](*[self.parse_param(p, parent) for p in args])
+                
+                return constr
+            
+            else:
+                d = {}
+                for k,v in param.items():
+                    d[k] = self.parse_param(v, parent)
+                
+                return d
             
 
 if __name__ == "__main__":
