@@ -52,6 +52,7 @@ class Game:
         self.running = True
         self.paused = True
         pygame.init()
+        pygame.display.set_icon(pygame.image.load("./logo.png"))
         self.window = pygame.display.set_mode([Game.WIDTH, Game.HEIGHT])
         self.menu_surf, self.editor_surf, self.hud_surf, self.world_surf = [pygame.Surface([Game.WIDTH, Game.HEIGHT], pygame.SRCALPHA) for i in range(4)]
         self.clock = pygame.time.Clock()
@@ -60,21 +61,6 @@ class Game:
 
         self.gui = GUI(self)
         self.init_gui()
-
-        #Test
-        """self.gui.add(
-            Button(
-                ConstantConstraint(50),
-                ConstantConstraint(50),
-                RelativeConstraint(self, "WIDTH", 0.25),
-                RelativeConstraint(self, "HEIGHT", 0.1),
-                text="Button 1",
-                callback=lambda *args, **kwargs: print("Clicked button 1") or True
-            )
-        )"""
-
-        if not self.config["edition"]:
-            self.world.load("level1")
     
     @classproperty
     def instance(cls):
@@ -115,6 +101,12 @@ class Game:
                         self.resume()
                     elif not self.paused:
                         self.pause()
+                    
+                    elif self.levels_menu.visible:
+                        self.cb_exit_levels(None)
+                    
+                    elif self.settings_menu.visible:
+                        self.cb_exit_settings(None)
 
                 elif not self.config["edition"]:
                     if event.key == pygame.K_SPACE:
@@ -156,13 +148,12 @@ class Game:
                     getattr(event.obj, event.callback).__call__(event)
 
         self.events = []
-        
         if not self.config["edition"]:
             self.camera.update()
 
     def physics(self):
         """Processes physic simulation"""
-
+        
         delta = self.clock.get_time()/1000
         self.world.physics(delta)
     
@@ -235,17 +226,11 @@ class Game:
         container = self.levels_menu.get_by_name("levels")
         container.children = []
 
-        y = 0
-
         for l in levels:
             if l.endswith(".dat"):
                 level = self.level_comp.copy()
-                level._w.obj = container
-                level._h.obj = container
                 level.args = (l[:-4], )
                 level.text = l[:-4]
-                level._y = ConstantConstraint(y)
-                y += level.h+5
                 container.add(level)
 
         self.levels_menu.visible = True

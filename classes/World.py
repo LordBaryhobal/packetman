@@ -42,7 +42,7 @@ class World:
 
                 tiles_below = list(filter(lambda t: t is not None and t.type != 0 and t.solid, tiles_below))
                 
-                if len(tiles_below) > 0:
+                if len(tiles_below) > 0 or entity.pos.y < 0.001:
                     entity.on_ground = True
                     entity.vel.x = 0
             
@@ -60,14 +60,53 @@ class World:
             return None
         
         return self.tiles[y, x]
+    
+    def set_tile(self, tile, pos):
+        """Set tile at pos
+        @param tile: the Tile to set
+        @param pos: coordinates of the tile as a Vec
+        """
+
+        if pos.x >= self.WIDTH or pos.y >= self.HEIGHT:
+            self.modify_tilelistlen(pos)
+
+        tile.pos = pos.copy()
+        self.tiles[pos.y, pos.x] = tile
+        self.update_tile(pos)
 
     def get_tiles_in_rect(self, topleft, bottomright):
+        """Get tiles overlapping with rectangle
+
+        Returns a 2D numpy array of tiles which overlap with the rectangle
+        delimited by its top-left and bottom-right corners
+
+        Args:
+            topleft (Vec): top-left world coordinates of the rectangle
+            bottomright (Vec): bottom-right world coordinates of the rectangle
+        
+        Returns:
+            np.array: 2D array of Tiles
+        """
+
         topleft = floor(topleft)
         bottomright = floor(bottomright)
         self.modify_tilelistlen(bottomright.max(topleft))
         return self.tiles[bottomright.y:topleft.y+1, topleft.x:bottomright.x+1]
     
     def get_entities_in_rect(self, topleft, bottomright):
+        """Get entities overlapping with rectangle
+
+        Returns a list of entities which overlap with the rectangle
+        delimited by its top-left and bottom-right corners
+
+        Args:
+            topleft (Vec): top-left world coordinates of the rectangle
+            bottomright (Vec): bottom-right world coordinates of the rectangle
+        
+        Returns:
+            list: array of entities
+        """
+
         rect = Rect(topleft.x, bottomright.y, bottomright.x-topleft.x, topleft.y-bottomright.y)
 
         return list(filter(lambda e: e.box.overlaps(rect), self.entities))
@@ -80,6 +119,16 @@ class World:
         br = Vec( int(entity.pos.x+entity.box.w), int(entity.pos.y))
 
         tiles = self.get_tiles_in_rect(tl,br).flatten()
+
+        if entity.pos.x < 0:
+            tiles = np.append(tiles, Tile(floor(entity.pos.x), floor(entity.pos.y-1), -1))
+            tiles = np.append(tiles, Tile(floor(entity.pos.x), floor(entity.pos.y), -1))
+            tiles = np.append(tiles, Tile(floor(entity.pos.x), floor(entity.pos.y+1), -1))
+        
+        if entity.pos.y < 0:
+            tiles = np.append(tiles, Tile(floor(entity.pos.x-1), floor(entity.pos.y), -1))
+            tiles = np.append(tiles, Tile(floor(entity.pos.x), floor(entity.pos.y), -1))
+            tiles = np.append(tiles, Tile(floor(entity.pos.x+1), floor(entity.pos.y), -1))
 
         for tile in tiles:
             if tile.type != 0 and tile.solid and entity.box.overlaps(Rect(tile.pos.x,tile.pos.y,1,1)):
@@ -113,11 +162,6 @@ class World:
                         entity.pos.y += dy
                 
                 entity.update()
-        
-    def set_tile(self, pos, type_):
-        if pos.x >= self.WIDTH or pos.y >= self.HEIGHT:
-            self.modify_tilelistlen(pos)
-        self.tiles[pos.y][pos.x] = Tile(pos.x,pos.y,type_)
         
     def modify_tilelistlen(self,pos):
         xpad,ypad = 0,0
@@ -160,6 +204,7 @@ class World:
             attrs = tile.__dict__.copy()
             del attrs["type"]
             del attrs["pos"]
+            del attrs["texture"]
             attrs = pickle.dumps(attrs)
             buf_tile.extend(attrs)
 
@@ -274,6 +319,7 @@ class World:
         
         Logger.info("Level loaded successfully (maybe)")
 
+        self.game.camera.update()
         self.game.camera.update_visible_tiles()
         self.game.camera.update_visible_entities()
 
@@ -288,6 +334,30 @@ class World:
                 t = selection[y][x]
                 if t.type == 0 and not place_empty:
                     continue
-                t.pos.x = pos.x + x
-                t.pos.y = pos.y + y
-                self.tiles[pos.y+y][pos.x+x] = t
+                #t.pos.x = pos.x + x
+                #t.pos.y = pos.y + y
+                #self.tiles[pos.y+y][pos.x+x] = t
+                self.set_tile(t, pos+Vec(x,y))
+    
+    def update_tile(self, pos):
+        tile = self.get_tile(pos)
+        offsets = [Vec(0,1),Vec(1,0),Vec(0,-1),Vec(-1,0)]
+        
+        for i, off in enumerate(offsets):
+            bit, bit2 = 2**i, 2**((i+2)%4)
+            tile2 = self.get_tile(pos+off)
+
+            t = not tile or tile.type > 0
+            t2 = not tile2 or tile2.type > 0
+
+            if t:
+                if t2:
+                    if tile2:
+                        tile2.neighbors |= bit2
+                    
+                    if tile:
+                        tile.neighbors |= bit
+                elif tile:
+                    tile.neighbors &= ~bit
+            elif tile2:
+                tile2.neighbors &= ~bit2

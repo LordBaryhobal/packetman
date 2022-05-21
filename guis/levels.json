@@ -3,35 +3,46 @@
     "params": [ "${game}" ],
     "children": [
         {
-            "class": "Label",
+            "class": "Flex",
             "params": [
-                { "constraint": "const", "val": 0 },
-                { "constraint": "const", "val": 0 },
-                { "constraint": "rel", "obj": "${game}", "attr": "WIDTH", "ratio": 1.0 },
-                { "constraint": "rel", "obj": "${game}", "attr": "HEIGHT", "ratio": 0.1 },
-                "Choose a level",
-                { "name": "font_size", "val": 40 }
-            ]
-        },
-        {
-            "class": "Component",
-            "params": [
-                { "constraint": "rel", "obj": "${game}", "attr": "WIDTH", "ratio": 0.3 },
-                { "constraint": "rel", "obj": "${game}", "attr": "HEIGHT", "ratio": 0.25 },
-                { "constraint": "rel", "obj": "${game}", "attr": "WIDTH", "ratio": 0.4 },
-                { "constraint": "rel", "obj": "${game}", "attr": "HEIGHT", "ratio": 0.55 },
-                { "name": "name", "val": "levels"}
-            ]
-        },
-        {
-            "class": "Button",
-            "params": [
-                { "constraint": "rel", "obj": "${game}", "attr": "WIDTH", "ratio": 0.25 },
-                { "constraint": "rel", "obj": "${game}", "attr": "HEIGHT", "ratio": 0.85 },
-                { "constraint": "rel", "obj": "${game}", "attr": "WIDTH", "ratio": 0.5 },
-                { "constraint": "rel", "obj": "${game}", "attr": "HEIGHT", "ratio": 0.1 },
-                "Back to main menu",
-                "${game.cb_exit_levels}"
+                {"name": "justify", "val": "space-evenly"}
+            ],
+            "x": {"type": "Absolute", "val": 0},
+            "y": {"type": "Absolute", "val": 0},
+            "w": {"type": "Relative", "val": 1.0},
+            "h": {"type": "Relative", "val": 1.0},
+            "children": [
+                {
+                    "class": "Label",
+                    "params": [
+                        "Choose a level",
+                        { "name": "font_size", "val": 40 }
+                    ],
+                    "x": {"type": "Absolute", "val": 0},
+                    "w": {"type": "Relative", "val": 1.0},
+                    "h": {"type": "Relative", "val": 0.1}
+                },
+                {
+                    "class": "Flex",
+                    "params": [
+                        {"name": "name", "val": "levels"},
+                        {"name": "justify", "val": "space-between"},
+                        {"name": "gap", "val": 10}
+                    ],
+                    "x": {"type": "Center"},
+                    "w": {"type": "Relative", "val": 0.4},
+                    "h": {"type": "Relative", "val": 0.55}
+                },
+                {
+                    "class": "Button",
+                    "params": [
+                        "Back to main menu",
+                        "${game.cb_exit_levels}"
+                    ],
+                    "x": {"type": "Center"},
+                    "w": {"type": "Relative", "val": 0.5},
+                    "h": {"type": "Relative", "val": 0.1}
+                }
             ]
         }
     ]

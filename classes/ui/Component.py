@@ -7,11 +7,8 @@ from .Constraints import *
 class Component:
     """Basic UI component extend by all other UI elements"""
 
-    def __init__(self, x, y, w, h, name):
-        self._x = x
-        self._y = y
-        self._w = w
-        self._h = h
+    def __init__(self, name):
+        self.cm = Manager() # Constraints manager
         self.name = name
 
         self.parent = None
@@ -28,37 +25,50 @@ class Component:
         Creates a new copy of this component. Keeps class and all properties
         """
         cls = self.__class__
-        new = cls(self._x, self._y, self._w, self._h, self.name)
+        new = cls(self.name)
+
         for k,v in self.__dict__.items():
             if hasattr(v, "copy"):
                 v = v.copy()
             setattr(new, k, v)
         
         return new
+    
+    def __repr__(self) -> str:
+        return f"<{self.__class__.__qualname__} \"{self.name}\" {self.cm}>"
+    
+    def print_tree(self, level=0):
+        print("| "*level + "+-+" + str(self))
+        for child in self.children:
+            child.print_tree(level+1)
 
-    def render(self, surface, x, y, w, h):
+    def render(self, surface):
         if self.visible:
+            tmp_surf = surface.copy()
+
             if not self.bg_color is None:
-                pygame.draw.rect(surface, self.bg_color, [x, y, w, h])
+                pygame.draw.rect(tmp_surf, self.bg_color, self.get_shape())
             
             for child in self.children:
-                child.render(surface, x+child.x, y+child.y, child.w, child.h)
+                child.render(tmp_surf)
+            
+            x, y, w, h = self.get_shape()
+            surface.blit(tmp_surf, [x,y], [x,y,w,h])
+
+    def get_shape(self):
+        return self.cm.get_shape(self.parent)
     
-    @property
-    def x(self):
-        return self._x.val
+    def get_x(self):
+        return self.cm.get_x(self.parent)
     
-    @property
-    def y(self):
-        return self._y.val
+    def get_y(self):
+        return self.cm.get_y(self.parent)
     
-    @property
-    def w(self):
-        return self._w.val
+    def get_w(self):
+        return self.cm.get_w(self.parent)
     
-    @property
-    def h(self):
-        return self._h.val
+    def get_h(self):
+        return self.cm.get_h(self.parent)
 
     def get_by_name(self, name):
         if self.name == name:
@@ -77,12 +87,11 @@ class Component:
         self.children.append(child)
         return self
     
-    def handle_event(self, event, x=0, y=0):
+    def handle_event(self, event):
         if not self.visible:
             return False
         
-        x, y = x+self.x, y+self.y
-        w, h = self.w, self.h
+        x, y, w, h = self.get_shape()
 
         handled = False
 
@@ -90,7 +99,7 @@ class Component:
             if handled:
                 break
             
-            handled = child.handle_event(event, x, y)
+            handled = child.handle_event(event)
         
         if event.type == pygame.MOUSEBUTTONDOWN:
             if x <= event.pos[0] < x+w and y <= event.pos[1] < y+h:

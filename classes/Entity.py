@@ -55,7 +55,7 @@ class Entity:
     def physics(self, delta):
         """Simulates physics"""
 
-        self.acc = Vec(0,-10)
+        self.acc = Vec(0,-20)
 
         self.pos += self.vel * delta
         self.vel += self.acc * delta

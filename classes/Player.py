@@ -10,8 +10,8 @@ class Player(Entity):
     and manages interactions
     """
 
-    SPEED = 2
-    JUMP_SPEED = 5
+    SPEED = 3
+    JUMP_SPEED = 7
     
     def jump(self):
         if self.on_ground:

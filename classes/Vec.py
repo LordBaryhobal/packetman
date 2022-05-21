@@ -83,3 +83,11 @@ class Vec():
     
     def __floor__(self):
         return Vec(int(self.x), int(self.y))
+    
+    """The following methods make this class compatible with pygame"""
+
+    def __getitem__(self, i):
+        return [self.x, self.y][i]
+    
+    def __len__(self):
+        return 2
