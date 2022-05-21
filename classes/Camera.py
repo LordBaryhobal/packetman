@@ -2,6 +2,7 @@
 #Copyright (C) 2022  Louis HEREDERO & Mathéo BENEY
 
 from classes.Vec import Vec
+from math import floor
 
 class Camera:
     """
@@ -72,11 +73,12 @@ class Camera:
         if self.game.config["edition"]:
             self.game.editor.render(hud_surf, editor_surf)
 
-    def screen_to_world(self, pos):
+    def screen_to_world(self, pos, round_=True):
         """Converts screen to world coordinates
         @param pos: Vec to convert
         """
-        return (Vec(pos.x,self.game.HEIGHT-pos.y) + self.pos)//self.tilesize
+        pos = (Vec(pos.x,self.game.HEIGHT-pos.y) + self.pos)/self.tilesize
+        return floor(pos) if round_ else pos
 
     def world_to_screen(self, pos):
         """Converts world to screen coordinates
