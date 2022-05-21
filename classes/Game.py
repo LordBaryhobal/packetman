@@ -60,21 +60,6 @@ class Game:
 
         self.gui = GUI(self)
         self.init_gui()
-
-        #Test
-        """self.gui.add(
-            Button(
-                ConstantConstraint(50),
-                ConstantConstraint(50),
-                RelativeConstraint(self, "WIDTH", 0.25),
-                RelativeConstraint(self, "HEIGHT", 0.1),
-                text="Button 1",
-                callback=lambda *args, **kwargs: print("Clicked button 1") or True
-            )
-        )"""
-
-        if not self.config["edition"]:
-            self.world.load("level1")
     
     @classproperty
     def instance(cls):
@@ -115,6 +100,12 @@ class Game:
                         self.resume()
                     elif not self.paused:
                         self.pause()
+                    
+                    elif self.levels_menu.visible:
+                        self.cb_exit_levels(None)
+                    
+                    elif self.settings_menu.visible:
+                        self.cb_exit_settings(None)
 
                 elif not self.config["edition"]:
                     if event.key == pygame.K_SPACE:
