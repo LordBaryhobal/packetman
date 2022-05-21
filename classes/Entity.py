@@ -13,7 +13,7 @@ class Entity:
 
     COLORS = [(100,100,100),(100,0,0),(0,100,0),(0,0,100),(100,100,0),(100,0,100),(0,100,100)]
 
-    def __init__(self, pos=None, vel=None, acc=None, type_=None, highlight=True):
+    def __init__(self, pos=None, vel=None, acc=None, type_=None, highlight=False):
         """
         @param pos: position Vec of bottom-left corner
         @param vel: velocity Vec

@@ -12,16 +12,20 @@ class Editor():
     """
     
     def __init__(self,game):
-       self.game = game
-       self.move = [0,None] #0 = not moving, 1 = moving camera
-       self.placing = 0 #0 = not placing, 1 = placing tiles, 2 = placing pasted tiles
-       self.selection = [0,None,None] #0 = nothing selected, 1 = selecting, 2 = selected | selection[1 and 2] are the 2 corners of the selection
-       self.boundingbox = Rect()
-       
-       self.moveselection = 0 #0 = not moving selection, 1 = moving selection
-       self.selected_tiles = []
-       self.copied_tiles = []
-       self.hud = Hud(self.game)
+        self.game = game
+        self.move = [0,None] #0 = not moving, 1 = moving camera
+        self.placing = 0 #0 = not placing, 1 = placing tiles, 2 = placing pasted tiles
+        self.selection = [0,None,None] #0 = nothing selected, 1 = selecting, 2 = selected | selection[1 and 2] are the 2 corners of the selection
+        self.boundingbox = Rect()
+        
+        self.moveselection = 0 #0 = not moving selection, 1 = moving selection
+        self.selected_tiles = []
+        self.copied_tiles = []
+        
+        self.select_entities = 0
+        self.selected_entities = []
+        self.copied_entities = []
+        self.hud = Hud(self.game)
     
     def handle_events(self,events):
         
@@ -75,6 +79,10 @@ class Editor():
                             self.modify_selection(0)
                             
                             self.start_move_pos = self.game.camera.screen_to_world(self.get_mousepos())
+                            if self.select_entities:
+                                self.entity_start_move_pos = []
+                                for entity in self.selected_entities:
+                                    self.entity_start_move_pos.append(entity.pos)
                         
                 
 
@@ -85,7 +93,8 @@ class Editor():
                 elif event.button == 3:
                     if self.placing == 0 and self.moveselection == 0:
                         self.selection = [1,self.game.camera.screen_to_world(self.get_mousepos()),None]
-                
+                        self.select_entities = pygame.key.get_pressed()[pygame.K_LALT]
+                            
                 elif event.button == 4:
                     self.hud.slot -= 1
                     self.hud.slot %= 9
@@ -123,14 +132,28 @@ class Editor():
                     self.hud.hide_scrollbars()
                 
                 elif event.button == 3:
-                    if self.placing != 2 and self.moveselection == 0:
+                    if self.placing == 0 and self.moveselection == 0:
+                        
+                        self.select_entities = pygame.key.get_pressed()[pygame.K_LALT]
+                        
                         self.selection[2] = self.game.camera.screen_to_world(self.get_mousepos())
                         if self.selection[1] == self.selection[2]:
                             self.selection = [0,None,None]
+                            self.select_entities = 0
+                            for entity in self.selected_entities:
+                                entity.highlight = False
                         else:
                             v1 = self.selection[1].min(self.selection[2])
                             v2 = self.selection[1].max(self.selection[2])
                             self.selection = [2,v1,v2]
+                            
+                            if self.select_entities:
+                                #get the top left and bottom right corners of the selection
+                                v1 = Vec(min(self.selection[1].x,self.selection[2].x),max(self.selection[1].y,self.selection[2].y)+1)
+                                v2 = Vec(max(self.selection[1].x,self.selection[2].x)+1,min(self.selection[1].y,self.selection[2].y))
+                                self.selected_entities = self.game.world.get_entities_in_rect(v1,v2)
+                                for entity in self.selected_entities:
+                                    entity.highlight = True
             
             elif event.type == pygame.KEYDOWN:
                 if pygame.K_0 <= event.key <= pygame.K_9:
@@ -165,6 +188,13 @@ class Editor():
                     for y,row in enumerate(self.copied_tiles):
                         for x,tile in enumerate(row):
                             self.copied_tiles[y][x] = tile.copy()
+                    if self.select_entities:
+                        self.copied_entities = []
+                        for entity in self.selected_entities:
+                            self.copied_entities.append(entity.copy())
+                        # tranform the pos to be the relative pos to the topleft corner of the selection
+                        for entity in self.selected_entities:
+                            entity.pos = v1-entity.pos
                 
                 elif event.key == pygame.K_v and event.mod & pygame.KMOD_CTRL and self.placing == 0:
                     if len(self.copied_tiles) != 0:
@@ -203,6 +233,13 @@ class Editor():
                 displacement = self.game.camera.screen_to_world(self.get_mousepos())-self.start_move_pos
                 for tile in self.selected_tiles.flatten():
                     tile.render(editor_surf, self.game.camera.world_to_screen(tile.pos+displacement),self.game.camera.tilesize)
+                
+                if self.select_entities:
+                    for entity,start_pos in zip(self.selected_entities,self.entity_start_move_pos):
+                        entity.pos = start_pos + displacement
+                        entity.update()
+                    
+                
             
             v1,v2 = self.game.camera.world_to_screen(self.selection[1]+displacement), self.game.camera.world_to_screen(self.selection[2]+displacement)
             v1,v2 = v1.min(v2),v1.max(v2)
@@ -222,6 +259,12 @@ class Editor():
             
             self.boundingbox.from_vectors(v1-Vec(0,self.game.camera.tilesize),v2+Vec(self.game.camera.tilesize,0))
             self.boundingbox.render(editor_surf,(100,100,100),5)
+            
+            if len(self.copied_entities) != 0:
+                for entity in self.copied_entities:
+                    entity.render(editor_surf,self.game.camera.world_to_screen(pos+entity.pos),self.game.camera.tilesize)
+        
+        
 
     def get_mousepos(self):
         return Vec(*pygame.mouse.get_pos())
