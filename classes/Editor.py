@@ -137,7 +137,7 @@ class Editor():
                         self.select_entities = pygame.key.get_pressed()[pygame.K_LALT]
                         self.selected_entity = None
                         
-                        self.highlight_entities(self.selected_entities, hightlight=False)
+                        self.highlight_entities(self.selected_entities, highlight=False)
                             
                 elif event.button == 4:
                     self.hud.slot -= 1
