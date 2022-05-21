@@ -11,7 +11,7 @@ class Tile:
     def __init__(self, x=0, y=0, type_=0):
         self.pos = Vec(x, y)
         self.type = type_ # 0 = empty, 1 = ..., 2 = ..., 3 = ...
-        self.solid = (self.type in [2,3])
+        self.solid = (self.type in [-1,2,3])
         self.texture = Texture("metal", 0)
         self.neighbors = 0
     

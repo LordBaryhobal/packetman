@@ -42,7 +42,7 @@ class World:
 
                 tiles_below = list(filter(lambda t: t is not None and t.type != 0 and t.solid, tiles_below))
                 
-                if len(tiles_below) > 0:
+                if len(tiles_below) > 0 or entity.pos.y < 0.001:
                     entity.on_ground = True
                     entity.vel.x = 0
             
@@ -93,6 +93,16 @@ class World:
         br = Vec( int(entity.pos.x+entity.box.w), int(entity.pos.y))
 
         tiles = self.get_tiles_in_rect(tl,br).flatten()
+
+        if entity.pos.x < 0:
+            tiles = np.append(tiles, Tile(floor(entity.pos.x), floor(entity.pos.y-1), -1))
+            tiles = np.append(tiles, Tile(floor(entity.pos.x), floor(entity.pos.y), -1))
+            tiles = np.append(tiles, Tile(floor(entity.pos.x), floor(entity.pos.y+1), -1))
+        
+        if entity.pos.y < 0:
+            tiles = np.append(tiles, Tile(floor(entity.pos.x-1), floor(entity.pos.y), -1))
+            tiles = np.append(tiles, Tile(floor(entity.pos.x), floor(entity.pos.y), -1))
+            tiles = np.append(tiles, Tile(floor(entity.pos.x+1), floor(entity.pos.y), -1))
 
         for tile in tiles:
             if tile.type != 0 and tile.solid and entity.box.overlaps(Rect(tile.pos.x,tile.pos.y,1,1)):
