@@ -258,6 +258,15 @@ class Editor():
                         self.select_entities = 0
                         self.highlight_entities(self.selected_entities,hightlight=False)
                         self.selected_entities = []
+                
+                
+                elif event.key == pygame.K_d and self.selected_entity is not None:
+                    if not isinstance(self.selected_entity,Player):
+                        self.selected_entity.highlight = False
+                        self.selected_entity = self.selected_entity.copy()
+                        self.selected_entity.highlight = True
+                        self.game.world.entities.append(self.selected_entity)
+                        self.game.camera.update_visible_entities()
                     
                     
                     
