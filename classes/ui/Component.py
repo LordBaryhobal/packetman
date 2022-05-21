@@ -44,11 +44,16 @@ class Component:
 
     def render(self, surface):
         if self.visible:
+            tmp_surf = surface.copy()
+
             if not self.bg_color is None:
-                pygame.draw.rect(surface, self.bg_color, self.get_shape())
+                pygame.draw.rect(tmp_surf, self.bg_color, self.get_shape())
             
             for child in self.children:
-                child.render(surface)
+                child.render(tmp_surf)
+            
+            x, y, w, h = self.get_shape()
+            surface.blit(tmp_surf, [x,y], [x,y,w,h])
 
     def get_shape(self):
         return self.cm.get_shape(self.parent)

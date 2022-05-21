@@ -26,7 +26,8 @@
                     "class": "Flex",
                     "params": [
                         {"name": "name", "val": "levels"},
-                        {"name": "justify", "val": "space-evenly"}
+                        {"name": "justify", "val": "space-between"},
+                        {"name": "gap", "val": 10}
                     ],
                     "x": {"type": "Center"},
                     "w": {"type": "Relative", "val": 0.4},
