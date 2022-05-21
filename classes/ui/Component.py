@@ -76,7 +76,7 @@ class Component:
                 child.render(tmp_surf)
             
             x, y, w, h = self.get_shape()
-            surface.blit(tmp_surf, [x,y], [x,y,w,h])
+            surface.blit(tmp_surf, [x, y], [x, y, w, h])
 
     def get_shape(self):
         """Returns the shape of this component

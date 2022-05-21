@@ -53,4 +53,4 @@ class Label(Component):
         elif self.valign == "bottom":
             Y = y+h-text.get_height()
 
-        surface.blit(text, [X,Y])
+        surface.blit(text, [X, Y])

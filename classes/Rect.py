@@ -34,7 +34,7 @@ class Rect:
 
         return hor and ver
     
-    def from_vectors(self, topleft,bottomright):
+    def from_vectors(self, topleft, bottomright):
         """Sets rectangle properties from corners
 
         Sets rectangle position and size from top-left and bottom-right corners
@@ -49,7 +49,7 @@ class Rect:
         self.w = bottomright.x - topleft.x
         self.h = bottomright.y - topleft.y
     
-    def render(self,surface,color,thickness=0):
+    def render(self, surface, color, thickness=0):
         """Renders the rectangle
 
         Arguments:
@@ -60,7 +60,7 @@ class Rect:
             thickness {int} -- line thickness in pixels, 0 to fill (default: {0})
         """
 
-        pygame.draw.rect(surface,color,(self.x,self.y,self.w,self.h),thickness)
+        pygame.draw.rect(surface, color,(self.x, self.y, self.w, self.h), thickness)
     
     def __repr__(self):
         return f"Rect[{self.x}, {self.y}, {self.w}, {self.h}]"

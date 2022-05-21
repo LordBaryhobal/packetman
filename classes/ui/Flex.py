@@ -37,7 +37,7 @@ class Flex(Component):
             x, y, w, h = self.get_shape()
 
             if not self.bg_color is None:
-                pygame.draw.rect(tmp_surf, self.bg_color, [x,y,w,h])
+                pygame.draw.rect(tmp_surf, self.bg_color, [x, y, w, h])
 
             gaps = 0
 
@@ -103,7 +103,7 @@ class Flex(Component):
                 sb_y = self.scroll/self.max_scroll * (h-sb_h)
                 pygame.draw.rect(tmp_surf, (255,255,255), [x+w-5, y+sb_y, 5, sb_h])
 
-            surface.blit(tmp_surf, [x,y], [x,y,w,h])
+            surface.blit(tmp_surf, [x, y], [x, y, w, h])
     
     def on_click(self, event):
         """Callback called when the component is scrolled

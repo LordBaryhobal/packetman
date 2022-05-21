@@ -53,8 +53,8 @@ class Checkbox(Label):
             (x+2*h12, y+3*h12)
         ]
 
-        pygame.draw.rect(surface, (100,100,100), [x,y,h,h])
-        pygame.draw.rect(surface, (200,200,200), [x+h*0.1,y+h*0.1,h*0.8,h*0.8])
+        pygame.draw.rect(surface, (100,100,100), [x, y, h, h])
+        pygame.draw.rect(surface, (200,200,200), [x+h*0.1, y+h*0.1, h*0.8, h*0.8])
 
         if self.checked:
             pygame.draw.polygon(surface, (0,0,0), pts)

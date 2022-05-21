@@ -145,7 +145,7 @@ class World:
         tl = Vec( int(entity.pos.x), int(entity.pos.y+entity.box.h))
         br = Vec( int(entity.pos.x+entity.box.w), int(entity.pos.y))
 
-        tiles = self.get_tiles_in_rect(tl,br).flatten()
+        tiles = self.get_tiles_in_rect(tl, br).flatten()
 
         if entity.pos.x < 0:
             tiles = np.append(tiles, Tile(floor(entity.pos.x), floor(entity.pos.y-1), -1))
@@ -158,7 +158,7 @@ class World:
             tiles = np.append(tiles, Tile(floor(entity.pos.x+1), floor(entity.pos.y), -1))
 
         for tile in tiles:
-            if tile.type != 0 and tile.solid and entity.box.overlaps(Rect(tile.pos.x,tile.pos.y,1,1)):
+            if tile.type != 0 and tile.solid and entity.box.overlaps(Rect(tile.pos.x, tile.pos.y,1,1)):
                 dx, dy = 0, 0
                 if vel.x < 0:
                     dx = tile.pos.x+1 - entity.pos.x
@@ -190,14 +190,14 @@ class World:
                 
                 entity.update()
         
-    def modify_tilelistlen(self,pos):
+    def modify_tilelistlen(self, pos):
         """Updates world size to include a given position
 
         Arguments:
             pos {Vec} -- world coordinates of position to include
         """
 
-        xpad,ypad = 0,0
+        xpad, ypad = 0,0
         pos = floor(pos)
         
         if pos.x >= self.WIDTH:
@@ -209,11 +209,11 @@ class World:
             self.HEIGHT = pos.y + 1
         
         if xpad != 0 or ypad != 0:
-            self.tiles = np.pad(self.tiles, ((0,ypad),(0,xpad)), "constant", constant_values=0)
+            self.tiles = np.pad(self.tiles, ((0, ypad),(0, xpad)), "constant", constant_values=0)
             for x in range(self.WIDTH):
                 for y in range(self.HEIGHT):
                     if self.tiles[y][x] == 0:
-                        self.tiles[y][x] = Tile(x,y,0)
+                        self.tiles[y][x] = Tile(x, y, 0)
     
     def save(self, filename):
         """Saves the current level
@@ -303,7 +303,7 @@ class World:
             self.WIDTH = struct.unpack(">H", f.read(2))[0]
             self.HEIGHT = struct.unpack(">H", f.read(2))[0]
             
-            self.tiles = np.empty([self.HEIGHT,self.WIDTH], dtype='object')
+            self.tiles = np.empty([self.HEIGHT, self.WIDTH], dtype='object')
             self.entities = []
 
             Logger.info("Loading tiles")
@@ -331,8 +331,8 @@ class World:
             
             for y in range(self.HEIGHT):
                 for x in range(self.WIDTH):
-                    if self.tiles[y,x] is None:
-                        self.tiles[y,x] = Tile(x, y)
+                    if self.tiles[y, x] is None:
+                        self.tiles[y, x] = Tile(x, y)
             
             Logger.info("Loading entities")
             while f.tell() < size_entities+size_tiles+12:
@@ -353,7 +353,7 @@ class World:
                 attrs = pickle.loads(f.read(size - len(cls) - 19))
 
                 cls = globals()[str(cls, "utf-8")]
-                entity = cls(pos=Vec(x,y), vel=Vec(vx, vy), type_=type_)
+                entity = cls(pos=Vec(x, y), vel=Vec(vx, vy), type_=type_)
 
                 for k, v in attrs.items():
                     setattr(entity, k, v)
@@ -383,7 +383,7 @@ class World:
             place_empty {bool} -- wether to override if placing empty tiles (default: {False})
         """
 
-        self.modify_tilelistlen(pos+Vec(len(selection[0]),len(selection)))
+        self.modify_tilelistlen(pos+Vec(len(selection[0]), len(selection)))
 
         for y in range(len(selection)):
             for x in range(len(selection[0])):
@@ -391,7 +391,7 @@ class World:
                 if t.type == 0 and not place_empty:
                     continue
                 
-                self.set_tile(t, pos+Vec(x,y))
+                self.set_tile(t, pos+Vec(x, y))
     
     def update_tile(self, pos):
         """Updates a tile
@@ -403,7 +403,7 @@ class World:
         """
         
         tile = self.get_tile(pos)
-        offsets = [Vec(0,1),Vec(1,0),Vec(0,-1),Vec(-1,0)]
+        offsets = [Vec(0,1), Vec(1,0), Vec(0,-1), Vec(-1,0)]
         
         for i, off in enumerate(offsets):
             bit, bit2 = 2**i, 2**((i+2)%4)
@@ -424,6 +424,12 @@ class World:
             elif tile2:
                 tile2.neighbors &= ~bit2
     
-    def remove_entity(self,entity):
+    def remove_entity(self, entity):
+        """Removes an entity
+
+        Arguments:
+            entity {Entity} -- entity to remove
+        """
+        
         self.entities.remove(entity)
         del entity

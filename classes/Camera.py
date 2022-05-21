@@ -11,7 +11,7 @@ class Camera:
     of tiles and entities.
     """
 
-    def __init__(self,game):
+    def __init__(self, game):
         """Initializes a Camera instance
 
         Arguments:
@@ -85,7 +85,7 @@ class Camera:
         
         world_surf.fill((0,0,0))
         for tile in self.visible_tiles:
-            tile.render(world_surf, self.world_to_screen(tile.pos),self.tilesize)
+            tile.render(world_surf, self.world_to_screen(tile.pos), self.tilesize)
         
         for entity in self.visible_entities:
             entity.render(world_surf, self.world_to_screen(entity.pos), self.tilesize)
@@ -115,4 +115,4 @@ class Camera:
             Vec -- screen coordinates
         """
 
-        return Vec(pos.x*self.tilesize,self.game.HEIGHT-pos.y*self.tilesize) + Vec(-self.pos.x,self.pos.y)
+        return Vec(pos.x*self.tilesize, self.game.HEIGHT-pos.y*self.tilesize) + Vec(-self.pos.x,self.pos.y)
