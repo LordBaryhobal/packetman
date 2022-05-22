@@ -1,0 +1,144 @@
+{
+    "class": "Flex",
+    "params": [
+        {"name": "justify", "val": "space-evenly"}
+    ],
+    "w": {"type": "Relative", "val": 0.3},
+    "h": {"type": "Aspect", "val": 1.0},
+    "children": [
+        {
+            "class": "Label",
+            "params": [
+                "Entity",
+                { "name": "font_size", "val": 30 }
+            ],
+            "x": {"type": "Center", "val": 0},
+            "w": {"type": "Relative", "val": 1.0},
+            "h": {"type": "Relative", "val": 0.1}
+        },
+        {
+            "class": "Flex",
+            "params": [
+                {"name": "justify", "val": "start"}
+            ],
+            "x": {"type": "Center"},
+            "w": {"type": "Relative", "val": 0.8},
+            "h": {"type": "Relative", "val": 0.3},
+            "children": [
+                {
+                    "class": "Label",
+                    "params": [
+                        "Vel(0, 0)",
+                        {"name": "font_size", "val": 20},
+                        {"name":"halign", "val": "left"}
+                    ],
+                    "x": {"type": "Absolute", "val": 0},
+                    "w": {"type": "Relative", "val": 1.0},
+                    "h": {"type": "Relative", "val": 0.4}
+                },
+                {
+                    "class": "Flex",
+                    "params": [
+                        {"name": "dir_", "val": "row"},
+                        {"name": "justify", "val": "space-evenly"}
+                    ],
+                    "x": {"type": "Absolute", "val": 0},
+                    "w": {"type": "Relative", "val": 1.0},
+                    "h": {"type": "Relative", "val": 0.4},
+                    "children": [
+                        {
+                            "class": "Slider",
+                            "params": [
+                                -10,
+                                10,
+                                0.1,
+                                "${game.cb_entity_slider}",
+                                ["vel_x"],
+                                { "name": "name", "val": "vel_slider" }
+                            ],
+                            "y": {"type": "Center"},
+                            "w": {"type": "Relative", "val": 0.4},
+                            "h": {"type": "Relative", "val": 1.0}
+                        },
+                        {
+                            "class": "Slider",
+                            "params": [
+                                -10,
+                                10,
+                                0.1,
+                                "${game.cb_entity_slider}",
+                                ["vel_y"],
+                                { "name": "name", "val": "vel_slider" }
+                            ],
+                            "y": {"type": "Center"},
+                            "w": {"type": "Relative", "val": 0.4},
+                            "h": {"type": "Relative", "val": 1.0}
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "class": "Flex",
+            "params": [
+                {"name": "justify", "val": "start"}
+            ],
+            "x": {"type": "Center"},
+            "w": {"type": "Relative", "val": 0.8},
+            "h": {"type": "Relative", "val": 0.3},
+            "children": [
+                {
+                    "class": "Label",
+                    "params": [
+                        "Acc(0, 0)",
+                        {"name": "font_size", "val": 20},
+                        {"name":"halign", "val": "left"}
+                    ],
+                    "x": {"type": "Absolute", "val": 0},
+                    "w": {"type": "Relative", "val": 1.0},
+                    "h": {"type": "Relative", "val": 0.4}
+                },
+                {
+                    "class": "Flex",
+                    "params": [
+                        {"name": "dir_", "val": "row"},
+                        {"name": "justify", "val": "space-evenly"}
+                    ],
+                    "x": {"type": "Absolute", "val": 0},
+                    "w": {"type": "Relative", "val": 1.0},
+                    "h": {"type": "Relative", "val": 0.4},
+                    "children": [
+                        {
+                            "class": "Slider",
+                            "params": [
+                                -10,
+                                10,
+                                0.1,
+                                "${game.cb_entity_slider}",
+                                ["acc_x"],
+                                { "name": "name", "val": "acc_slider" }
+                            ],
+                            "y": {"type": "Center"},
+                            "w": {"type": "Relative", "val": 0.4},
+                            "h": {"type": "Relative", "val": 1.0}
+                        },
+                        {
+                            "class": "Slider",
+                            "params": [
+                                -10,
+                                10,
+                                0.1,
+                                "${game.cb_entity_slider}",
+                                ["acc_y"],
+                                { "name": "name", "val": "acc_slider" }
+                            ],
+                            "y": {"type": "Center"},
+                            "w": {"type": "Relative", "val": 0.4},
+                            "h": {"type": "Relative", "val": 1.0}
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

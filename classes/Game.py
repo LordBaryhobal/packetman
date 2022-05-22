@@ -211,16 +211,19 @@ class Game:
         self.settings_menu = Parser(self).parse("settings")
         self.levels_menu = Parser(self).parse("levels")
         self.level_comp = Parser(self).parse("level")
+        self.entity_menu = Parser(self).parse("entity")
 
         self.main_menu.set_visible(True)
-        self.main_menu.visible = True
+        self.entity_menu.set_visible(False)
 
         self.pause_menu.bg_color = (100,100,100,200)
+        self.entity_menu.bg_color = (100,150,100)
 
         self.gui.add(self.main_menu)
         self.gui.add(self.pause_menu)
         self.gui.add(self.settings_menu)
         self.gui.add(self.levels_menu)
+        self.gui.add(self.entity_menu)
     
     def resume(self):
         """Closes pause menu and resumes the game"""
@@ -292,4 +295,18 @@ class Game:
         self.levels_menu.set_visible(False)
     
     def cb_checkbox(self, checkbox, *args, **kwargs):
-        pass
+        return True
+    
+    def cb_entity_slider(self, slider, name, *args, **kwargs):
+        #print(slider, name, slider.value)
+        label = slider.parent.parent.children[0]
+        x,y = label.text.split("(")[1].split(")")[0].split(",")
+
+        if name.endswith("x"):
+            x = round(slider.value,1)
+        elif name.endswith("y"):
+            y = round(slider.value,1)
+        
+        label.set_text(label.text.split("(")[0]+f"({x},{y})")
+
+        return True
