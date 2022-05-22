@@ -1,17 +1,18 @@
 #Packetman is a small game created in the scope of a school project
 #Copyright (C) 2022  Louis HEREDERO & Mathéo BENEY
 
+from classes.Copyable import Copyable
 import pygame
 from .Constraints import *
 
-class Component:
+class Component(Copyable):
     """Basic UI component extend by all other UI elements"""
 
-    def __init__(self, name):
+    def __init__(self, name=None):
         """Initializes a Component instance
 
-        Arguments:
-            name {str} -- component's name
+        Keyword Arguments:
+            name {str} -- component's name (default: {None})
         """
 
         self.cm = Manager() # Constraints manager
@@ -25,27 +26,7 @@ class Component:
         self.pressed = False
         self.hover = False
         self.visible = True
-
         self.changed = 2
-
-    def copy(self):
-        """Creates a new copy this component
-
-        Keeps class and all properties
-
-        Returns:
-            Component -- deepcopy of this component
-        """
-
-        cls = self.__class__
-        new = cls(self.name)
-
-        for k,v in self.__dict__.items():
-            if hasattr(v, "copy"):
-                v = v.copy()
-            setattr(new, k, v)
-        
-        return new
     
     def __repr__(self) -> str:
         return f"<{self.__class__.__qualname__} \"{self.name}\" {self.cm}>"

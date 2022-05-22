@@ -1,11 +1,12 @@
 #Packetman is a small game created in the scope of a school project
 #Copyright (C) 2022  Louis HEREDERO & Mathéo BENEY
 
+from classes.Copyable import Copyable
 from .Vec import Vec
 from .Rect import Rect
 import pygame, random
 
-class Entity:
+class Entity(Copyable):
     """
     Non grid-locked entity, either alive or not
     Subject to physics
@@ -80,16 +81,3 @@ class Entity:
         
         self.box.x = self.pos.x
         self.box.y = self.pos.y
-    
-    def copy(self):
-        """
-        Creates a new copy of this entity. Keeps class and all properties
-        """
-        cls = self.__class__
-        new = cls()
-        for k,v in self.__dict__.items():
-            if hasattr(v, "copy"):
-                v = v.copy()
-            setattr(new, k, v)
-        
-        return new

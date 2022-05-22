@@ -1,11 +1,12 @@
 #Packetman is a small game created in the scope of a school project
 #Copyright (C) 2022  Louis HEREDERO & Mathéo BENEY
 
+from classes.Copyable import Copyable
 from .Vec import Vec
 from .Texture import Texture
 import pygame
 
-class Tile:
+class Tile(Copyable):
     COLORS = [None,(50,50,50),(255,255,255),(255,0,0),(0,255,0),(0,0,255),(255,255,0),(255,0,255),(0,255,255)]
 
     def __init__(self, x=0, y=0, type_=0):
@@ -46,24 +47,6 @@ class Tile:
         
         else:
             pygame.draw.rect(surface, self.COLORS[self.type], (pos.x, pos.y-size, size, size))
-    
-    def copy(self):
-        """Creates a new copy this tile
-
-        Keeps class and all properties
-
-        Returns:
-            Tile -- deepcopy of this tile
-        """
-
-        cls = self.__class__
-        new = cls()
-        for k,v in self.__dict__.items():
-            if hasattr(v, "copy"):
-                v = v.copy()
-            setattr(new, k, v)
-        
-        return new
     
     def __repr__(self):
         return f"<Tile of type {self.type} at ({self.pos.x}, {self.pos.y})>"
