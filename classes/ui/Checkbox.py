@@ -75,6 +75,7 @@ class Checkbox(Label):
 
         if event.button == 1:
             self.checked = not self.checked
+            self.set_changed(1)
             return self.callback(self, *self.args)
         
         return False

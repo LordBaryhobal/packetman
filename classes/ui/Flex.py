@@ -115,14 +115,18 @@ class Flex(Component):
             bool -- True if event has been handled and shouldn't be passed further, False otherwise
         """
 
+        scroll = self.scroll
+
         if event.button == 4:
             self.scroll -= 10
             self.scroll = max(0, min(self.max_scroll, self.scroll))
+            if scroll != self.scroll: self.set_changed(2)
             return True
         
         elif event.button == 5:
             self.scroll += 10
             self.scroll = max(0, min(self.max_scroll, self.scroll))
+            if scroll != self.scroll: self.set_changed(2)
             return True
         
         return False

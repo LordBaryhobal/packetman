@@ -163,10 +163,11 @@ class Game:
         
         pygame.display.set_caption(f"Packetman - {self.clock.get_fps():.2f}fps")
 
-        self.menu_surf.fill((0,0,0,0))
         self.camera.render(self.world_surf, self.hud_surf, self.editor_surf)
 
-        self.gui.render(self.menu_surf)
+        if self.gui.changed:
+            self.menu_surf.fill((0,0,0,0))
+            self.gui.render(self.menu_surf)
 
         #self.editor_surf.set_alpha(200)
         self.window.blit(self.world_surf, [0,0])
@@ -211,6 +212,7 @@ class Game:
         self.levels_menu = Parser(self).parse("levels")
         self.level_comp = Parser(self).parse("level")
 
+        self.main_menu.set_visible(True)
         self.main_menu.visible = True
 
         self.pause_menu.bg_color = (100,100,100,200)
@@ -223,14 +225,14 @@ class Game:
     def resume(self):
         """Closes pause menu and resumes the game"""
 
-        self.pause_menu.visible = False
+        self.pause_menu.set_visible(False)
         self.paused = False
     
     def pause(self):
         """Pauses the game and opens pause menu"""
 
         self.paused = True
-        self.pause_menu.visible = True
+        self.pause_menu.set_visible(True)
     
     def load_settings(self):
         #menu = self.settings_menu
@@ -259,8 +261,8 @@ class Game:
                 level.text = l[:-4]
                 container.add(level)
 
-        self.levels_menu.visible = True
-        self.main_menu.visible = False
+        self.levels_menu.set_visible(True)
+        self.main_menu.set_visible(False)
     
     def cb_lvl(self, button, path):
         Logger.debug(f"Selected level {path}")
@@ -268,26 +270,26 @@ class Game:
         self.camera.update_visible_tiles()
         self.camera.update_visible_entities()
         
-        self.levels_menu.visible = False
+        self.levels_menu.set_visible(False)
         self.paused = False
 
     def cb_settings(self, button):
         self.load_settings()
-        self.main_menu.visible = False
-        self.settings_menu.visible = True
+        self.main_menu.set_visible(False)
+        self.settings_menu.set_visible(True)
     
     def cb_exit_pause(self, button):
-        self.main_menu.visible = True
-        self.pause_menu.visible = False
+        self.main_menu.set_visible(True)
+        self.pause_menu.set_visible(False)
     
     def cb_exit_settings(self, button):
         self.save_settings()
-        self.main_menu.visible = True
-        self.settings_menu.visible = False
+        self.main_menu.set_visible(True)
+        self.settings_menu.set_visible(False)
     
     def cb_exit_levels(self, button):
-        self.main_menu.visible = True
-        self.levels_menu.visible = False
+        self.main_menu.set_visible(True)
+        self.levels_menu.set_visible(False)
     
     def cb_checkbox(self, checkbox, *args, **kwargs):
         pass

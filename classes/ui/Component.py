@@ -26,6 +26,8 @@ class Component:
         self.hover = False
         self.visible = True
 
+        self.changed = 2
+
     def copy(self):
         """Creates a new copy this component
 
@@ -59,6 +61,31 @@ class Component:
         for child in self.children:
             child.print_tree(level+1)
 
+    def set_visible(self, visible=True):
+        """Sets this component's visibility state
+
+        Keyword Arguments:
+            visible {bool} -- new visibility state (default: {True})
+        """
+
+        if visible != self.visible:
+            self.set_changed()
+        
+        self.visible = visible
+    
+    def set_changed(self, changed=2):
+        """Sets this component's changed state
+
+        Keyword Arguments:
+            changed {int} -- new changed state, one of: 0 (not changed), 1 (changed visually), 2 (changed shape) (default: {2})
+        """
+        
+        if changed > self.changed or changed == 0:
+            self.changed = changed
+            if self.parent:
+                self.parent.set_changed(changed)
+        
+
     def render(self, surface):
         """Renders the component
 
@@ -66,7 +93,7 @@ class Component:
             surface {pygame.Surface} -- surface to render the component on
         """
 
-        if self.visible:
+        if self.visible and self.changed:
             tmp_surf = surface.copy()
 
             if not self.bg_color is None:
@@ -77,6 +104,10 @@ class Component:
             
             x, y, w, h = self.get_shape()
             surface.blit(tmp_surf, [x, y], [x, y, w, h])
+            #Debug draw component bounding box
+            #pygame.draw.rect(surface, (255,255,255), [x,y,w,h], 1)
+        
+        self.set_changed(0)
 
     def get_shape(self):
         """Returns the shape of this component
@@ -158,6 +189,7 @@ class Component:
 
         child.parent = self
         self.children.append(child)
+        self.set_changed()
         return self
     
     def handle_event(self, event):
@@ -179,7 +211,8 @@ class Component:
 
         handled = False
 
-        for child in self.children:
+        #Reverse to process children in front first
+        for child in self.children[::-1]:
             if handled:
                 break
             
@@ -188,7 +221,6 @@ class Component:
         if event.type == pygame.MOUSEBUTTONDOWN:
             if x <= event.pos[0] < x+w and y <= event.pos[1] < y+h:
                 self.pressed = True
-
                 if self.on_click(event):
                     handled = True
         
@@ -229,7 +261,7 @@ class Component:
         Returns:
             bool -- wether this event has been handled and shouldn't be passed further
         """
-
+        
         return False
     
     def on_release(self, event):
