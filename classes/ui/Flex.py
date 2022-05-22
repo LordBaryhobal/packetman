@@ -52,11 +52,13 @@ class Flex(Component):
             if self.dir == "col":
                 min_size = sum([child.get_h() for child in self.children])+gaps
                 remainder = h-min_size
+                self.max_scroll = min_size-h
+
             else:
                 min_size = sum([child.get_w() for child in self.children])+gaps
                 remainder = w-min_size
+                self.max_scroll = 0
             
-            self.max_scroll = min_size-h
             current = -self.scroll
             remainder = max(0, remainder)
 
@@ -98,7 +100,7 @@ class Flex(Component):
                 current += gap
             
             #Scrollbar
-            if min_size > h:
+            if min_size > h and self.max_scroll > 0:
                 sb_h = h*h/min_size
                 sb_y = self.scroll/self.max_scroll * (h-sb_h)
                 pygame.draw.rect(tmp_surf, (255,255,255), [x+w-5, y+sb_y, 5, sb_h])
