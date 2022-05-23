@@ -9,6 +9,10 @@ import pygame
 class Tile(Copyable):
     COLORS = [None,(50,50,50),(255,255,255),(255,0,0),(0,255,0),(0,0,255),(255,255,0),(255,0,255),(0,255,255)]
 
+    _tiles = {
+        0: None
+    }
+
     def __init__(self, x=0, y=0, type_=0):
         """Initializes a Tile instance
 
@@ -19,13 +23,13 @@ class Tile(Copyable):
         """
 
         self.pos = Vec(x, y)
-        self.type = type_ # 0 = empty, 1 = ..., 2 = ..., 3 = ...
-        self.solid = (self.type in [-1,2,3])
-        self.texture = Texture("metal", 0)
+        self.type = type_
+        self.name = self._tiles[self.type]
+        self.texture = Texture(self.name, self.type) if self.name else None
         self.neighbors = 0
     
     def __setattr__(self, name, value):
-        if name == "neighbors":
+        if name == "neighbors" and self.texture:
             self.texture = Texture(self.texture.name, value)
         
         super().__setattr__(name, value)
@@ -38,15 +42,13 @@ class Tile(Copyable):
             pos {Vec} -- pixel coordinates where to render on the surface
             size {int} -- size of a tile in pixels
         """
-
-        if self.type == 0:
-            return
         
-        if self.type == 2:
+        if self.texture:
             self.texture.render(surface, pos, size)
         
+        """
         else:
-            pygame.draw.rect(surface, self.COLORS[self.type], (pos.x, pos.y-size, size, size))
+            pygame.draw.rect(surface, self.COLORS[self.type], (pos.x, pos.y-size, size, size))"""
     
     def __repr__(self):
         return f"<Tile of type {self.type} at ({self.pos.x}, {self.pos.y})>"
