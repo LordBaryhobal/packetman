@@ -33,6 +33,9 @@ class Entity(Copyable):
         self.vel = vel
         self.acc = acc
 
+        self.mass = 1
+        self.forces = []
+
         self.type = type_
 
         self.box = Rect(self.pos.x, self.pos.y, 0.5, 0.5) # width and height in tiles
@@ -56,7 +59,12 @@ class Entity(Copyable):
         pygame.draw.rect(surface, color, (pos.x, pos.y-self.box.h*size, self.box.w*size, self.box.h*size))
         if self.highlight:
             pygame.draw.rect(surface, (255,255,255), (pos.x, pos.y-self.box.h*size, self.box.w*size, self.box.h*size), 2)
-            
+        
+        for force in self.forces:
+            dx, dy = force/10*size
+            pygame.draw.line(surface, (255,255,0), pos, pos + Vec(dx, -dy))
+
+        self.forces = []    
 
     def physics(self, delta):
         """Simulates physics
@@ -65,7 +73,8 @@ class Entity(Copyable):
             delta {float} -- time elapsed in last fram in seconds
         """
 
-        self.acc = Vec(0,-20)
+        self.forces.append(Vec(0,-20)*self.mass)
+        self.acc = sum(self.forces, Vec())/self.mass
 
         self.pos += self.vel * delta
         self.vel += self.acc * delta
@@ -74,6 +83,7 @@ class Entity(Copyable):
         self.vel = round(self.vel, 6)
         self.acc = round(self.acc, 6)
 
+        #self.forces = []
         self.update()
     
     def update(self):

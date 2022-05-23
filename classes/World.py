@@ -58,7 +58,7 @@ class World:
                     entity.on_ground = True
                     entity.vel.x = 0
             
-            if isinstance(entity, Player):
+            if False and isinstance(entity, Player):
                 entity.vel.x *= 0.95
     
     def get_tile(self, pos):

@@ -112,6 +112,14 @@ class Game:
                 elif not self.config["edition"]:
                     if event.key == pygame.K_SPACE:
                         self.world.player.jump()
+                    
+                    elif event.key == pygame.K_s:
+                        self.world.player.start_swing(self.camera.screen_to_world(Vec(*pygame.mouse.get_pos()), False))
+            
+            elif event.type == pygame.KEYUP:
+                if not self.config["edition"]:
+                    if event.key == pygame.K_s:
+                        self.world.player.stop_swing()
 
             
         keys = pygame.key.get_pressed()

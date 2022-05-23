@@ -3,6 +3,8 @@
 
 from .Entity import Entity
 from math import copysign
+import pygame
+from .Vec import Vec
 
 class Player(Entity):
     """
@@ -12,6 +14,10 @@ class Player(Entity):
 
     SPEED = 3
     JUMP_SPEED = 7
+
+    def __init__(self, pos=None, vel=None, acc=None, type_=None, highlight=False):
+        super().__init__(pos, vel, acc, type_, highlight)
+        self.swinging = (False, None)
     
     def jump(self):
         """Makes the player jump if on the ground"""
@@ -26,4 +32,45 @@ class Player(Entity):
             direction {int} -- negative if moving left, positive if moving right
         """
 
-        self.vel.x = copysign(self.SPEED, direction)
+        dv = copysign(self.SPEED, direction)
+
+        if self.swinging[0]:
+            swing_vec = self.swinging[1]-self.pos-Vec(self.box.w/2,self.box.h/2)
+
+            swing_len = swing_vec.length**2
+
+            vel = self.vel.copy()
+            v = self.vel.dot(swing_vec)/swing_len
+            #self.vel -= swing_vec * v
+            self.vel = Vec(swing_vec.y, -swing_vec.x).normalize() * dv
+        
+        else:
+            self.vel.x = dv
+    
+    def start_swing(self, p):
+        self.swinging = (True, p)
+
+    def stop_swing(self):
+        self.swinging = (False, None)
+
+    def render(self, surface, pos, size):
+        super().render(surface, pos, size)
+        
+        if self.swinging[0]:
+            center = self.pos + Vec(self.box.w, self.box.h)*0.5
+            pygame.draw.line(surface, (255,255,255), pos + (center-self.pos)*Vec(1,-1)*size, pos + (self.swinging[1]-self.pos)*Vec(1,-1)*size)
+        
+    def physics(self, delta):
+        if self.swinging[0]:
+            swing_vec = self.swinging[1]-self.pos-Vec(self.box.w/2,self.box.h/2)
+
+            total_f = sum(self.forces, Vec(0, -20)*self.mass)
+            dot = total_f.dot(swing_vec)
+            swing_len = swing_vec.length**2
+            force = dot/swing_len
+            self.forces.append(swing_vec * force * -1)
+
+            v = self.vel.dot(swing_vec)/swing_len
+            self.vel -= swing_vec*v
+        
+        super().physics(delta)
