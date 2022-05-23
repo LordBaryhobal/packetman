@@ -17,7 +17,7 @@ class Player(Entity):
 
     def __init__(self, pos=None, vel=None, acc=None, type_=None, highlight=False):
         super().__init__(pos, vel, acc, type_, highlight)
-        self.swinging = (False, None)
+        self.swinging = (False, None, None)
     
     def jump(self):
         """Makes the player jump if on the ground"""
@@ -35,6 +35,7 @@ class Player(Entity):
         dv = copysign(self.SPEED, direction)
 
         if self.swinging[0]:
+            """
             swing_vec = self.swinging[1]-self.pos-Vec(self.box.w/2,self.box.h/2)
 
             swing_len = swing_vec.length**2
@@ -43,12 +44,14 @@ class Player(Entity):
             v = self.vel.dot(swing_vec)/swing_len
             #self.vel -= swing_vec * v
             self.vel = Vec(swing_vec.y, -swing_vec.x).normalize() * dv
+            """
+            self.forces.append(Vec(copysign(5, direction), 0))
         
         else:
             self.vel.x = dv
     
     def start_swing(self, p):
-        self.swinging = (True, p)
+        self.swinging = (True, p, self.pos.distance_to(p))
 
     def stop_swing(self):
         self.swinging = (False, None)
@@ -62,7 +65,11 @@ class Player(Entity):
         
     def physics(self, delta):
         if self.swinging[0]:
-            swing_vec = self.swinging[1]-self.pos-Vec(self.box.w/2,self.box.h/2)
+            half = Vec(self.box.w/2,self.box.h/2)
+            swing_vec = self.swinging[1]-(self.pos+half)
+            swing_vec = swing_vec.normalize()*self.swinging[2]
+            self.pos = self.swinging[1] - swing_vec - half
+            
 
             total_f = sum(self.forces, Vec(0, -20)*self.mass)
             dot = total_f.dot(swing_vec)
