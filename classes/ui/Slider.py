@@ -87,11 +87,7 @@ class Slider(Component):
             self.thumb = (event.pos[0]-self.get_x())/self.get_w()
             value = round_step(self.min + self.thumb*self.range, self.step, self.min, self.max)
             
-            if self.value != value:
-                if self.on_change(value):
-                    self.value = value
-
-            self.thumb = (self.value-self.min)/self.range
+            self.set_value(value)
 
     def on_change(self, value):
         """Callback (can be overwritten by subclasses)
@@ -106,5 +102,17 @@ class Slider(Component):
         """
         
         self.set_changed(1)
-        return self.callback(self, *self.args)
+        return self.callback(self, value, *self.args)
         #return True
+    
+    def set_value(self, value):
+        """Sets the slider's value
+
+        Arguments:
+            value {float} -- new value
+        """
+
+        if self.value != value:
+            if self.on_change(value):
+                self.value = value
+                self.thumb = (self.value-self.min)/self.range
