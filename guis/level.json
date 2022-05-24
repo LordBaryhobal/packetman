@@ -6,5 +6,5 @@
     ],
     "x": {"type": "Absolute", "val": 0},
     "w": {"type": "Relative", "val": 1.0},
-    "h": {"type": "Relative", "val": 0.1}
+    "h": {"type": "Relative", "val": 0.15}
 }

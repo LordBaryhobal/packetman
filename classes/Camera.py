@@ -40,6 +40,8 @@ class Camera:
             W, H = self.game.WIDTH, self.game.HEIGHT
             W4, H4 = W/4, H/4
 
+            prev_pos = self.pos.copy()
+
             if player_tl.x < W4:                # left
                 self.pos.x -= W4-player_tl.x
             elif player_br.x > W-W4:            # right
@@ -51,6 +53,11 @@ class Camera:
                 self.pos.y -= player_br.y-H+H4
             
             self.pos = self.pos.max(Vec(0,0))
+
+            
+            if prev_pos != self.pos:
+                self.update_visible_tiles()
+                self.update_visible_entities()
         
     def update_visible_tiles(self):
         """Updates the list of visible tiles"""

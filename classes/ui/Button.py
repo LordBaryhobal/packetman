@@ -51,3 +51,11 @@ class Button(Label):
             return self.callback(self, *self.args)
         
         return False
+    
+    def on_enter(self, event):
+        self.set_changed(1)
+        return super().on_enter(event)
+    
+    def on_exit(self, event):
+        self.set_changed(1)
+        return super().on_enter(event)

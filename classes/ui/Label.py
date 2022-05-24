@@ -54,3 +54,9 @@ class Label(Component):
             Y = y+h-text.get_height()
 
         surface.blit(text, [X, Y])
+    
+    def set_text(self, text):
+        if text != self.text:
+            self.set_changed(2)
+        
+        self.text = text

@@ -105,4 +105,6 @@ class Slider(Component):
             bool -- wether this event has been handled and shouldn't be passed further
         """
         
-        return True
+        self.set_changed(1)
+        return self.callback(self, *self.args)
+        #return True

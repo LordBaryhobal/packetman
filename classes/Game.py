@@ -163,10 +163,11 @@ class Game:
         
         pygame.display.set_caption(f"Packetman - {self.clock.get_fps():.2f}fps")
 
-        self.menu_surf.fill((0,0,0,0))
         self.camera.render(self.world_surf, self.hud_surf, self.editor_surf)
 
-        self.gui.render(self.menu_surf)
+        if self.gui.changed:
+            self.menu_surf.fill((0,0,0,0))
+            self.gui.render(self.menu_surf)
 
         #self.editor_surf.set_alpha(200)
         self.window.blit(self.world_surf, [0,0])
@@ -212,9 +213,11 @@ class Game:
         self.level_comp = Parser(self).parse("level")
         self.entity_menu = Parser(self).parse("entity")
 
-        self.main_menu.visible = True
+        self.main_menu.set_visible(True)
+        self.entity_menu.set_visible(False)
 
         self.pause_menu.bg_color = (100,100,100,200)
+        self.entity_menu.bg_color = (100,150,100)
 
         self.gui.add(self.main_menu)
         self.gui.add(self.pause_menu)
@@ -225,14 +228,14 @@ class Game:
     def resume(self):
         """Closes pause menu and resumes the game"""
 
-        self.pause_menu.visible = False
+        self.pause_menu.set_visible(False)
         self.paused = False
     
     def pause(self):
         """Pauses the game and opens pause menu"""
 
         self.paused = True
-        self.pause_menu.visible = True
+        self.pause_menu.set_visible(True)
     
     def load_settings(self):
         #menu = self.settings_menu
@@ -261,8 +264,8 @@ class Game:
                 level.text = l[:-4]
                 container.add(level)
 
-        self.levels_menu.visible = True
-        self.main_menu.visible = False
+        self.levels_menu.set_visible(True)
+        self.main_menu.set_visible(False)
     
     def cb_lvl(self, button, path):
         Logger.debug(f"Selected level {path}")
@@ -270,28 +273,29 @@ class Game:
         self.camera.update_visible_tiles()
         self.camera.update_visible_entities()
         
-        self.levels_menu.visible = False
+        self.levels_menu.set_visible(False)
         self.paused = False
 
     def cb_settings(self, button):
         self.load_settings()
-        self.main_menu.visible = False
-        self.settings_menu.visible = True
+        self.main_menu.set_visible(False)
+        self.settings_menu.set_visible(True)
     
     def cb_exit_pause(self, button):
-        self.main_menu.visible = True
-        self.pause_menu.visible = False
+        self.main_menu.set_visible(True)
+        self.pause_menu.set_visible(False)
     
     def cb_exit_settings(self, button):
         self.save_settings()
-        self.main_menu.visible = True
-        self.settings_menu.visible = False
+        self.main_menu.set_visible(True)
+        self.settings_menu.set_visible(False)
     
     def cb_exit_levels(self, button):
-        self.main_menu.visible = True
-        self.levels_menu.visible = False
+        self.main_menu.set_visible(True)
+        self.levels_menu.set_visible(False)
     
     def cb_checkbox(self, checkbox, *args, **kwargs):
+<<<<<<< HEAD
         pass
 
     def cb_exit_entity_settings(self, button):
@@ -305,3 +309,20 @@ class Game:
     
     def save_entity_settings(self):
         pass
+=======
+        return True
+    
+    def cb_entity_slider(self, slider, name, *args, **kwargs):
+        #print(slider, name, slider.value)
+        label = slider.parent.parent.children[0]
+        x,y = label.text.split("(")[1].split(")")[0].split(",")
+
+        if name.endswith("x"):
+            x = round(slider.value,1)
+        elif name.endswith("y"):
+            y = round(slider.value,1)
+        
+        label.set_text(label.text.split("(")[0]+f"({x},{y})")
+
+        return True
+>>>>>>> main

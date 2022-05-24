@@ -1,10 +1,11 @@
 #Packetman is a small game created in the scope of a school project
 #Copyright (C) 2022  Louis HEREDERO & Mathéo BENEY
 
+from classes.Copyable import Copyable
 from classes.Vec import Vec
 from classes.Rect import Rect
 
-class Manager:
+class Manager(Copyable):
     def __init__(self):
         """Initializes a Manager instance"""
 
@@ -160,33 +161,11 @@ class Manager:
         """
         
         return Rect(self.get_x(parent), self.get_y(parent), self.get_w(parent), self.get_h(parent))
-
-    def copy(self):
-        """Creates a new copy this manager
-
-        Keeps class and all properties
-
-        Returns:
-            Manager -- deepcopy of this manager
-        """
-
-        cm = Manager()
-        
-        if self.x:
-            cm.set_x(self.x.copy())
-        if self.y:
-            cm.set_y(self.y.copy())
-        if self.w:
-            cm.set_w(self.w.copy())
-        if self.h:
-            cm.set_h(self.h.copy())
-
-        return cm
     
     def __repr__(self):
         return f"[{self.x}, {self.y}, {self.w}, {self.h}]"
 
-class Constraint:
+class Constraint(Copyable):
     def __init__(self, type_=None):
         """Initializes a Constraint instance
 
@@ -204,17 +183,6 @@ class Constraint:
         """
 
         self.type = type_
-    
-    def copy(self):
-        """Creates a new copy this constraint
-
-        Keeps class and all properties
-
-        Returns:
-            Constraint -- deepcopy of this constraint
-        """
-
-        return self.__class__(self.type)
     
     def __repr__(self):
         return f"<{self.__class__.__qualname__} Constraint>"
@@ -237,13 +205,11 @@ class Center(Constraint):
         return parent_size/2 - size/2
 
 class Absolute(Constraint):
-    def __init__(self, val, type_=None):
+    def __init__(self, val=0, type_=None):
         """Initializes an Absolute instance
 
-        Arguments:
-            val {float} -- constant value
-
         Keyword Arguments:
+            val {float} -- constant value (default: {0})
             type_ {str} -- type of constraint (see `Constraint.__init__` for possible values) (default: {None})
         """
 
@@ -262,18 +228,13 @@ class Absolute(Constraint):
         """
         
         return self.val
-    
-    def copy(self):
-        return self.__class__(self.val, self.type)
 
 class Relative(Constraint):
-    def __init__(self, val, rel_type=None, type_=None):
+    def __init__(self, val=1, rel_type=None, type_=None):
         """Initializes a Relative instance
 
-        Arguments:
-            val {float} -- ratio with parent's value
-
         Keyword Arguments:
+            val {float} -- ratio with parent's value (default: {1})
             rel_type {str} -- type of parent's value (see `type_` for possible values) (default: {None})
             type_ {str} -- type of constraint (see `Constraint.__init__` for possible values) (default: {None})
         """
@@ -309,18 +270,13 @@ class Relative(Constraint):
             val = parent.get_h()
         
         return self.val * val
-    
-    def copy(self):
-        return self.__class__(self.val, self.rel_type, self.type)
 
 class Aspect(Constraint):
-    def __init__(self, val, type_=None):
+    def __init__(self, val=1, type_=None):
         """Initializes a Relative instance
 
-        Arguments:
-            val {float} -- aspect ratio
-
         Keyword Arguments:
+            val {float} -- aspect ratio (default: {1})
             type_ {str} -- type of constraint (see `Constraint.__init__` for possible values) (default: {None})
         """
         
@@ -341,18 +297,15 @@ class Aspect(Constraint):
         val = manager.get_w(parent) if self.type == "h" else manager.get_h(parent)
         
         return self.val * val
-    
-    def copy(self):
-        return self.__class__(self.val, self.type)
 
 class Math(Constraint):
-    def __init__(self, val1, val2, op):
+    def __init__(self, val1=None, val2=None, op=""):
         """Initializes a Math instance
 
-        Arguments:
-            val1 {Constraint} -- first constraint
-            val2 {Constraint} -- second constraint
-            op {str} -- operation to apply between the two constraints
+        Keyword Arguments:
+            val1 {Constraint} -- first constraint (default: {None})
+            val2 {Constraint} -- second constraint (default: {None})
+            op {str} -- operation to apply between the two constraints (default: {""})
         """
         
         super().__init__()
@@ -370,6 +323,9 @@ class Math(Constraint):
         Returns:
             float -- computed value
         """
+
+        if self.val1 is None or self.val2 is None or self.op == "":
+            return 0
         
         v1 = self.val1.get_val(manager, parent)
         v2 = self.val2.get_val(manager, parent)
@@ -392,6 +348,3 @@ class Math(Constraint):
         super().set_type(type_)
         self.val1.set_type(type_)
         self.val2.set_type(type_)
-    
-    def copy(self):
-        return self.__class__(self.val1, self.val2, self.op)
