@@ -85,7 +85,7 @@ class Slider(Component):
         
         if self.pressed:
             self.thumb = (event.pos[0]-self.get_x())/self.get_w()
-            value = round_step(self.min + self.thumb*self.range, self.step, self.min, self.max)
+            value = self.min + self.thumb*self.range
             
             self.set_value(value)
 
@@ -111,8 +111,9 @@ class Slider(Component):
         Arguments:
             value {float} -- new value
         """
-
+        
+        value = round_step(value, self.step, self.min, self.max)
         if self.value != value:
             if self.on_change(value):
                 self.value = value
-                self.thumb = (self.value-self.min)/self.range
+        self.thumb = (self.value-self.min)/self.range
