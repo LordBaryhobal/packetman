@@ -8,7 +8,8 @@ class Bit(Tile):
     solid = True
     
     _tiles = {
-        0: "bit"
+        0: "bit",
+        1: "bit"
     }
 
     def __init__(self, x=0, y=0, type_=0):
@@ -16,4 +17,5 @@ class Bit(Tile):
         self.value = 0
     
     def on_update(self):
-        self.texture.id = self.value
+        self.type = self.value
+        self.texture.id = self.type
