@@ -257,6 +257,12 @@ class Game:
         container = self.levels_menu.get_by_name("levels")
         container.children = []
 
+        if self.config["edition"]:
+            level = self.level_comp.copy()
+            level.args = ("new", )
+            level.text = "New Level"
+            container.add(level)
+
         for l in levels:
             if l.endswith(".dat"):
                 level = self.level_comp.copy()
@@ -269,7 +275,11 @@ class Game:
     
     def cb_lvl(self, button, path):
         Logger.debug(f"Selected level {path}")
+        
+        #TODO: empty world if new
+        if path != "new":
         self.world.load(path)
+        
         self.camera.update_visible_tiles()
         self.camera.update_visible_entities()
         
