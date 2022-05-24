@@ -330,7 +330,8 @@ class Editor():
                         self.selected_entity.highlight = True
                         self.game.world.entities.append(self.selected_entity)
                         self.game.camera.update_visible_entities()
-                    
+                
+                #open the entity menu
                 elif event.key == pygame.K_m:
                     if self.selected_entity is not None and not isinstance(self.selected_entity, Player):
                         self.game.open_entity_settings()
