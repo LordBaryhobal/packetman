@@ -2,12 +2,15 @@
 #Copyright (C) 2022  Louis HEREDERO & Mathéo BENEY
 
 from .Tile import Tile
-from .tiles.Bit import Bit
-from .tiles.Terrain import Terrain
 from .Vec import Vec
 from .Logger import Logger
 from .Animation import Animation
 import pygame
+
+from .tiles.Bit import Bit
+from .tiles.Terrain import *
+from .tiles.Components import *
+from .tiles.Metals import *
 
 class Hud:
     """Class to display editor hud"""
@@ -28,8 +31,12 @@ class Hud:
         self.hotbar = 0
         self.hotbars = [
             #[Tile(type_=1), Tile(type_=2), Tile(type_=3), Tile(type_=4), Tile(type_=5), Tile(type_=7), Tile(type_=8)]
-            [Terrain(type_=0), Bit(type_=0)]
+            #[Terrain(type_=0), Bit(type_=0), Bit(type_=0)]
+            [Aluminium(), Brass(), Copper(), Gold(), Iron(), Lead(), Zinc()],
+            [Insulator(), Plastic(), ThermalConductor(), Plate(), Button(), Wire(), Gate()]
         ]
+        #self.hotbars[0][2].value = 1
+        #self.hotbars[0][2].on_update()
 
         self.sb_opacity_anim = None
         self.sb_opacity = 0
@@ -38,13 +45,15 @@ class Hud:
         """Returns the selected tile/entity type
 
         Returns:
+            class -- class of selected type
             int -- selected type
         """
 
         if self.hotbar < len(self.hotbars) and self.slot < len(self.hotbars[self.hotbar]):
-            return self.hotbars[self.hotbar][self.slot].type
+            selected = self.hotbars[self.hotbar][self.slot]
+            return (selected.__class__, selected.type, selected)
         
-        return 0
+        return (Tile, 0, Tile(type_=0))
 
     def render(self, surface):
         """Renders the hud
