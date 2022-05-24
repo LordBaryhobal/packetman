@@ -210,6 +210,7 @@ class Game:
         self.settings_menu = Parser(self).parse("settings")
         self.levels_menu = Parser(self).parse("levels")
         self.level_comp = Parser(self).parse("level")
+        self.entity_menu = Parser(self).parse("entity")
 
         self.main_menu.visible = True
 
@@ -219,6 +220,7 @@ class Game:
         self.gui.add(self.pause_menu)
         self.gui.add(self.settings_menu)
         self.gui.add(self.levels_menu)
+        self.gui.add(self.entity_menu)
     
     def resume(self):
         """Closes pause menu and resumes the game"""
@@ -290,4 +292,16 @@ class Game:
         self.levels_menu.visible = False
     
     def cb_checkbox(self, checkbox, *args, **kwargs):
+        pass
+
+    def cb_exit_entity_settings(self, button):
+        self.save_entity_settings()
+        self.entity_menu.visible = False
+    
+    def open_entity_settings(self, entity=None):
+        self.entity_menu.visible = True
+        self.animate(self.entity_menu.cm.x, "val", 0, 0.5, 1)
+        
+    
+    def save_entity_settings(self):
         pass

@@ -330,6 +330,11 @@ class Editor():
                         self.selected_entity.highlight = True
                         self.game.world.entities.append(self.selected_entity)
                         self.game.camera.update_visible_entities()
+                    
+                elif event.key == pygame.K_m:
+                    self.game.open_entity_settings()
+                    
+
     
     def modify_selection(self, type):
         """Fills selection with certain tile type

@@ -1,0 +1,88 @@
+{
+    "class": "Menu",
+    "params": [ "${game}" ],
+    "children": [
+        {
+            "class": "Flex",
+            "params": [
+                {"name": "justify", "val": "space-evenly"}
+            ],
+            "x": {"type": "Absolute", "val": 0},
+            "y": {"type": "Absolute", "val": 0},
+            "w": {"type": "Relative", "val": 1.0},
+            "h": {"type": "Relative", "val": 1.0},
+            "children": [
+                {
+                    "class": "Label",
+                    "params": [
+                        "Entity Settings",
+                        { "name": "font_size", "val": 40 }
+                    ],
+                    "x": {"type": "Center"},
+                    "w": {"type": "Relative", "val": 1.0},
+                    "h": {"type": "Relative", "val": 0.1}
+                },
+                {
+                    "class": "Flex",
+                    "params": [
+                        {"name": "justify", "val": "space-evenly"}
+                    ],
+                    "x": {"type": "Absolute", "val": 0},
+                    "y": {"type": "Absolute", "val": 0},
+                    "w": {"type": "Relative", "val": 1},
+                    "h": {"type": "Relative", "val": 0.7},
+                    "children": [
+                        {
+                            "class": "Flex",
+                            "params": [
+                                {"name": "justify", "val": "space-evenly"},
+                                {"name": "dir_", "val": "row"}
+                            ],
+                            "x": {"type": "Absolute", "val": 0},
+                            "y": {"type": "Absolute", "val": 0},
+                            "w": {"type": "Relative", "val": 1},
+                            "h": {"type": "Relative", "val": 0.2},
+                            "children": [
+                                {
+                                    "class": "Slider",
+                                    "params": [
+                                        0,
+                                        5,
+                                        0.1,
+                                        { "name": "name", "val": "x Velocity" }
+                                    ],
+                                    "x": {"type": "Center"},
+                                    "w": {"type": "Relative", "val": 0.1},
+                                    "h": {"type": "Relative", "val": 1}
+                                },
+                                {
+                                    "class": "Slider",
+                                    "params": [
+                                        0,
+                                        5,
+                                        0.1,
+                                        { "name": "name", "val": "x accelereration" }
+                                    ],
+                                    "x": {"type": "Center"},
+                                    "w": {"type": "Relative", "val": 0.1},
+                                    "h": {"type": "Relative", "val": 1}
+                                }
+                            ]
+                        }
+                    ]
+                },
+
+                {
+                    "class": "Button",
+                    "params": [
+                        "Save",
+                        "${game.cb_exit_entity_settings}"
+                    ],
+                    "x": {"type": "Center"},
+                    "w": {"type": "Relative", "val": 0.5},
+                    "h": {"type": "Relative", "val": 0.1}
+                }
+            ]
+        }
+    ]
+}
