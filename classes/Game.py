@@ -236,6 +236,7 @@ class Game:
 
         self.paused = True
         self.pause_menu.set_visible(True)
+        self.entity_menu.set_visible(False)
     
     def load_settings(self):
         #menu = self.settings_menu
@@ -299,12 +300,10 @@ class Game:
 
     def cb_exit_entity_settings(self, button):
         self.save_entity_settings()
-        self.entity_menu.visible = False
+        self.entity_menu.set_visible(False)
     
     def open_entity_settings(self, entity=None):
-        self.entity_menu.visible = True
-        self.animate(self.entity_menu.cm.x, "val", 0, 0.5, 1)
+        self.entity_menu.set_visible(True)
         
-    
     def save_entity_settings(self):
         pass

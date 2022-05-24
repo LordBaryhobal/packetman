@@ -44,16 +44,26 @@
                             "h": {"type": "Relative", "val": 0.2},
                             "children": [
                                 {
-                                    "class": "Slider",
+                                    "class": "Label",
                                     "params": [
-                                        0,
-                                        5,
-                                        0.1,
-                                        { "name": "name", "val": "x Velocity" }
+                                        "Velocity",
+                                        { "name": "font_size", "val": 40 }
                                     ],
                                     "x": {"type": "Center"},
+                                    "y": {"type": "Center"},
                                     "w": {"type": "Relative", "val": 0.1},
-                                    "h": {"type": "Relative", "val": 1}
+                                    "h": {"type": "Relative", "val": 0.1}
+                                },
+                                {
+                                    "class": "Label",
+                                    "params": [
+                                        "X:",
+                                        { "name": "font_size", "val": 30 }
+                                    ],
+                                    "x": {"type": "Center"},
+                                    "y": {"type": "Center"},
+                                    "w": {"type": "Relative", "val": 0.05},
+                                    "h": {"type": "Relative", "val": 0.1}
                                 },
                                 {
                                     "class": "Slider",
@@ -61,10 +71,103 @@
                                         0,
                                         5,
                                         0.1,
-                                        { "name": "name", "val": "x accelereration" }
+                                        { "name": "name", "val": "x_velocity" }
                                     ],
                                     "x": {"type": "Center"},
+                                    "w": {"type": "Relative", "val": 0.15},
+                                    "h": {"type": "Relative", "val": 1}
+                                },
+                                {
+                                    "class": "Label",
+                                    "params": [
+                                        "Y:",
+                                        { "name": "font_size", "val": 30 }
+                                    ],
+                                    "x": {"type": "Center"},
+                                    "y": {"type": "Center"},
+                                    "w": {"type": "Relative", "val": 0.05},
+                                    "h": {"type": "Relative", "val": 0.1}
+                                },
+                                {
+                                    "class": "Slider",
+                                    "params": [
+                                        0,
+                                        5,
+                                        0.1,
+                                        { "name": "name", "val": "y_velocity" }
+                                    ],
+                                    "x": {"type": "Center"},
+                                    "w": {"type": "Relative", "val": 0.15},
+                                    "h": {"type": "Relative", "val": 1}
+                                }
+                            ]
+                        },
+                        {
+                            "class": "Flex",
+                            "params": [
+                                {"name": "justify", "val": "space-evenly"},
+                                {"name": "dir_", "val": "row"}
+                            ],
+                            "x": {"type": "Absolute", "val": 0},
+                            "y": {"type": "Absolute", "val": 0},
+                            "w": {"type": "Relative", "val": 1},
+                            "h": {"type": "Relative", "val": 0.2},
+                            "children": [
+                                {
+                                    "class": "Label",
+                                    "params": [
+                                        "Acceleration",
+                                        { "name": "font_size", "val": 40 }
+                                    ],
+                                    "x": {"type": "Center"},
+                                    "y": {"type": "Center"},
                                     "w": {"type": "Relative", "val": 0.1},
+                                    "h": {"type": "Relative", "val": 0.1}
+                                },
+                                {
+                                    "class": "Label",
+                                    "params": [
+                                        "X:",
+                                        { "name": "font_size", "val": 30 }
+                                    ],
+                                    "x": {"type": "Center"},
+                                    "y": {"type": "Center"},
+                                    "w": {"type": "Relative", "val": 0.05},
+                                    "h": {"type": "Relative", "val": 0.1}
+                                },
+                                {
+                                    "class": "Slider",
+                                    "params": [
+                                        0,
+                                        5,
+                                        0.1,
+                                        { "name": "name", "val": "x_acceleration" }
+                                    ],
+                                    "x": {"type": "Center"},
+                                    "w": {"type": "Relative", "val": 0.15},
+                                    "h": {"type": "Relative", "val": 1}
+                                },
+                                {
+                                    "class": "Label",
+                                    "params": [
+                                        "Y:",
+                                        { "name": "font_size", "val": 30 }
+                                    ],
+                                    "x": {"type": "Center"},
+                                    "y": {"type": "Center"},
+                                    "w": {"type": "Relative", "val": 0.05},
+                                    "h": {"type": "Relative", "val": 0.1}
+                                },
+                                {
+                                    "class": "Slider",
+                                    "params": [
+                                        0,
+                                        5,
+                                        0.1,
+                                        { "name": "name", "val": "y_acceleration" }
+                                    ],
+                                    "x": {"type": "Center"},
+                                    "w": {"type": "Relative", "val": 0.15},
                                     "h": {"type": "Relative", "val": 1}
                                 }
                             ]

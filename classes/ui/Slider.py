@@ -12,7 +12,7 @@ def round_step(val, step, min_, max_):
     return min(max_, max(min_, round(val/step)*step ))
 
 class Slider(Component):
-    def __init__(self, min_, max_, step=1, callback=lambda *args, **kwargs: None, args=(), name=None):
+    def __init__(self, min_, max_, step=1, callback=lambda *args, **kwargs: True, args=(), name=None):
         """Initializes a Slider instance
 
         Arguments:
