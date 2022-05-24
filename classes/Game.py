@@ -303,7 +303,20 @@ class Game:
         self.entity_menu.set_visible(False)
     
     def open_entity_settings(self, entity=None):
+        self.entity_menu.get_by_name("x_velocity") \
+            .set_value(self.editor.selected_entity.vel.x)
+        
+        self.entity_menu.get_by_name("y_velocity") \
+            .set_value(self.editor.selected_entity.vel.y)
+        
         self.entity_menu.set_visible(True)
         
     def save_entity_settings(self):
         pass
+
+    def cb_entity_menu(self, slider, value, label_name, *args, **kwargs):
+        label = self.entity_menu.get_by_name(label_name)
+        current_text = label.text
+        new_text = current_text.split(":")[0] + ":" + str(round(value,1))
+        label.set_text(new_text)
+        return True

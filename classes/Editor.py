@@ -332,7 +332,8 @@ class Editor():
                         self.game.camera.update_visible_entities()
                     
                 elif event.key == pygame.K_m:
-                    self.game.open_entity_settings()
+                    if self.selected_entity is not None and not isinstance(self.selected_entity, Player):
+                        self.game.open_entity_settings()
                     
 
     

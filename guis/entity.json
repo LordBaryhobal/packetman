@@ -58,7 +58,8 @@
                                     "class": "Label",
                                     "params": [
                                         "X:",
-                                        { "name": "font_size", "val": 30 }
+                                        { "name": "font_size", "val": 30 },
+                                        { "name": "name", "val": "x_velocity_label" }
                                     ],
                                     "x": {"type": "Center"},
                                     "y": {"type": "Center"},
@@ -68,9 +69,11 @@
                                 {
                                     "class": "Slider",
                                     "params": [
-                                        0,
-                                        5,
+                                        -10,
+                                        10,
                                         0.1,
+                                        "${game.cb_entity_menu}",
+                                        ["x_velocity_label"],
                                         { "name": "name", "val": "x_velocity" }
                                     ],
                                     "x": {"type": "Center"},
@@ -81,7 +84,8 @@
                                     "class": "Label",
                                     "params": [
                                         "Y:",
-                                        { "name": "font_size", "val": 30 }
+                                        { "name": "font_size", "val": 30 },
+                                        { "name": "name", "val": "y_velocity_label" }
                                     ],
                                     "x": {"type": "Center"},
                                     "y": {"type": "Center"},
@@ -91,9 +95,11 @@
                                 {
                                     "class": "Slider",
                                     "params": [
-                                        0,
-                                        5,
+                                        -10,
+                                        10,
                                         0.1,
+                                        "${game.cb_entity_menu}",
+                                        ["y_velocity_label"],
                                         { "name": "name", "val": "y_velocity" }
                                     ],
                                     "x": {"type": "Center"},
@@ -128,7 +134,8 @@
                                     "class": "Label",
                                     "params": [
                                         "X:",
-                                        { "name": "font_size", "val": 30 }
+                                        { "name": "font_size", "val": 30 },
+                                        { "name": "name", "val": "x_acceleration_label" }
                                     ],
                                     "x": {"type": "Center"},
                                     "y": {"type": "Center"},
@@ -138,9 +145,11 @@
                                 {
                                     "class": "Slider",
                                     "params": [
-                                        0,
-                                        5,
+                                        -10,
+                                        10,
                                         0.1,
+                                        "${game.cb_entity_menu}",
+                                        ["x_acceleration_label"],
                                         { "name": "name", "val": "x_acceleration" }
                                     ],
                                     "x": {"type": "Center"},
@@ -151,7 +160,8 @@
                                     "class": "Label",
                                     "params": [
                                         "Y:",
-                                        { "name": "font_size", "val": 30 }
+                                        { "name": "font_size", "val": 30 },
+                                        { "name": "name", "val": "y_acceleration_label" }
                                     ],
                                     "x": {"type": "Center"},
                                     "y": {"type": "Center"},
@@ -161,9 +171,11 @@
                                 {
                                     "class": "Slider",
                                     "params": [
-                                        0,
-                                        5,
+                                        -10,
+                                        10,
                                         0.1,
+                                        "${game.cb_entity_menu}",
+                                        ["y_acceleration_label"],
                                         { "name": "name", "val": "y_acceleration" }
                                     ],
                                     "x": {"type": "Center"},
