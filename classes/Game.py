@@ -295,7 +295,6 @@ class Game:
         self.levels_menu.set_visible(False)
     
     def cb_checkbox(self, checkbox, *args, **kwargs):
-<<<<<<< HEAD
         pass
 
     def cb_exit_entity_settings(self, button):
@@ -309,20 +308,3 @@ class Game:
     
     def save_entity_settings(self):
         pass
-=======
-        return True
-    
-    def cb_entity_slider(self, slider, name, *args, **kwargs):
-        #print(slider, name, slider.value)
-        label = slider.parent.parent.children[0]
-        x,y = label.text.split("(")[1].split(")")[0].split(",")
-
-        if name.endswith("x"):
-            x = round(slider.value,1)
-        elif name.endswith("y"):
-            y = round(slider.value,1)
-        
-        label.set_text(label.text.split("(")[0]+f"({x},{y})")
-
-        return True
->>>>>>> main
