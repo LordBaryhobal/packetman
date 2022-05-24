@@ -26,6 +26,17 @@ class Button(Input):
         0: "button"
     }
 
+    pressed = False
+    rotatable = True
+
+    def on_interact(self):
+        if not self.pressed:
+            self.set_pressed(True)
+    
+    def set_pressed(self, pressed=True):
+        self.pressed = pressed
+        self.texture.id = int(self.pressed) << 2
+
 class Wire(Electrical):
     _tiles = {
         0: "wire"
