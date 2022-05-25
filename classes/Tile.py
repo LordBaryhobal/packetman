@@ -10,8 +10,14 @@ class Tile(Copyable):
     COLORS = [None,(50,50,50),(255,255,255),(255,0,0),(0,255,0),(0,0,255),(255,255,0),(255,0,255),(0,255,255)]
 
     _tiles = {
+        -1: None,
         0: None
     }
+
+    solid = False
+    connected = False
+    connect_strict = False
+    rotatable = False
 
     def __init__(self, x=0, y=0, type_=0):
         """Initializes a Tile instance
@@ -29,7 +35,7 @@ class Tile(Copyable):
         self.neighbors = 0
     
     def __setattr__(self, name, value):
-        if name == "neighbors" and self.texture:
+        if self.connected and name == "neighbors" and self.texture:
             self.texture = Texture(self.texture.name, value)
         
         super().__setattr__(name, value)
@@ -51,4 +57,7 @@ class Tile(Copyable):
             pygame.draw.rect(surface, self.COLORS[self.type], (pos.x, pos.y-size, size, size))"""
     
     def __repr__(self):
-        return f"<Tile of type {self.type} at ({self.pos.x}, {self.pos.y})>"
+        return f"<{self.__class__.__name__} Tile of type {self.type} at ({self.pos.x}, {self.pos.y})>"
+    
+    def on_update(self):
+        pass

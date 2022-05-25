@@ -11,6 +11,11 @@ from .Logger import Logger
 from math import floor
 import struct, pickle
 
+from .tiles.Bit import Bit
+from .tiles.Terrain import *
+from .tiles.Components import *
+from .tiles.Metals import *
+
 class World:
     """
     World class holding world tiles and entities. Also processes physics.
@@ -52,7 +57,7 @@ class World:
                     floor( entity.pos+Vec(entity.box.w-0.001, -0.001) )
                 ).flatten()
 
-                tiles_below = list(filter(lambda t: t is not None and t.type != 0 and t.solid, tiles_below))
+                tiles_below = list(filter(lambda t: t is not None and ((t.name and t.solid) or t.type == -1), tiles_below))
                 
                 if len(tiles_below) > 0 or entity.pos.y < 0.001:
                     entity.on_ground = True
@@ -156,9 +161,13 @@ class World:
             tiles = np.append(tiles, Tile(floor(entity.pos.x-1), floor(entity.pos.y), -1))
             tiles = np.append(tiles, Tile(floor(entity.pos.x), floor(entity.pos.y), -1))
             tiles = np.append(tiles, Tile(floor(entity.pos.x+1), floor(entity.pos.y), -1))
+        
+        #TODO: fix that
+        p = round(entity.pos)
+        tiles = sorted(tiles, key=lambda t: t.pos.distance_to(p))
 
         for tile in tiles:
-            if tile.type != 0 and tile.solid and entity.box.overlaps(Rect(tile.pos.x, tile.pos.y,1,1)):
+            if ((tile.name and tile.solid) or tile.type == -1) and entity.box.overlaps(Rect(tile.pos.x, tile.pos.y,1,1)):
                 dx, dy = 0, 0
                 if vel.x < 0:
                     dx = tile.pos.x+1 - entity.pos.x
@@ -231,7 +240,7 @@ class World:
         Logger.info("Saving tiles")
         tiles = self.tiles.flatten()
         for tile in tiles:
-            if tile.type == 0:
+            if not tile.name:
                 continue
             
             buf_tile = bytearray()
@@ -388,7 +397,7 @@ class World:
         for y in range(len(selection)):
             for x in range(len(selection[0])):
                 t = selection[y][x]
-                if t.type == 0 and not place_empty:
+                if not t.name and not place_empty:
                     continue
                 
                 self.set_tile(t, pos+Vec(x, y))
@@ -409,8 +418,8 @@ class World:
             bit, bit2 = 2**i, 2**((i+2)%4)
             tile2 = self.get_tile(pos+off)
 
-            t = not tile or tile.type > 0
-            t2 = not tile2 or tile2.type > 0
+            t = not tile or tile.name
+            t2 = not tile2 or tile2.name
 
             if t:
                 if t2:
@@ -423,6 +432,12 @@ class World:
                     tile.neighbors &= ~bit
             elif tile2:
                 tile2.neighbors &= ~bit2
+            
+            if tile2:
+                tile2.on_update()
+        
+        if tile:
+            tile.on_update()
     
     def remove_entity(self, entity):
         """Removes an entity

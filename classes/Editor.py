@@ -59,7 +59,9 @@ class Editor():
         #placing == 1 --> placing tiles
         if self.placing == 1 and self.selection[0] != 2:
             pos = self.game.camera.screen_to_world(self.get_mousepos())
-            tile = Tile(pos.x, pos.y, self.hud.get_type())
+            cls, type, t = self.hud.get_type()
+            #tile = cls(pos.x, pos.y, type)
+            tile = t.copy()
             self.game.world.set_tile(tile, pos)
             self.game.camera.update_visible_tiles()
         
@@ -135,7 +137,7 @@ class Editor():
                             tl,br = self.selection[1].get_tl_br_corners(self.selection[2])
                             
                             self.selected_tiles = self.game.world.get_tiles_in_rect(tl,br).copy()
-                            self.modify_selection(0)
+                            self.modify_selection(Tile, 0)
                             
                             self.start_move_pos = self.game.camera.screen_to_world(self.get_mousepos())
                             if self.select_entities:
@@ -246,7 +248,7 @@ class Editor():
                 #fill selection with tile of the current type
                 elif event.key == pygame.K_f:
                     if self.selection[0] == 2:
-                        self.modify_selection(self.hud.get_type())
+                        self.modify_selection(*self.hud.get_type())
                 
                 elif event.key == pygame.K_BACKSPACE:
                     #remove the selected entity
@@ -257,7 +259,7 @@ class Editor():
                     
                     #remove the tiles in the selection
                     if self.selection[0] == 2:
-                        self.modify_selection(0)
+                        self.modify_selection(Tile, 0)
                     
                     #stop placing the pasted tiles/entities
                     if self.placing == 2:
@@ -339,17 +341,18 @@ class Editor():
                     
 
     
-    def modify_selection(self, type):
+    def modify_selection(self, cls, type):
         """Fills selection with certain tile type
 
         Arguments:
+            cls {class} -- class of tile to fill
             type {int} -- tile type to fill
         """
 
         for x in range(self.selection[1].x, self.selection[2].x+1):
             for y in range(self.selection[1].y, self.selection[2].y+1):
                 pos = Vec(x, y)
-                tile = Tile(x, y, type)
+                tile = cls(x, y, type)
                 self.game.world.set_tile(tile, pos)
         self.game.camera.update_visible_tiles()
             

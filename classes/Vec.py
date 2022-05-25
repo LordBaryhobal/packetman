@@ -143,7 +143,7 @@ class Vec(Copyable):
     def __repr__(self):
         return f"Vec({self.x}, {self.y})"
     
-    def __round__(self, n):
+    def __round__(self, n=0):
         return Vec(round(self.x, n), round(self.y, n))
     
     def __floor__(self):

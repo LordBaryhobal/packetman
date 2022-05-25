@@ -16,6 +16,9 @@ from classes.ui.Label import Label
 from classes.ui.Parser import Parser
 import os
 
+from classes.tiles.Bit import Bit
+from classes.tiles.Components import Button as ButtonTile
+
 class classproperty(property):
     """Utility class for annotating class properties. Parallel to `@property`"""
 
@@ -112,6 +115,17 @@ class Game:
                 elif not self.config["edition"]:
                     if event.key == pygame.K_SPACE:
                         self.world.player.jump()
+                    
+                    elif event.key == pygame.K_e:
+                        """Test interaction"""
+                        player = self.world.player
+                        for y in range(-1,2):
+                            for x in range(-1,2):
+                                if (x,y) == (0,0): continue
+                                tile = self.world.get_tile(player.pos + Vec(x,y))
+                                if tile and tile.name and isinstance(tile, ButtonTile) and not tile.pressed:
+                                    tile.on_interact()
+                        """End test interaction"""
 
             
         keys = pygame.key.get_pressed()
@@ -164,6 +178,23 @@ class Game:
         pygame.display.set_caption(f"Packetman - {self.clock.get_fps():.2f}fps")
 
         self.camera.render(self.world_surf, self.hud_surf, self.editor_surf)
+
+        """Test interaction"""
+        player = self.world.player
+        can_interact = False
+        for y in range(-1,2):
+            for x in range(-1,2):
+                if (x,y) == (0,0): continue
+                tile = self.world.get_tile(player.pos + Vec(x,y))
+                if tile and tile.name and isinstance(tile, ButtonTile) and not tile.pressed:
+                    can_interact = True
+                    break
+            if can_interact:
+                break
+        
+        if can_interact:
+            pygame.draw.circle(self.world_surf, (0,255,0), [15,self.HEIGHT-15], 15)
+        """End test interaction"""
 
         if self.gui.changed:
             self.menu_surf.fill((0,0,0,0))
@@ -258,6 +289,12 @@ class Game:
         container = self.levels_menu.get_by_name("levels")
         container.children = []
 
+        if self.config["edition"]:
+            level = self.level_comp.copy()
+            level.args = ("new", )
+            level.text = "New Level"
+            container.add(level)
+
         for l in levels:
             if l.endswith(".dat"):
                 level = self.level_comp.copy()
@@ -270,7 +307,11 @@ class Game:
     
     def cb_lvl(self, button, path):
         Logger.debug(f"Selected level {path}")
-        self.world.load(path)
+        
+        #TODO: empty world if new
+        if path != "new":
+            self.world.load(path)
+        
         self.camera.update_visible_tiles()
         self.camera.update_visible_entities()
         

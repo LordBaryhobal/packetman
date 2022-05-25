@@ -49,15 +49,14 @@ class Texture:
             size {int} -- size of a tile in pixels
         """
         
-        if self.id is None:
-            img = pygame.transform.scale(self.img, (size, size))
-        else:
-            img = pygame.transform.scale(self.img, (int(size*4), int(size*4)))
+        width, height = self.img.get_width()/self.WIDTH, self.img.get_height()/self.HEIGHT
+
+        img = pygame.transform.scale(self.img, (int(width*size), int(height*size)))
         
         x, y = 0, 0
         if not self.id is None:
-            x = (self.id%4)*size
-            y = (self.id//4)*size
+            x = (self.id%width)*size
+            y = (self.id//width)*size
 
         surface.blit(img, [pos.x, pos.y-size], [x, y, size, size])
         #surface.blit(img, [pos.x, pos.y])
