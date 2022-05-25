@@ -351,7 +351,6 @@ class Editor():
                 elif event.key == pygame.K_m:
                     if self.selected_entity is not None and not isinstance(self.selected_entity, Player):
                         self.game.open_entity_settings()
-                        print(self.selected_entity.vel)
                     
 
     
