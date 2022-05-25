@@ -2,6 +2,8 @@
 #Copyright (C) 2022  Louis HEREDERO & Mathéo BENEY
 
 from .Tile import Tile
+from .tiles.Bit import Bit
+from .tiles.Terrain import Terrain
 from .Vec import Vec
 from .Logger import Logger
 from .Animation import Animation
@@ -25,7 +27,8 @@ class Hud:
         self.slot = 0
         self.hotbar = 0
         self.hotbars = [
-            [Tile(type_=1), Tile(type_=2), Tile(type_=3), Tile(type_=4), Tile(type_=5), Tile(type_=7), Tile(type_=8)]
+            #[Tile(type_=1), Tile(type_=2), Tile(type_=3), Tile(type_=4), Tile(type_=5), Tile(type_=7), Tile(type_=8)]
+            [Terrain(type_=0), Bit(type_=0)]
         ]
 
         self.sb_opacity_anim = None
