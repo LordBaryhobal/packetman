@@ -7,6 +7,7 @@ from .Rect import Rect
 from .Hud import Hud
 from .Tile import Tile
 from .Player import Player
+from .Entity import Entity
 
 class Editor():
     """
@@ -57,7 +58,7 @@ class Editor():
             self.game.camera.update_visible_tiles()
             
         #placing == 1 --> placing tiles
-        if self.placing == 1 and self.selection[0] != 2:
+        if self.placing == 1:
             pos = self.game.camera.screen_to_world(self.get_mousepos())
             cls, type, t = self.hud.get_type()
             #tile = cls(pos.x, pos.y, type)
@@ -129,21 +130,34 @@ class Editor():
                         self.selection = [2, pos.max(Vec()), otherpos.max(Vec())]
                     
                     #start moving the selected tiles/entities
+                    elif self.selection[0]==2:
+                        self.moveselection = 1
+                        
+                        tl,br = self.selection[1].get_tl_br_corners(self.selection[2])
+                        
+                        self.selected_tiles = self.game.world.get_tiles_in_rect(tl,br).copy()
+                        self.modify_selection(Tile, 0)
+                        
+                        self.start_move_pos = self.game.camera.screen_to_world(self.get_mousepos())
+                        if self.select_entities:
+                            self.entity_start_move_pos = []
+                            for entity in self.selected_entities:
+                                self.entity_start_move_pos.append(entity.pos)
+                    
+                    #if an entity is selected in the hotbar, place it
+                    elif self.hud.get_type()[0] == Entity:
+                        pos = self.game.camera.screen_to_world(self.get_mousepos(), round_=False)
+                        
+                        new_entity = self.hud.get_type()[2].copy()
+                        new_entity.pos = pos
+                        new_entity.update()
+                        
+                        self.game.world.entities.append(new_entity)
+                        self.game.camera.update_visible_entities()
+                        
+                    #start placing tiles
                     else:
                         self.placing = 1
-                        if self.selection[0]==2:
-                            self.moveselection = 1
-                            
-                            tl,br = self.selection[1].get_tl_br_corners(self.selection[2])
-                            
-                            self.selected_tiles = self.game.world.get_tiles_in_rect(tl,br).copy()
-                            self.modify_selection(Tile, 0)
-                            
-                            self.start_move_pos = self.game.camera.screen_to_world(self.get_mousepos())
-                            if self.select_entities:
-                                self.entity_start_move_pos = []
-                                for entity in self.selected_entities:
-                                    self.entity_start_move_pos.append(entity.pos)
                         
                 
                 #start moving camera
