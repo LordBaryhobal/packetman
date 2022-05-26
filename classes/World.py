@@ -463,6 +463,7 @@ class World:
         
         self.entities.remove(entity)
         del entity
+        self.game.camera.update_visible_entities()
     
     def add_entity(self, entity):
         """Adds an entity
