@@ -25,7 +25,7 @@ class Bullet(Entity):
             self.destroy()
 
     @on(Event.COLLISION_ENTITY)
-    def on_collision_world(self, event):
+    def on_collision_entity(self, event):
         if self in event.entities:
             if self.world.player in event.entities:
                 self.hit(self.world.player)
