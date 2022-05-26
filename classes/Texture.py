@@ -54,7 +54,7 @@ class Texture:
         width, height = self.img.get_width()/self.WIDTH, self.img.get_height()/self.HEIGHT
 
         #dimensions is the size of the object in tiles
-        img = pygame.transform.scale(self.img, (int(width*tilesize)*dimensions.x, int(height*tilesize)*dimensions.y))
+        img = pygame.transform.scale(self.img, (int(width*tilesize*dimensions.x), int(height*tilesize*dimensions.y)))
         
         x, y = 0, 0
         if not self.id is None:

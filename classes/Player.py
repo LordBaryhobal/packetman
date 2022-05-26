@@ -3,6 +3,7 @@
 
 from .Entity import Entity
 from math import copysign
+from .Vec import Vec
 
 class Player(Entity):
     """
@@ -12,6 +13,10 @@ class Player(Entity):
 
     SPEED = 3
     JUMP_SPEED = 7
+    
+    _entity = {
+        0: "player"
+    }
     
     def jump(self):
         """Makes the player jump if on the ground"""
