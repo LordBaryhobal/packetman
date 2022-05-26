@@ -354,6 +354,12 @@ class Game:
         
         self.editor.selected_entity.vel.y = \
             self.entity_menu.get_by_name("y_velocity").value
+            
+        value = self.entity_menu.get_by_name("type").value
+        if value in self.editor.selected_entity._entity:
+            self.editor.selected_entity.type = \
+                self.entity_menu.get_by_name("type").value
+            self.editor.selected_entity.update_texture()
         return True
 
     def cb_entity_menu(self, slider, value, label_name, *args, **kwargs):

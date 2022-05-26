@@ -108,3 +108,8 @@ class Entity(Copyable):
             events {list} -- list of events
         """
         pass
+    
+    def update_texture(self):
+        """Updates the entity's texture"""
+        self.name = self._entity[self.type]
+        self.texture = Texture(self.name, 0) if self.name else None

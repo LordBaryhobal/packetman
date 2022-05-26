@@ -122,8 +122,9 @@
                                 {
                                     "class": "Label",
                                     "params": [
-                                        "Acceleration",
-                                        { "name": "font_size", "val": 40 }
+                                        "Type:",
+                                        { "name": "font_size", "val": 40 },
+                                        {"name": "name", "val": "type_label"}
                                     ],
                                     "x": {"type": "Center"},
                                     "y": {"type": "Center"},
@@ -131,52 +132,14 @@
                                     "h": {"type": "Relative", "val": 0.1}
                                 },
                                 {
-                                    "class": "Label",
-                                    "params": [
-                                        "X:",
-                                        { "name": "font_size", "val": 30 },
-                                        { "name": "name", "val": "x_acceleration_label" }
-                                    ],
-                                    "x": {"type": "Center"},
-                                    "y": {"type": "Center"},
-                                    "w": {"type": "Relative", "val": 0.05},
-                                    "h": {"type": "Relative", "val": 0.1}
-                                },
-                                {
                                     "class": "Slider",
                                     "params": [
-                                        -10,
-                                        10,
-                                        0.1,
+                                        0,
+                                        5,
+                                        1,
                                         "${game.cb_entity_menu}",
-                                        ["x_acceleration_label"],
-                                        { "name": "name", "val": "x_acceleration" }
-                                    ],
-                                    "x": {"type": "Center"},
-                                    "w": {"type": "Relative", "val": 0.15},
-                                    "h": {"type": "Relative", "val": 1}
-                                },
-                                {
-                                    "class": "Label",
-                                    "params": [
-                                        "Y:",
-                                        { "name": "font_size", "val": 30 },
-                                        { "name": "name", "val": "y_acceleration_label" }
-                                    ],
-                                    "x": {"type": "Center"},
-                                    "y": {"type": "Center"},
-                                    "w": {"type": "Relative", "val": 0.05},
-                                    "h": {"type": "Relative", "val": 0.1}
-                                },
-                                {
-                                    "class": "Slider",
-                                    "params": [
-                                        -10,
-                                        10,
-                                        0.1,
-                                        "${game.cb_entity_menu}",
-                                        ["y_acceleration_label"],
-                                        { "name": "name", "val": "y_acceleration" }
+                                        ["type_label"],
+                                        { "name": "name", "val": "type" }
                                     ],
                                     "x": {"type": "Center"},
                                     "w": {"type": "Relative", "val": 0.15},
