@@ -267,6 +267,7 @@ class Game:
 
         self.paused = True
         self.pause_menu.set_visible(True)
+        self.entity_menu.set_visible(False)
     
     def load_settings(self):
         #menu = self.settings_menu
@@ -336,18 +337,32 @@ class Game:
         self.levels_menu.set_visible(False)
     
     def cb_checkbox(self, checkbox, *args, **kwargs):
-        return True
+        pass
+
+    def cb_exit_entity_settings(self, button):
+        self.save_entity_settings()
+        self.entity_menu.set_visible(False)
     
-    def cb_entity_slider(self, slider, name, *args, **kwargs):
-        #print(slider, name, slider.value)
-        label = slider.parent.parent.children[0]
-        x,y = label.text.split("(")[1].split(")")[0].split(",")
-
-        if name.endswith("x"):
-            x = round(slider.value,1)
-        elif name.endswith("y"):
-            y = round(slider.value,1)
+    def open_entity_settings(self, entity=None):
+        self.entity_menu.get_by_name("x_velocity") \
+            .set_value(self.editor.selected_entity.vel.x)
         
-        label.set_text(label.text.split("(")[0]+f"({x},{y})")
+        self.entity_menu.get_by_name("y_velocity") \
+            .set_value(self.editor.selected_entity.vel.y)
+        
+        self.entity_menu.set_visible(True)
+        
+    def save_entity_settings(self):
+        self.editor.selected_entity.vel.x = \
+            self.entity_menu.get_by_name("x_velocity").value
+        
+        self.editor.selected_entity.vel.y = \
+            self.entity_menu.get_by_name("y_velocity").value
+        return True
 
+    def cb_entity_menu(self, slider, value, label_name, *args, **kwargs):
+        label = self.entity_menu.get_by_name(label_name)
+        current_text = label.text
+        new_text = current_text.split(":")[0] + ":" + str(round(value,1))
+        label.set_text(new_text)
         return True

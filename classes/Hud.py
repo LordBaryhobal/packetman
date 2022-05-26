@@ -1,6 +1,7 @@
 #Packetman is a small game created in the scope of a school project
 #Copyright (C) 2022  Louis HEREDERO & Mathéo BENEY
 
+from .Entity import Entity
 from .Tile import Tile
 from .Vec import Vec
 from .Logger import Logger
@@ -33,7 +34,8 @@ class Hud:
             #[Tile(type_=1), Tile(type_=2), Tile(type_=3), Tile(type_=4), Tile(type_=5), Tile(type_=7), Tile(type_=8)]
             #[Terrain(type_=0), Bit(type_=0), Bit(type_=0)]
             [Aluminium(), Brass(), Copper(), Gold(), Iron(), Lead(), Zinc()],
-            [Insulator(), Plastic(), ThermalConductor(), Plate(), Button(), Wire(), Gate()]
+            [Insulator(), Plastic(), ThermalConductor(), Plate(), Button(), Wire(), Gate()],
+            [Entity(type_=0)]
         ]
         #self.hotbars[0][2].value = 1
         #self.hotbars[0][2].on_update()

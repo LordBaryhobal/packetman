@@ -12,7 +12,7 @@ def round_step(val, step, min_, max_):
     return min(max_, max(min_, round(val/step)*step ))
 
 class Slider(Component):
-    def __init__(self, min_, max_, step=1, callback=lambda *args, **kwargs: None, args=(), name=None):
+    def __init__(self, min_, max_, step=1, callback=lambda *args, **kwargs: True, args=(), name=None):
         """Initializes a Slider instance
 
         Arguments:
@@ -85,13 +85,9 @@ class Slider(Component):
         
         if self.pressed:
             self.thumb = (event.pos[0]-self.get_x())/self.get_w()
-            value = round_step(self.min + self.thumb*self.range, self.step, self.min, self.max)
+            value = self.min + self.thumb*self.range
             
-            if self.value != value:
-                if self.on_change(value):
-                    self.value = value
-
-            self.thumb = (self.value-self.min)/self.range
+            self.set_value(value)
 
     def on_change(self, value):
         """Callback (can be overwritten by subclasses)
@@ -106,5 +102,18 @@ class Slider(Component):
         """
         
         self.set_changed(1)
-        return self.callback(self, *self.args)
+        return self.callback(self, value, *self.args)
         #return True
+    
+    def set_value(self, value):
+        """Sets the slider's value
+
+        Arguments:
+            value {float} -- new value
+        """
+        
+        value = round_step(value, self.step, self.min, self.max)
+        if self.value != value:
+            if self.on_change(value):
+                self.value = value
+        self.thumb = (self.value-self.min)/self.range

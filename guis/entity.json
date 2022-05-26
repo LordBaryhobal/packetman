@@ -1,142 +1,201 @@
 {
-    "class": "Flex",
-    "params": [
-        {"name": "justify", "val": "space-evenly"}
-    ],
-    "w": {"type": "Relative", "val": 0.3},
-    "h": {"type": "Aspect", "val": 1.0},
+    "class": "Menu",
+    "params": [ "${game}" ],
     "children": [
         {
-            "class": "Label",
+            "class": "Flex",
             "params": [
-                "Entity",
-                { "name": "font_size", "val": 30 }
+                {"name": "justify", "val": "space-evenly"}
             ],
-            "x": {"type": "Center", "val": 0},
+            "x": {"type": "Absolute", "val": 0},
+            "y": {"type": "Absolute", "val": 0},
             "w": {"type": "Relative", "val": 1.0},
-            "h": {"type": "Relative", "val": 0.1}
-        },
-        {
-            "class": "Flex",
-            "params": [
-                {"name": "justify", "val": "start"}
-            ],
-            "x": {"type": "Center"},
-            "w": {"type": "Relative", "val": 0.8},
-            "h": {"type": "Relative", "val": 0.3},
+            "h": {"type": "Relative", "val": 1.0},
             "children": [
                 {
                     "class": "Label",
                     "params": [
-                        "Vel(0, 0)",
-                        {"name": "font_size", "val": 20},
-                        {"name":"halign", "val": "left"}
+                        "Entity Settings",
+                        { "name": "font_size", "val": 40 }
                     ],
-                    "x": {"type": "Absolute", "val": 0},
+                    "x": {"type": "Center"},
                     "w": {"type": "Relative", "val": 1.0},
-                    "h": {"type": "Relative", "val": 0.4}
+                    "h": {"type": "Relative", "val": 0.1}
                 },
                 {
                     "class": "Flex",
                     "params": [
-                        {"name": "dir_", "val": "row"},
                         {"name": "justify", "val": "space-evenly"}
                     ],
                     "x": {"type": "Absolute", "val": 0},
-                    "w": {"type": "Relative", "val": 1.0},
-                    "h": {"type": "Relative", "val": 0.4},
+                    "y": {"type": "Absolute", "val": 0},
+                    "w": {"type": "Relative", "val": 1},
+                    "h": {"type": "Relative", "val": 0.7},
                     "children": [
                         {
-                            "class": "Slider",
+                            "class": "Flex",
                             "params": [
-                                -10,
-                                10,
-                                0.1,
-                                "${game.cb_entity_slider}",
-                                ["vel_x"],
-                                { "name": "name", "val": "vel_slider" }
+                                {"name": "justify", "val": "space-evenly"},
+                                {"name": "dir_", "val": "row"}
                             ],
-                            "y": {"type": "Center"},
-                            "w": {"type": "Relative", "val": 0.4},
-                            "h": {"type": "Relative", "val": 1.0}
+                            "x": {"type": "Absolute", "val": 0},
+                            "y": {"type": "Absolute", "val": 0},
+                            "w": {"type": "Relative", "val": 1},
+                            "h": {"type": "Relative", "val": 0.2},
+                            "children": [
+                                {
+                                    "class": "Label",
+                                    "params": [
+                                        "Velocity",
+                                        { "name": "font_size", "val": 40 }
+                                    ],
+                                    "x": {"type": "Center"},
+                                    "y": {"type": "Center"},
+                                    "w": {"type": "Relative", "val": 0.1},
+                                    "h": {"type": "Relative", "val": 0.1}
+                                },
+                                {
+                                    "class": "Label",
+                                    "params": [
+                                        "X:",
+                                        { "name": "font_size", "val": 30 },
+                                        { "name": "name", "val": "x_velocity_label" }
+                                    ],
+                                    "x": {"type": "Center"},
+                                    "y": {"type": "Center"},
+                                    "w": {"type": "Relative", "val": 0.05},
+                                    "h": {"type": "Relative", "val": 0.1}
+                                },
+                                {
+                                    "class": "Slider",
+                                    "params": [
+                                        -10,
+                                        10,
+                                        0.1,
+                                        "${game.cb_entity_menu}",
+                                        ["x_velocity_label"],
+                                        { "name": "name", "val": "x_velocity" }
+                                    ],
+                                    "x": {"type": "Center"},
+                                    "w": {"type": "Relative", "val": 0.15},
+                                    "h": {"type": "Relative", "val": 1}
+                                },
+                                {
+                                    "class": "Label",
+                                    "params": [
+                                        "Y:",
+                                        { "name": "font_size", "val": 30 },
+                                        { "name": "name", "val": "y_velocity_label" }
+                                    ],
+                                    "x": {"type": "Center"},
+                                    "y": {"type": "Center"},
+                                    "w": {"type": "Relative", "val": 0.05},
+                                    "h": {"type": "Relative", "val": 0.1}
+                                },
+                                {
+                                    "class": "Slider",
+                                    "params": [
+                                        -10,
+                                        10,
+                                        0.1,
+                                        "${game.cb_entity_menu}",
+                                        ["y_velocity_label"],
+                                        { "name": "name", "val": "y_velocity" }
+                                    ],
+                                    "x": {"type": "Center"},
+                                    "w": {"type": "Relative", "val": 0.15},
+                                    "h": {"type": "Relative", "val": 1}
+                                }
+                            ]
                         },
                         {
-                            "class": "Slider",
+                            "class": "Flex",
                             "params": [
-                                -10,
-                                10,
-                                0.1,
-                                "${game.cb_entity_slider}",
-                                ["vel_y"],
-                                { "name": "name", "val": "vel_slider" }
+                                {"name": "justify", "val": "space-evenly"},
+                                {"name": "dir_", "val": "row"}
                             ],
-                            "y": {"type": "Center"},
-                            "w": {"type": "Relative", "val": 0.4},
-                            "h": {"type": "Relative", "val": 1.0}
+                            "x": {"type": "Absolute", "val": 0},
+                            "y": {"type": "Absolute", "val": 0},
+                            "w": {"type": "Relative", "val": 1},
+                            "h": {"type": "Relative", "val": 0.2},
+                            "children": [
+                                {
+                                    "class": "Label",
+                                    "params": [
+                                        "Acceleration",
+                                        { "name": "font_size", "val": 40 }
+                                    ],
+                                    "x": {"type": "Center"},
+                                    "y": {"type": "Center"},
+                                    "w": {"type": "Relative", "val": 0.1},
+                                    "h": {"type": "Relative", "val": 0.1}
+                                },
+                                {
+                                    "class": "Label",
+                                    "params": [
+                                        "X:",
+                                        { "name": "font_size", "val": 30 },
+                                        { "name": "name", "val": "x_acceleration_label" }
+                                    ],
+                                    "x": {"type": "Center"},
+                                    "y": {"type": "Center"},
+                                    "w": {"type": "Relative", "val": 0.05},
+                                    "h": {"type": "Relative", "val": 0.1}
+                                },
+                                {
+                                    "class": "Slider",
+                                    "params": [
+                                        -10,
+                                        10,
+                                        0.1,
+                                        "${game.cb_entity_menu}",
+                                        ["x_acceleration_label"],
+                                        { "name": "name", "val": "x_acceleration" }
+                                    ],
+                                    "x": {"type": "Center"},
+                                    "w": {"type": "Relative", "val": 0.15},
+                                    "h": {"type": "Relative", "val": 1}
+                                },
+                                {
+                                    "class": "Label",
+                                    "params": [
+                                        "Y:",
+                                        { "name": "font_size", "val": 30 },
+                                        { "name": "name", "val": "y_acceleration_label" }
+                                    ],
+                                    "x": {"type": "Center"},
+                                    "y": {"type": "Center"},
+                                    "w": {"type": "Relative", "val": 0.05},
+                                    "h": {"type": "Relative", "val": 0.1}
+                                },
+                                {
+                                    "class": "Slider",
+                                    "params": [
+                                        -10,
+                                        10,
+                                        0.1,
+                                        "${game.cb_entity_menu}",
+                                        ["y_acceleration_label"],
+                                        { "name": "name", "val": "y_acceleration" }
+                                    ],
+                                    "x": {"type": "Center"},
+                                    "w": {"type": "Relative", "val": 0.15},
+                                    "h": {"type": "Relative", "val": 1}
+                                }
+                            ]
                         }
                     ]
-                }
-            ]
-        },
-        {
-            "class": "Flex",
-            "params": [
-                {"name": "justify", "val": "start"}
-            ],
-            "x": {"type": "Center"},
-            "w": {"type": "Relative", "val": 0.8},
-            "h": {"type": "Relative", "val": 0.3},
-            "children": [
-                {
-                    "class": "Label",
-                    "params": [
-                        "Acc(0, 0)",
-                        {"name": "font_size", "val": 20},
-                        {"name":"halign", "val": "left"}
-                    ],
-                    "x": {"type": "Absolute", "val": 0},
-                    "w": {"type": "Relative", "val": 1.0},
-                    "h": {"type": "Relative", "val": 0.4}
                 },
+
                 {
-                    "class": "Flex",
+                    "class": "Button",
                     "params": [
-                        {"name": "dir_", "val": "row"},
-                        {"name": "justify", "val": "space-evenly"}
+                        "Save",
+                        "${game.cb_exit_entity_settings}"
                     ],
-                    "x": {"type": "Absolute", "val": 0},
-                    "w": {"type": "Relative", "val": 1.0},
-                    "h": {"type": "Relative", "val": 0.4},
-                    "children": [
-                        {
-                            "class": "Slider",
-                            "params": [
-                                -10,
-                                10,
-                                0.1,
-                                "${game.cb_entity_slider}",
-                                ["acc_x"],
-                                { "name": "name", "val": "acc_slider" }
-                            ],
-                            "y": {"type": "Center"},
-                            "w": {"type": "Relative", "val": 0.4},
-                            "h": {"type": "Relative", "val": 1.0}
-                        },
-                        {
-                            "class": "Slider",
-                            "params": [
-                                -10,
-                                10,
-                                0.1,
-                                "${game.cb_entity_slider}",
-                                ["acc_y"],
-                                { "name": "name", "val": "acc_slider" }
-                            ],
-                            "y": {"type": "Center"},
-                            "w": {"type": "Relative", "val": 0.4},
-                            "h": {"type": "Relative", "val": 1.0}
-                        }
-                    ]
+                    "x": {"type": "Center"},
+                    "w": {"type": "Relative", "val": 0.5},
+                    "h": {"type": "Relative", "val": 0.1}
                 }
             ]
         }
