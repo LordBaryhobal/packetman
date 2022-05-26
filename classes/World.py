@@ -16,6 +16,7 @@ from .tiles.Bit import Bit
 from .tiles.Terrain import *
 from .tiles.Components import *
 from .tiles.Metals import *
+from .Event import Event
 
 class World:
     """
@@ -145,6 +146,8 @@ class World:
             delta {float} -- time elapsed in last frame in seconds
         """
 
+        collided = False
+
         vel = entity.vel - entity.acc*delta
         v = vel.length
 
@@ -197,8 +200,15 @@ class World:
                     else:
                         entity.vel.y = 0
                         entity.pos.y += dy
-                
+                    
+                    collided = True
+
                 entity.update()
+        
+        if collided:
+            event = Event(Event.COLLISION_WORLD)
+            event.entity = entity
+            self.game.events.append(event)
         
     def modify_tilelistlen(self, pos):
         """Updates world size to include a given position

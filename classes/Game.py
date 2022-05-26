@@ -148,12 +148,14 @@ class Game:
         events = self.events
 
         for event in events:
+            """
             if event.type == Event.NONE:
                 pass
             
             elif event.type == Event.UPDATED:
                 if hasattr(event.obj) and hasattr(event.callback):
-                    getattr(event.obj, event.callback).__call__(event)
+                    getattr(event.obj, event.callback).__call__(event)"""
+            event.dispatch()
 
         self.events = []
         if not self.config["edition"]:
