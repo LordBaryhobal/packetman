@@ -145,7 +145,7 @@ class Editor():
                                 self.entity_start_move_pos.append(entity.pos)
                     
                     #if an entity is selected in the hotbar, place it
-                    elif self.hud.get_type()[0] == Entity:
+                    elif isinstance(self.hud.get_type()[2], Entity):
                         pos = self.game.camera.screen_to_world(self.get_mousepos(), round_=False)
                         
                         new_entity = self.hud.get_type()[2].copy()
