@@ -12,8 +12,6 @@ class Entity(Copyable):
     Non grid-locked entity, either alive or not
     Subject to physics
     """
-
-    COLORS = [(100,100,100),(100,0,0),(0,100,0),(0,0,100),(100,100,0),(100,0,100),(0,100,100)]
     
     SIZE = Vec(0.5,0.5)
     
@@ -23,9 +21,9 @@ class Entity(Copyable):
         0: None
     }
 
-    _no_save = ["type", "pos", "vel", "acc", "box", "highlight", "texture"]
+    _no_save = ["type", "pos", "vel", "acc", "box", "highlight", "texture", "world"]
 
-    def __init__(self, pos=None, vel=None, acc=None, type_=None, highlight=False):
+    def __init__(self, pos=None, vel=None, acc=None, type_=None, highlight=False, world=None):
         """Initializes an Entity instance
 
         Keyword Arguments:
@@ -33,6 +31,8 @@ class Entity(Copyable):
             vel {Vec} -- velocity of entity in world units (default: {None})
             acc {Vec} -- acceleration of entity in world units (default: {None})
             type_ {int} -- entity type (default: {None})
+            highlight {bool} -- whether to highlight the entity (default: {False})
+            world {World} -- world the entity is in (default: {None})
         """
 
         if pos is None: pos = Vec()
@@ -53,6 +53,7 @@ class Entity(Copyable):
         self.on_ground = False
         
         self.highlight = highlight
+        self.world = world
 
     def render(self, surface, pos, size, dimensions=None):
         """Renders the entity
@@ -71,8 +72,7 @@ class Entity(Copyable):
         if self.texture:
             self.texture.render(surface, pos, size, dimensions)
         else:
-            color = self.COLORS[self.type]
-            pygame.draw.rect(surface, color, (pos.x, pos.y-self.box.h*size, self.box.w*size, self.box.h*size))
+            pygame.draw.rect(surface, (100,100,100), (pos.x, pos.y-self.box.h*size, self.box.w*size, self.box.h*size))
         if self.highlight:
             pygame.draw.rect(surface, (255,255,255), (pos.x, pos.y-self.box.h*size, self.box.w*size, self.box.h*size), 2)
             

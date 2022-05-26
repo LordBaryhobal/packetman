@@ -10,7 +10,7 @@ class Bullet(Entity):
     GRAVITY = False
     
     _entity = {
-        0: "bullet"
-        
+        0: "bullet",
+        1: "bit"
     }
-    SIZE = Vec(2,2)
+    SIZE = Vec(0.2,0.2)
