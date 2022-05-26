@@ -56,8 +56,3 @@ class Player(Entity):
         
         if keys[pygame.K_a]:
             self.move(-1)
-    
-    @on(Event.COLLISION_WORLD)
-    def on_world_collision(self, event):
-        if event.entity is self:
-            self.jump()
