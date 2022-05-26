@@ -206,12 +206,13 @@ class Game:
     def init_gui(self):
         """Loads and initializes the GUI"""
 
-        self.main_menu = Parser(self).parse("main")
-        self.pause_menu = Parser(self).parse("pause")
-        self.settings_menu = Parser(self).parse("settings")
-        self.levels_menu = Parser(self).parse("levels")
-        self.level_comp = Parser(self).parse("level")
-        self.entity_menu = Parser(self).parse("entity")
+        self.parser = Parser(self)
+        self.main_menu = self.parser.parse("main")
+        self.pause_menu = self.parser.parse("pause")
+        self.settings_menu = self.parser.parse("settings")
+        self.levels_menu = self.parser.parse("levels")
+        self.level_comp = self.parser.parse("level")
+        self.entity_menu = self.parser.parse("entity")
 
         self.main_menu.set_visible(True)
         self.entity_menu.set_visible(False)
