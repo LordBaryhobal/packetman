@@ -4,10 +4,8 @@
 from .Entity import Entity
 from math import copysign
 from .Vec import Vec
-from .Event import Event, on, listener
 import pygame
 
-@listener
 class Player(Entity):
     """
     Player class, extends Entity. Holds player-specific information
@@ -56,8 +54,3 @@ class Player(Entity):
         
         if keys[pygame.K_a]:
             self.move(-1)
-    
-    @on(Event.COLLISION_WORLD)
-    def on_world_collision(self, event):
-        if event.entity is self:
-            self.jump()
