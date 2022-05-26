@@ -1,3 +1,6 @@
+#Packetman is a small game created in the scope of a school project
+#Copyright (C) 2022  Louis HEREDERO & Mathéo BENEY
+
 import pygame
 from classes.Entity import Entity
 from classes.Vec import Vec
