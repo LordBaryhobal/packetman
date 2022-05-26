@@ -13,6 +13,7 @@ import struct, pickle
 from .entities.Bullet import Bullet
 from .entities.Hacker import Hacker
 from .entities.Robot import Robot
+from .entities.Drone import Drone
 
 from .tiles.Bit import Bit
 from .tiles.Terrain import *

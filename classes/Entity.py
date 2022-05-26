@@ -46,7 +46,7 @@ class Entity(Copyable):
 
         self.type = type_
         self.name = self._entity[self.type]
-        self.texture = Texture(self.name, self.type) if self.name else None
+        self.texture = Texture(self.name, 0) if self.name else None
 
         self.box = Rect(self.pos.x, self.pos.y, self.SIZE.x, self.SIZE.y) # width and height in tiles
 
