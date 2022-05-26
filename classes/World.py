@@ -10,6 +10,7 @@ from .Player import Player
 from .Logger import Logger
 from math import floor
 import struct, pickle
+from .entities.Bullet import Bullet
 
 from .tiles.Bit import Bit
 from .tiles.Terrain import *
@@ -280,6 +281,7 @@ class World:
             del attrs["vel"]
             del attrs["acc"]
             del attrs["box"]
+            del attrs["texture"]
             attrs = pickle.dumps(attrs)
             buf_entity.extend(attrs)
 

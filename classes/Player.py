@@ -4,6 +4,7 @@
 from .Entity import Entity
 from math import copysign
 from .Vec import Vec
+import pygame
 
 class Player(Entity):
     """
@@ -32,3 +33,22 @@ class Player(Entity):
         """
 
         self.vel.x = copysign(self.SPEED, direction)
+    
+    def handle_events(self, events):
+        """Handles events for the player
+
+        Arguments:
+            events {list} -- list of pygame events
+        """
+        for event in events:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    self.jump()
+        
+        keys = pygame.key.get_pressed()
+        
+        if keys[pygame.K_d]:
+            self.move(1)
+        
+        if keys[pygame.K_a]:
+            self.move(-1)

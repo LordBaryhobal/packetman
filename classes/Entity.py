@@ -98,3 +98,11 @@ class Entity(Copyable):
         
         self.box.x = self.pos.x
         self.box.y = self.pos.y
+    
+    def handle_events(self, events):
+        """Handles events
+
+        Arguments:
+            events {list} -- list of events
+        """
+        pass
