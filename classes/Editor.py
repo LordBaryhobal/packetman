@@ -152,7 +152,7 @@ class Editor():
                         new_entity.pos = pos
                         new_entity.update()
                         
-                        self.game.world.entities.append(new_entity)
+                        self.game.world.add_entity(new_entity)
                         self.game.camera.update_visible_entities()
                         
                     #start placing tiles

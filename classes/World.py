@@ -36,7 +36,7 @@ class World:
         self.game = game
         self.tiles = np.array([[Tile()]], dtype='object')
         self.entities = []
-        self.player = Player(Vec(1,1))
+        self.player = Player(Vec(1,1),world=self)
         self.entities.append(self.player)
     
     def physics(self, delta):
@@ -370,7 +370,7 @@ class World:
                 for k, v in attrs.items():
                     setattr(entity, k, v)
                 
-                self.entities.append(entity)
+                self.add_entity(entity)
                 if cls == Player:
                     self.player = entity
         
@@ -451,3 +451,14 @@ class World:
         
         self.entities.remove(entity)
         del entity
+    
+    def add_entity(self, entity):
+        """Adds an entity
+
+        Arguments:
+            entity {Entity} -- entity to add
+        """
+        
+        entity.world = self
+        self.entities.append(entity)
+        self.game.camera.update_visible_entities()
