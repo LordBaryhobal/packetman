@@ -136,11 +136,11 @@ class Vec(Copyable):
         """
 
         return Vec(min(self.x, other.x), min(self.y, other.y))
-    
     def __eq__(self, other):
         return self.x == other.x and self.y == other.y
     
     def __repr__(self):
+    
         return f"Vec({self.x}, {self.y})"
     
     def __round__(self, n=0):
