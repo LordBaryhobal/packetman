@@ -13,4 +13,4 @@ class Bullet(Entity):
         0: "bullet"
         
     }
-    SIZE = Vec(2,2)
+    SIZE = Vec(0.2,0.2)

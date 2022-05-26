@@ -11,6 +11,7 @@ from .Logger import Logger
 from math import floor, copysign
 import struct, pickle
 from .entities.Bullet import Bullet
+from .entities.Hacker import Hacker
 
 from .tiles.Bit import Bit
 from .tiles.Terrain import *

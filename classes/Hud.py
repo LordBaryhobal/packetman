@@ -14,6 +14,7 @@ from .tiles.Components import *
 from .tiles.Metals import *
 
 from .entities.Bullet import Bullet
+from .entities.Hacker import Hacker
 
 class Hud:
     """Class to display editor hud"""
@@ -37,7 +38,7 @@ class Hud:
             #[Terrain(type_=0), Bit(type_=0), Bit(type_=0)]
             [Aluminium(), Brass(), Copper(), Gold(), Iron(), Lead(), Zinc()],
             [Insulator(), Plastic(), ThermalConductor(), Plate(), Button(), Wire(), Gate()],
-            [Entity(type_=0),Bullet(type_=0)]
+            [Entity(type_=0),Bullet(type_=0),Hacker(type_=0)]
         ]
         #self.hotbars[0][2].value = 1
         #self.hotbars[0][2].on_update()
