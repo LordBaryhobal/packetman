@@ -65,6 +65,7 @@ class Player(Entity):
         
     def physics(self, delta):
         if self.swinging[0]:
+            """
             half = Vec(self.box.w/2,self.box.h/2)
             swing_vec = self.swinging[1]-(self.pos+half)
             swing_vec = swing_vec.normalize()*self.swinging[2]
@@ -73,11 +74,19 @@ class Player(Entity):
 
             total_f = sum(self.forces, Vec(0, -20)*self.mass)
             dot = total_f.dot(swing_vec)
-            swing_len = swing_vec.length**2
+            swing_len = self.swinging[2]**2
             force = dot/swing_len
             self.forces.append(swing_vec * force * -1)
 
             v = self.vel.dot(swing_vec)/swing_len
             self.vel -= swing_vec*v
+            """
+
+            k = 20
+            
+            half = Vec(self.box.w/2,self.box.h/2)
+            swing_vec = self.swinging[1]-(self.pos+half)
+            force = swing_vec.length-self.swinging[2]*0.5
+            self.forces.append(swing_vec.normalize() * force * k)
         
         super().physics(delta)
