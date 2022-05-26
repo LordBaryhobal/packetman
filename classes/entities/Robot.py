@@ -1,7 +1,10 @@
+#Packetman is a small game created in the scope of a school project
+#Copyright (C) 2022  Louis HEREDERO & Mathéo BENEY
+
 import pygame
 from classes.Entity import Entity
 from classes.Vec import Vec
-from math import copysign
+from math import copysign, floor
 from random import uniform
 
 
@@ -15,7 +18,7 @@ class Robot(Entity):
     
     SPEED = uniform(1,3)
     JUMP_SPEED = 7
-    VIEW_DISTANCE = 4
+    VIEW_DISTANCE = 3
     
     def __init__(self, pos=None, vel=None, acc=None, type_=None, highlight=False, world=None):
         super().__init__(pos, vel, acc, type_, highlight, world)
@@ -47,5 +50,11 @@ class Robot(Entity):
         
             if player_pos.y -self.pos.y-self.SIZE.y/2 > 0.5:
                 self.jump()
+    
+    def render(self, surface, pos, size, dimensions=None):
+        super().render(surface, pos, size, dimensions)
+        #render the viewdistance
+        """pos = floor(pos + self.SIZE*Vec(1,-1)*size/2)
+        pygame.draw.circle(surface, (0,255,0), pos, int(self.VIEW_DISTANCE*size),1)"""
         
     
