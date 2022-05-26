@@ -12,6 +12,7 @@ from math import floor, copysign
 import struct, pickle
 from .entities.Bullet import Bullet
 from .entities.Hacker import Hacker
+from .entities.Robot import Robot
 
 from .tiles.Bit import Bit
 from .tiles.Terrain import *

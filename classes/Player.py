@@ -15,6 +15,8 @@ class Player(Entity):
     SPEED = 3
     JUMP_SPEED = 7
     
+    SIZE = Vec(0.8,0.8)
+    
     _entity = {
         0: "player"
     }
