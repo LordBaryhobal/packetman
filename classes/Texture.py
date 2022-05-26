@@ -2,6 +2,7 @@
 #Copyright (C) 2022  Louis HEREDERO & Mathéo BENEY
 
 import pygame
+from classes.Vec import Vec
 
 class Texture:
     _cache = {}
@@ -40,23 +41,25 @@ class Texture:
         
         return Texture._cache[name]
 
-    def render(self, surface, pos, size):
+    def render(self, surface, pos, tilesize, dimensions=Vec(1,1)):
         """Renders the texture
 
         Arguments:
             surface {pygame.Surface} -- surface to render the texture on
             pos {Vec} -- pixel coordinates where to render on the surface
-            size {int} -- size of a tile in pixels
+            tilesize {int} -- size of a tile in pixels
+            dimensions {Vec} -- dimensions of the texture (default: {Vec(1,1)})
         """
         
         width, height = self.img.get_width()/self.WIDTH, self.img.get_height()/self.HEIGHT
 
-        img = pygame.transform.scale(self.img, (int(width*size), int(height*size)))
+        #dimensions is the size of the object in tiles
+        img = pygame.transform.scale(self.img, (int(width*tilesize)*dimensions.x, int(height*tilesize)*dimensions.y))
         
         x, y = 0, 0
         if not self.id is None:
-            x = (self.id%width)*size
-            y = (self.id//width)*size
+            x = (self.id%width)*tilesize*dimensions.x
+            y = (self.id//width)*tilesize*dimensions.y
 
-        surface.blit(img, [pos.x, pos.y-size], [x, y, size, size])
+        surface.blit(img, [pos.x, pos.y-tilesize*dimensions.y], [x, y, tilesize*dimensions.x, tilesize*dimensions.y])
         #surface.blit(img, [pos.x, pos.y])
