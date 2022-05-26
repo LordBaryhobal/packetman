@@ -14,6 +14,8 @@ class Tile(Copyable):
         0: None
     }
 
+    _no_save = ["type", "pos", "texture"]
+
     solid = False
     connected = False
     connect_strict = False

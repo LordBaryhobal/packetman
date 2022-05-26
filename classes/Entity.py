@@ -14,6 +14,8 @@ class Entity(Copyable):
 
     COLORS = [(100,100,100),(100,0,0),(0,100,0),(0,0,100),(100,100,0),(100,0,100),(0,100,100)]
 
+    _no_save = ["type", "pos", "vel", "acc", "box", "highlight"]
+
     def __init__(self, pos=None, vel=None, acc=None, type_=None, highlight=False):
         """Initializes an Entity instance
 

@@ -250,9 +250,11 @@ class World:
             buf_tile.extend(bytearray(tile.__class__.__qualname__, "utf-8"))
             buf_tile.append(0)
             attrs = tile.__dict__.copy()
-            del attrs["type"]
-            del attrs["pos"]
-            del attrs["texture"]
+
+            if hasattr(tile, "_no_save"):
+                for a in tile._no_save:
+                    del attrs[a]
+            
             attrs = pickle.dumps(attrs)
             buf_tile.extend(attrs)
 
@@ -275,11 +277,11 @@ class World:
             buf_entity.extend(bytearray(entity.__class__.__qualname__, "utf-8"))
             buf_entity.append(0)
             attrs = entity.__dict__.copy()
-            del attrs["type"]
-            del attrs["pos"]
-            del attrs["vel"]
-            del attrs["acc"]
-            del attrs["box"]
+
+            if hasattr(entity, "_no_save"):
+                for a in entity._no_save:
+                    del attrs[a]
+            
             attrs = pickle.dumps(attrs)
             buf_entity.extend(attrs)
 
