@@ -8,7 +8,7 @@ from .Rect import Rect
 from .Entity import Entity
 from .Player import Player
 from .Logger import Logger
-from math import floor
+from math import floor, copysign
 import struct, pickle
 
 from .tiles.Bit import Bit
@@ -162,9 +162,9 @@ class World:
             tiles = np.append(tiles, Tile(floor(entity.pos.x), floor(entity.pos.y), -1))
             tiles = np.append(tiles, Tile(floor(entity.pos.x+1), floor(entity.pos.y), -1))
         
-        #TODO: fix that
-        p = round(entity.pos)
-        tiles = sorted(tiles, key=lambda t: t.pos.distance_to(p))
+        # order according to speed -> going right = sort from left to right
+        #                             going up = sort from botton to top
+        tiles = sorted(tiles, key=lambda t: copysign(t.pos.x,vel.x)+copysign(t.pos.y,vel.y))
 
         for tile in tiles:
             if ((tile.name and tile.solid) or tile.type == -1) and entity.box.overlaps(Rect(tile.pos.x, tile.pos.y,1,1)):
