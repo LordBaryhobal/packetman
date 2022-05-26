@@ -112,20 +112,20 @@ class Game:
                     elif self.settings_menu.visible:
                         self.cb_exit_settings(None)
 
-                elif not self.config["edition"]:
-                    if event.key == pygame.K_SPACE:
-                        self.world.player.jump()
+        if not self.config["edition"]:
+            for entity in self.world.entities:
+                entity.handle_events(events)
                     
-                    elif event.key == pygame.K_e:
-                        """Test interaction"""
-                        player = self.world.player
-                        for y in range(-1,2):
-                            for x in range(-1,2):
-                                if (x,y) == (0,0): continue
-                                tile = self.world.get_tile(player.pos + Vec(x,y))
-                                if tile and tile.name and isinstance(tile, ButtonTile) and not tile.pressed:
-                                    tile.on_interact()
-                        """End test interaction"""
+                """elif event.key == pygame.K_e:
+                    #Test interaction
+                    player = self.world.player
+                    for y in range(-1,2):
+                        for x in range(-1,2):
+                            if (x,y) == (0,0): continue
+                            tile = self.world.get_tile(player.pos + Vec(x,y))
+                            if tile and tile.name and isinstance(tile, ButtonTile) and not tile.pressed:
+                                tile.on_interact()
+                    #End test interaction"""
 
             
         keys = pygame.key.get_pressed()
@@ -134,13 +134,6 @@ class Game:
         events = list(filter(lambda e: not (hasattr(e, "handled") and e.handled), events))
 
         if not self.paused:
-            if not self.config["edition"]:
-                if keys[pygame.K_d]:
-                    self.world.player.move(1)
-                
-                if keys[pygame.K_a]:
-                    self.world.player.move(-1)
-
             if self.config["edition"]:
                 self.editor.handle_events(events)
 

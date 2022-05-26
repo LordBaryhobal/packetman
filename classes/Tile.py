@@ -42,13 +42,14 @@ class Tile(Copyable):
         
         super().__setattr__(name, value)
     
-    def render(self, surface, pos, size):
+    def render(self, surface, pos, size, dimensions=None):
         """Renders the tile
 
         Arguments:
             surface {pygame.Surface} -- surface to render the tile on
             pos {Vec} -- pixel coordinates where to render on the surface
             size {int} -- size of a tile in pixels
+            dimensions {Vec} -- dimensions of the tile (default: {None})
         """
         
         if self.texture:

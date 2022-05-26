@@ -5,6 +5,7 @@ from classes.Copyable import Copyable
 from .Vec import Vec
 from .Rect import Rect
 import pygame, random
+from classes.Texture import Texture
 
 class Entity(Copyable):
     """
@@ -13,8 +14,16 @@ class Entity(Copyable):
     """
 
     COLORS = [(100,100,100),(100,0,0),(0,100,0),(0,0,100),(100,100,0),(100,0,100),(0,100,100)]
+    
+    SIZE = Vec(0.5,0.5)
+    
+    GRAVITY = True
+    
+    _entity = {
+        0: None
+    }
 
-    _no_save = ["type", "pos", "vel", "acc", "box", "highlight"]
+    _no_save = ["type", "pos", "vel", "acc", "box", "highlight", "texture"]
 
     def __init__(self, pos=None, vel=None, acc=None, type_=None, highlight=False):
         """Initializes an Entity instance
@@ -29,21 +38,23 @@ class Entity(Copyable):
         if pos is None: pos = Vec()
         if vel is None: vel = Vec()
         if acc is None: acc = Vec()
-        if type_ is None: type_ = random.randint(0,6)
+        if type_ is None: type_ = 0
 
         self.pos = pos
         self.vel = vel
         self.acc = acc
 
         self.type = type_
+        self.name = self._entity[self.type]
+        self.texture = Texture(self.name, self.type) if self.name else None
 
-        self.box = Rect(self.pos.x, self.pos.y, 0.5, 0.5) # width and height in tiles
+        self.box = Rect(self.pos.x, self.pos.y, self.SIZE.x, self.SIZE.y) # width and height in tiles
 
         self.on_ground = False
         
         self.highlight = highlight
 
-    def render(self, surface, pos, size):
+    def render(self, surface, pos, size, dimensions=None):
         """Renders the entity
 
         Renders the entity on a given surface at a given position and scale
@@ -52,10 +63,16 @@ class Entity(Copyable):
             surface {pygame.Surface} -- surface to render the entity on
             pos {Vec} -- pixel coordinates where to render on the surface
             size {int} -- size of a tile in pixels
+            dimension {Vec} -- dimensions of the object in tiles (default: {None})
         """
+        if dimensions is None:
+            dimensions = self.SIZE
         
-        color = self.COLORS[self.type]
-        pygame.draw.rect(surface, color, (pos.x, pos.y-self.box.h*size, self.box.w*size, self.box.h*size))
+        if self.texture:
+            self.texture.render(surface, pos, size, dimensions)
+        else:
+            color = self.COLORS[self.type]
+            pygame.draw.rect(surface, color, (pos.x, pos.y-self.box.h*size, self.box.w*size, self.box.h*size))
         if self.highlight:
             pygame.draw.rect(surface, (255,255,255), (pos.x, pos.y-self.box.h*size, self.box.w*size, self.box.h*size), 2)
             
@@ -66,8 +83,8 @@ class Entity(Copyable):
         Arguments:
             delta {float} -- time elapsed in last fram in seconds
         """
-
-        self.acc = Vec(0,-20)
+        if self.GRAVITY:
+            self.acc = Vec(0,-20)
 
         self.pos += self.vel * delta
         self.vel += self.acc * delta
@@ -83,3 +100,11 @@ class Entity(Copyable):
         
         self.box.x = self.pos.x
         self.box.y = self.pos.y
+    
+    def handle_events(self, events):
+        """Handles events
+
+        Arguments:
+            events {list} -- list of events
+        """
+        pass

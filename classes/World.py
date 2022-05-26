@@ -10,6 +10,7 @@ from .Player import Player
 from .Logger import Logger
 from math import floor, copysign
 import struct, pickle
+from .entities.Bullet import Bullet
 
 from .tiles.Bit import Bit
 from .tiles.Terrain import *
