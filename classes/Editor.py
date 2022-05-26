@@ -268,7 +268,6 @@ class Editor():
                     #remove the selected entity
                     if self.selected_entity is not None:
                         self.game.world.remove_entity(self.selected_entity)
-                        self.game.camera.update_visible_entities()
                         self.selected_entity = None
                     
                     #remove the tiles in the selection
