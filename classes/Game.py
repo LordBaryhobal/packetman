@@ -314,27 +314,24 @@ class Game:
         self.save_entity_settings()
         self.entity_menu.set_visible(False)
     
-    def open_entity_settings(self, entity=None):
-        self.entity_menu.get_by_name("x_velocity") \
-            .set_value(self.editor.selected_entity.vel.x)
-        
-        self.entity_menu.get_by_name("y_velocity") \
-            .set_value(self.editor.selected_entity.vel.y)
-        
+    def open_entity_settings(self, single_entity=False):
+        self.single_entity = single_entity
         self.entity_menu.set_visible(True)
         
-    def save_entity_settings(self):
-        self.editor.selected_entity.vel.x = \
-            self.entity_menu.get_by_name("x_velocity").value
+    def save_entity_settings(self):   
+        if self.single_entity:
+            entities = [self.editor.selected_entity]
+        else:
+            entities = self.editor.selected_entities
         
-        self.editor.selected_entity.vel.y = \
-            self.entity_menu.get_by_name("y_velocity").value
-            
+        vel = Vec(self.entity_menu.get_by_name("x_velocity").value,self.entity_menu.get_by_name("y_velocity").value)
+        
         value = self.entity_menu.get_by_name("type").value
-        if value in self.editor.selected_entity._entity:
-            self.editor.selected_entity.type = \
-                self.entity_menu.get_by_name("type").value
-            self.editor.selected_entity.update_texture()
+        for entity in entities:
+            entity.vel = vel.copy()
+            if value in entity._entity:
+                entity.type = value
+                entity.update_texture()
         return True
 
     def cb_entity_menu(self, slider, value, label_name, *args, **kwargs):
