@@ -262,7 +262,9 @@ class Editor():
                 #fill selection with tile of the current type
                 elif event.key == pygame.K_f:
                     if self.selection[0] == 2:
-                        self.modify_selection(*self.hud.get_type())
+                        class_, type_, object_ = self.hud.get_type()
+                        if not isinstance(object_, Entity):
+                            self.modify_selection(class_, type_)
                 
                 elif event.key == pygame.K_BACKSPACE:
                     #remove the selected entity
