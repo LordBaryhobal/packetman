@@ -50,7 +50,8 @@ class World:
             delta {float} -- time elapsed in last frame in seconds
         """
 
-        for entity in self.entities:
+        count = len(self.entities)
+        for i, entity in enumerate(self.entities):
             entity.physics(delta)
 
             self.check_collisions(entity, delta)
@@ -70,6 +71,14 @@ class World:
             
             if isinstance(entity, Player):
                 entity.vel.x *= 0.95
+            
+
+            if i != count-1:
+                for entity2 in self.entities[i+1:]:
+                    if entity.box.overlaps(entity2.box):
+                        event = Event(Event.COLLISION_ENTITY)
+                        event.entities = [entity, entity2]
+                        self.game.events.append(event)
     
     def get_tile(self, pos):
         """Returns the tile at a given position
@@ -150,6 +159,7 @@ class World:
         """
 
         collided = False
+        collided_with = []
 
         vel = entity.vel - entity.acc*delta
         v = vel.length
@@ -205,12 +215,14 @@ class World:
                         entity.pos.y += dy
                     
                     collided = True
+                    collided_with.append(tile)
 
                 entity.update()
         
         if collided:
             event = Event(Event.COLLISION_WORLD)
             event.entity = entity
+            event.tiles = collided_with
             self.game.events.append(event)
         
     def modify_tilelistlen(self, pos):
