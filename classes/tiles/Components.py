@@ -55,6 +55,11 @@ class Button(Input):
 
     pressed = False
     rotatable = True
+    
+    def __init__(self, x=0, y=0, type_=0):
+        super().__init__(x, y, type_)
+        self.rotation = 0
+        self.set_pressed(False)
 
     @on(Event.INTERACTION)
     def on_interact(self, event):
@@ -63,7 +68,15 @@ class Button(Input):
     
     def set_pressed(self, pressed=True):
         self.pressed = pressed
-        self.texture.id = int(self.pressed) << 2
+        self.update_texture()
+    
+    def rotate(self):
+        self.rotation = (self.rotation + 1) % 4
+        self.update_texture()
+    
+    def update_texture(self):
+        self.texture.id = (int(self.pressed) << 2) + self.rotation
+        
 
 class Wire(Electrical):
     _tiles = {

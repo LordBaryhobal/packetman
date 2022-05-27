@@ -365,8 +365,13 @@ class Editor():
                             self.game.open_entity_settings(single_entity=False)
                         else:
                             Logger.warn("Can't edit the player")
-                    
-
+                
+                #rotate the tile the mouse is over
+                elif event.key == pygame.K_r:
+                    world_mouse_pos = self.game.camera.screen_to_world(self.get_mousepos())
+                    tile = self.game.world.get_tile(world_mouse_pos)
+                    if tile.rotatable:
+                        tile.rotate()
     
     def modify_selection(self, cls, type):
         """Fills selection with certain tile type
