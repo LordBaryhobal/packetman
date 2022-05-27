@@ -56,6 +56,8 @@ class Entity(Copyable):
         
         self.highlight = highlight
         self.world = world
+        
+        self.last_pos = None
 
     def render(self, surface, pos, size, dimensions=None):
         """Renders the entity
