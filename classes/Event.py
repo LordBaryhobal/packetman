@@ -34,6 +34,7 @@ class Event:
     INTERACTION = 5
     ENTER_TILE = 6
     EXIT_TILE = 7
+    WORLD_LOADED = 8
     
 
     def __init__(self, type_):

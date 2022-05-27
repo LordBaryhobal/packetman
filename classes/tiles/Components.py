@@ -76,6 +76,10 @@ class Button(Input):
     
     def update_texture(self):
         self.texture.id = (int(self.pressed) << 2) + self.rotation
+    
+    @on(Event.WORLD_LOADED)
+    def on_world_loaded(self, event):
+        self.update_texture()
         
 
 class Wire(Electrical):

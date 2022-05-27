@@ -426,6 +426,7 @@ class World:
                     self.player = entity
         
         Logger.info("Level loaded successfully (maybe)")
+        self.game.events.append(Event(Event.WORLD_LOADED))
 
         self.game.camera.update()
         self.game.camera.update_visible_tiles()
