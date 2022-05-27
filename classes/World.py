@@ -10,6 +10,7 @@ from .Player import Player
 from .Logger import Logger
 from math import floor, copysign
 import struct, pickle
+import pygame
 from .entities.Bullet import Bullet
 from .entities.Hacker import Hacker
 from .entities.Robot import Robot
@@ -488,3 +489,16 @@ class World:
         entity.world = self
         self.entities.append(entity)
         self.game.camera.update_visible_entities()
+        
+    def handle_events(self, events):
+        for event in events:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_e and not self.game.config["edition"] and not self.game.paused:
+                    #get the tile around the player
+                    player = self.player
+                    tiles = self.get_tiles_in_rect(player.pos+Vec(-1,1), player.pos + Vec(1,-1))
+                    interactive_tiles = list(filter(lambda t: t.INTERACTIVE, list(tiles.flatten())))
+                    if len(interactive_tiles) > 0:
+                        event = Event(Event.INTERACTION)
+                        event.tiles = interactive_tiles
+                        self.game.events.append(event)
