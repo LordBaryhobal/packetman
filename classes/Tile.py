@@ -4,7 +4,25 @@
 from classes.Copyable import Copyable
 from .Vec import Vec
 from .Texture import Texture
+from .Utility import import_class
 import pygame
+
+TILES = {
+    "Aluminium": "classes.tiles.Metals",
+    "Brass": "classes.tiles.Metals",
+    "Button": "classes.tiles.Components",
+    "Copper": "classes.tiles.Metals",
+    "Gate": "classes.tiles.Components",
+    "Gold": "classes.tiles.Metals",
+    "Insulator": "classes.tiles.Terrain",
+    "Iron": "classes.tiles.Metals",
+    "Lead": "classes.tiles.Metals",
+    "Plastic": "classes.tiles.Terrain",
+    "Plate": "classes.tiles.Components",
+    "ThermalConductor": "classes.tiles.Terrain",
+    "Wire": "classes.tiles.Components",
+    "Zinc": "classes.tiles.Metals"
+}
 
 class Tile(Copyable):
     COLORS = [None,(50,50,50),(255,255,255),(255,0,0),(0,255,0),(0,0,255),(255,255,0),(255,0,255),(0,255,255)]
@@ -42,6 +60,18 @@ class Tile(Copyable):
             self.texture = Texture(self.texture.name, value)
         
         super().__setattr__(name, value)
+    
+    def get_cls(cls):
+        """Get class from class name
+
+        Arguments:
+            cls {str} -- class name
+
+        Returns:
+            class -- corresponding class
+        """
+        
+        return import_class(TILES, cls)
     
     def render(self, surface, pos, size, dimensions=None):
         """Renders the tile

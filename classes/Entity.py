@@ -6,6 +6,15 @@ from .Vec import Vec
 from .Rect import Rect
 import pygame, random
 from classes.Texture import Texture
+from .Utility import import_class
+
+ENTITIES = {
+    "Bullet": "classes.entities.Bullet",
+    "Drone": "classes.entities.Drone",
+    "Hacker": "classes.entities.Hacker",
+    "Player": "classes.Player",
+    "Robot": "classes.entities.Robot"
+}
 
 class Entity(Copyable):
     """
@@ -56,6 +65,18 @@ class Entity(Copyable):
         
         self.highlight = highlight
         self.world = world
+    
+    def get_cls(cls):
+        """Get class from class name
+
+        Arguments:
+            cls {str} -- class name
+
+        Returns:
+            class -- corresponding class
+        """
+        
+        return import_class(ENTITIES, cls)
 
     def render(self, surface, pos, size, dimensions=None):
         """Renders the entity

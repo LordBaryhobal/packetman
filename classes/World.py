@@ -11,15 +11,6 @@ from .Logger import Logger
 from math import floor, copysign
 import struct, pickle
 import pygame
-from .entities.Bullet import Bullet
-from .entities.Hacker import Hacker
-from .entities.Robot import Robot
-from .entities.Drone import Drone
-
-from .tiles.Bit import Bit
-from .tiles.Terrain import *
-from .tiles.Components import *
-from .tiles.Metals import *
 from .Event import Event
 
 class World:
@@ -360,8 +351,10 @@ class World:
 
                 attrs = pickle.loads(f.read(size - len(cls) - 7))
 
-                cls = globals()[str(cls, "utf-8")]
-                tile = cls(x, y, type_)
+                #cls = globals()[str(cls, "utf-8")]
+                #tile = cls(x, y, type_)
+                cls = str(cls, "utf-8")
+                tile = Tile.get_cls(cls)(x, y, type_)
                 for k, v in attrs.items():
                     setattr(tile, k, v)
                 
@@ -390,14 +383,16 @@ class World:
                 
                 attrs = pickle.loads(f.read(size - len(cls) - 19))
 
-                cls = globals()[str(cls, "utf-8")]
-                entity = cls(pos=Vec(x, y), vel=Vec(vx, vy), type_=type_)
+                #cls = globals()[str(cls, "utf-8")]
+                #entity = cls(pos=Vec(x, y), vel=Vec(vx, vy), type_=type_)
+                cls = str(cls, "utf-8")
+                entity = Entity.get_cls(cls)(pos=Vec(x,y), vel=Vec(vx, vy), type_=type_)
 
                 for k, v in attrs.items():
                     setattr(entity, k, v)
                 
                 self.add_entity(entity)
-                if cls == Player:
+                if cls == "Player":
                     self.player = entity
         
         Logger.info("Level loaded successfully (maybe)")
