@@ -364,7 +364,7 @@ class Editor():
                         if not has_player:
                             self.game.open_entity_settings(single_entity=False)
                         else:
-                            Logger.info("Can't edit the player")
+                            Logger.warn("Can't edit the player")
                     
 
     
