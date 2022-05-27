@@ -110,7 +110,8 @@ class Game:
                         self.cb_exit_levels(None)
                     
                     elif self.settings_menu.visible:
-                        self.cb_exit_settings(None)
+                        #self.cb_exit_settings(None)
+                        pass
 
         if not self.config["edition"]:
             for entity in self.world.entities:
