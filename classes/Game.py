@@ -115,17 +115,8 @@ class Game:
         if not self.config["edition"]:
             for entity in self.world.entities:
                 entity.handle_events(events)
+            self.world.handle_events(events)
                     
-                """elif event.key == pygame.K_e:
-                    #Test interaction
-                    player = self.world.player
-                    for y in range(-1,2):
-                        for x in range(-1,2):
-                            if (x,y) == (0,0): continue
-                            tile = self.world.get_tile(player.pos + Vec(x,y))
-                            if tile and tile.name and isinstance(tile, ButtonTile) and not tile.pressed:
-                                tile.on_interact()
-                    #End test interaction"""
 
             
         keys = pygame.key.get_pressed()
@@ -173,23 +164,6 @@ class Game:
         pygame.display.set_caption(f"Packetman - {self.clock.get_fps():.2f}fps")
 
         self.camera.render(self.world_surf, self.hud_surf, self.editor_surf)
-
-        """Test interaction"""
-        player = self.world.player
-        can_interact = False
-        for y in range(-1,2):
-            for x in range(-1,2):
-                if (x,y) == (0,0): continue
-                tile = self.world.get_tile(player.pos + Vec(x,y))
-                if tile and tile.name and isinstance(tile, ButtonTile) and not tile.pressed:
-                    can_interact = True
-                    break
-            if can_interact:
-                break
-        
-        if can_interact:
-            pygame.draw.circle(self.world_surf, (0,255,0), [15,self.HEIGHT-15], 15)
-        """End test interaction"""
 
         if self.gui.changed:
             self.menu_surf.fill((0,0,0,0))
