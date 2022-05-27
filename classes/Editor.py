@@ -8,6 +8,7 @@ from .Hud import Hud
 from .Tile import Tile
 from .Player import Player
 from .Entity import Entity
+from .Logger import Logger
 
 class Editor():
     """
@@ -353,7 +354,17 @@ class Editor():
                 #open the entity menu
                 elif event.key == pygame.K_m:
                     if self.selected_entity is not None and not isinstance(self.selected_entity, Player):
-                        self.game.open_entity_settings()
+                        self.game.open_entity_settings(single_entity=True)
+                    elif len(self.selected_entities) != 0:
+                        has_player = False
+                        for entity in self.selected_entities:
+                            if isinstance(entity, Player):
+                                has_player = True
+                                break
+                        if not has_player:
+                            self.game.open_entity_settings(single_entity=False)
+                        else:
+                            Logger.info("Can't edit the player")
                     
 
     
