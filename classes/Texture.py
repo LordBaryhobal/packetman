@@ -2,26 +2,25 @@
 #Copyright (C) 2022  Louis HEREDERO & Mathéo BENEY
 
 import pygame
+from classes.Copyable import Copyable
 from classes.Vec import Vec
 
-class Texture:
+class Texture(Copyable):
     _cache = {}
 
     WIDTH, HEIGHT = 32, 32
 
-    def __init__(self, name, id_=None):
+    def __init__(self, name=None, id_=None):
         """Initializes a Texture instance
 
-        Arguments:
-            name {str} -- name of the texture
-
         Keyword Arguments:
+            name {str} -- name of the texture (default: {None})
             id_ {int} -- texture id, for connected textures (default: {None})
         """
 
         self.name = name
         self.id = id_
-        self.img = Texture.get(self.name, self.id)
+        self.img = Texture.get(self.name, self.id) if name else None
     
     def get(name, id_):
         """Returns a texture from name and id
