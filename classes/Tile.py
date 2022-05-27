@@ -20,6 +20,7 @@ class Tile(Copyable):
     connected = False
     connect_strict = False
     rotatable = False
+    INTERACTIVE = False
 
     def __init__(self, x=0, y=0, type_=0):
         """Initializes a Tile instance
