@@ -35,10 +35,7 @@ class Button(Input):
     @on(Event.INTERACTION)
     def on_interact(self, event):
         if self in event.tiles:
-            if self.pressed:
-                self.set_pressed(False)
-            else:
-                self.set_pressed(True)
+            self.set_pressed(not self.pressed)
     
     def set_pressed(self, pressed=True):
         self.pressed = pressed
