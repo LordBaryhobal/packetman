@@ -330,7 +330,9 @@ class Editor():
                         self.placing = 2
                         #unselect old selection
                         self.selection = [0, None, None]
-                        
+                        if self.selected_entity is not None:
+                            self.selected_entity.highlight = False
+                            self.selected_entity = None
                         #unselect old selected entities
                         self.select_entities = 0
                         self.highlight_entities(self.selected_entities, highlight=False)
