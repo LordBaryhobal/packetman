@@ -496,9 +496,14 @@ class World:
                 if event.key == pygame.K_e and not self.game.config["edition"] and not self.game.paused:
                     #get the tile around the player
                     player = self.player
-                    tiles = self.get_tiles_in_rect(player.pos+Vec(-1,1), player.pos + Vec(1,-1))
+                    player_pos = player.pos + player.SIZE/2
+                    tiles = self.get_tiles_in_rect(player_pos+Vec(-1,1), player_pos + Vec(1,-1))
                     interactive_tiles = list(filter(lambda t: t.INTERACTIVE, list(tiles.flatten())))
-                    if len(interactive_tiles) > 0:
+                    
+                    entities = self.get_entities_in_rect(player_pos+Vec(-1,1), player_pos + Vec(1,-1))
+                    interactive_entities = list(filter(lambda e: e.INTERACTIVE, entities))
+                    if len(interactive_entities) > 0 or len(interactive_tiles)>0:
                         event = Event(Event.INTERACTION)
                         event.tiles = interactive_tiles
+                        event.entities = interactive_entities
                         self.game.events.append(event)
