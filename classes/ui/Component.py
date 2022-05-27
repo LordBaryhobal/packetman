@@ -228,6 +228,14 @@ class Component(Copyable):
                 self.hover = False
                 if self.on_exit(event):
                     handled = True
+        
+        elif event.type == pygame.KEYDOWN:
+            if self.on_key_down(event):
+                self.handled = True
+        
+        elif event.type == pygame.KEYUP:
+            if self.on_key_up(event):
+                self.handled = True
 
         return handled
     
@@ -322,6 +330,34 @@ class Component(Copyable):
 
         Arguments:
             event {pygame.Event} -- MOUSEMOTION event
+
+        Returns:
+            bool -- wether this event has been handled and shouldn't be passed further
+        """
+        
+        return False
+    
+    def on_key_down(self, event):
+        """Callback (can be overwritten by subclasses)
+
+        Called when a key is pressed down
+
+        Arguments:
+            event {pygame.Event} -- KEYDOWN event
+
+        Returns:
+            bool -- wether this event has been handled and shouldn't be passed further
+        """
+        
+        return False
+    
+    def on_key_up(self, event):
+        """Callback (can be overwritten by subclasses)
+
+        Called when a key is released
+
+        Arguments:
+            event {pygame.Event} -- KEYUP event
 
         Returns:
             bool -- wether this event has been handled and shouldn't be passed further

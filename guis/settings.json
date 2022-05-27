@@ -49,6 +49,17 @@
                     "h": {"type": "Relative", "val": 0.05}
                 },
                 {
+                    "class": "Input",
+                    "params": [
+                        "the default",
+                        "the placeholder",
+                        { "name": "name", "val": "test_input" }
+                    ],
+                    "x": {"type": "Center"},
+                    "w": {"type": "Relative", "val": 0.25},
+                    "h": {"type": "Relative", "val": 0.05}
+                },
+                {
                     "class": "Button",
                     "params": [
                         "Return to main menu",
