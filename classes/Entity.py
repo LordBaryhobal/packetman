@@ -22,6 +22,8 @@ class Entity(Copyable):
     }
 
     _no_save = ["type", "pos", "vel", "acc", "box", "highlight", "texture", "world"]
+    
+    INTERACTIVE = False
 
     def __init__(self, pos=None, vel=None, acc=None, type_=None, highlight=False, world=None):
         """Initializes an Entity instance
