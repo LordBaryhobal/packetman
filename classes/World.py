@@ -71,7 +71,37 @@ class World:
                         event = Event(Event.COLLISION_ENTITY)
                         event.entities = [entity, entity2]
                         self.game.events.append(event)
-    
+            
+            current_pos = [entity.pos+ entity.SIZE*Vec(0,1), entity.pos+ entity.SIZE*Vec(1,0)]
+            if entity.last_pos is None:
+                entity.last_pos = current_pos
+                in_tiles = self.get_tiles_in_rect(*current_pos).flatten()
+                in_tiles = list(filter(lambda t: t.name, in_tiles))
+                if in_tiles:
+                    event = Event(Event.ENTER_TILE)
+                    event.tiles = in_tiles
+                    event.entiy = entity
+                    self.game.events.append(event)
+            else:
+                if floor(entity.last_pos[0]) == floor(current_pos[0]) and floor(entity.last_pos[1]) == floor(current_pos[1]):
+                    continue
+                
+                last_tiles = self.get_tiles_in_rect(*entity.last_pos).flatten()
+                new_tiles = self.get_tiles_in_rect(*current_pos).flatten()
+                enter_tiles = list(filter(lambda t: t not in last_tiles and t.name, new_tiles))
+                exit_tiles = list(filter(lambda t: t not in new_tiles and t.name, last_tiles))
+                if enter_tiles:
+                    event = Event(Event.ENTER_TILE)
+                    event.tiles = enter_tiles
+                    event.entity = entity
+                    self.game.events.append(event)
+                if exit_tiles:
+                    event = Event(Event.EXIT_TILE)
+                    event.tiles = exit_tiles
+                    event.entity = entity
+                    self.game.events.append(event)
+                entity.last_pos = current_pos
+                    
     def get_tile(self, pos):
         """Returns the tile at a given position
 

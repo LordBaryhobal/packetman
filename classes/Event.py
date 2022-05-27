@@ -32,6 +32,9 @@ class Event:
     ANIMATION_FINISH = 3
     CAMERA_MOVE = 4
     INTERACTION = 5
+    ENTER_TILE = 6
+    EXIT_TILE = 7
+    
 
     def __init__(self, type_):
         """Initializes an Event instance

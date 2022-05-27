@@ -17,11 +17,35 @@ class Output(Electrical):
         0: "output"
     }
 
+@listener
 class Plate(Input):
     _tiles = {
         0: "plate"
     }
-
+    
+    def __init__(self, x=0, y=0, type_=0):
+        super().__init__(x, y, type_)
+        self.pressed = False
+        self.number_of_entities = 0
+    
+    @on(Event.ENTER_TILE)
+    def on_enter(self, event):
+        if self in event.tiles:
+            if self.number_of_entities == 0:
+                self.change_pressed(True)
+            self.number_of_entities += 1
+    
+    @on(Event.EXIT_TILE)
+    def on_exit(self, event):
+        if self in event.tiles:
+            self.number_of_entities -= 1
+            if self.number_of_entities == 0:
+                self.change_pressed(False)
+    
+    def change_pressed(self, pressed):
+        self.pressed = pressed
+        self.texture.id = int(self.pressed)
+    
 @listener
 class Button(Input):
     _tiles = {

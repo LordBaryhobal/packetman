@@ -65,6 +65,7 @@ class Entity(Copyable):
         
         self.highlight = highlight
         self.world = world
+        self.last_pos = None
     
     def get_cls(cls):
         """Get class from class name
