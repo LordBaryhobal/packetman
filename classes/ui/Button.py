@@ -1,10 +1,13 @@
 #Packetman is a small game created in the scope of a school project
 #Copyright (C) 2022  Louis HEREDERO & Mathéo BENEY
 
-from .Label import Label
 import pygame
 
+from classes.ui.Label import Label
+
 class Button(Label):
+    """Clickable button which can trigger a callback"""
+
     def __init__(self, text="", callback=lambda *args, **kwargs: None, args=(), halign="center", valign="center", font_size=30, name=None):
         """Initializes a Button instance
 
@@ -25,28 +28,11 @@ class Button(Label):
         self.args = args
     
     def render(self, surface):
-        """Renders the component
-
-        Arguments:
-            surface {pygame.Surface} -- surface to render the component on
-        """
-
         color = (255,150,50) if self.hover else (200, 100, 0)
         pygame.draw.rect(surface, color, self.get_shape())
         super().render(surface)
     
     def on_release(self, event):
-        """Callback called when the component is released (after being pressed)
-
-        If it was pressed with the left button, the button's callback is called
-
-        Arguments:
-            event {pygame.Event} -- pygame MOUSEBUTTONUP event
-
-        Returns:
-            bool -- True if event has been handled and shouldn't be passed further, False otherwise
-        """
-
         if event.button == 1:
             return self.callback(self, *self.args)
         

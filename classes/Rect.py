@@ -1,10 +1,13 @@
 #Packetman is a small game created in the scope of a school project
 #Copyright (C) 2022  Louis HEREDERO & Mathéo BENEY
 
-from classes.Copyable import Copyable
 import pygame
 
+from classes.Copyable import Copyable
+
 class Rect(Copyable):
+    """Simple rectangle class"""
+    
     def __init__(self, x=0, y=0, w=0, h=0):
         """Initializes a Rect instance
 

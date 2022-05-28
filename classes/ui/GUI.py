@@ -1,10 +1,12 @@
 #Packetman is a small game created in the scope of a school project
 #Copyright (C) 2022  Louis HEREDERO & Mathéo BENEY
 
-from .Component import Component
-from .Constraints import *
+from classes.ui.Component import Component
+from classes.ui.Constraints import *
 
 class GUI(Component):
+    """Root component containing all menus which will be displayed"""
+
     def __init__(self, game, name=None):
         """Initializes a GUI instance
 
@@ -23,12 +25,6 @@ class GUI(Component):
         self.cm.set_h(Absolute(self.game.HEIGHT))
 
     def render(self, surface):
-        """Renders the component
-
-        Arguments:
-            surface {pygame.Surface} -- surface to render the component on
-        """
-
         for child in self.children:
             child.render(surface)
     

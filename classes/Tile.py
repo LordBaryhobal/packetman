@@ -2,10 +2,9 @@
 #Copyright (C) 2022  Louis HEREDERO & Mathéo BENEY
 
 from classes.Copyable import Copyable
-from .Vec import Vec
-from .Texture import Texture
-from .Utility import import_class
-import pygame
+from classes.Texture import Texture
+from classes.Utility import import_class
+from classes.Vec import Vec
 
 TILES = {
     "Aluminium": "classes.tiles.Metals",
@@ -25,20 +24,19 @@ TILES = {
 }
 
 class Tile(Copyable):
-    COLORS = [None,(50,50,50),(255,255,255),(255,0,0),(0,255,0),(0,0,255),(255,255,0),(255,0,255),(0,255,255)]
+    """World tile, can be solid, interactive, etc."""
 
-    _tiles = {
+    _no_save = ["type", "pos", "texture"]
+    _TILES = {
         -1: None,
         0: None
     }
+    CONNECTED = False
+    CONNECT_STRICT = False
 
-    _no_save = ["type", "pos", "texture"]
-
+    interactive = False
     solid = False
-    connected = False
-    connect_strict = False
     rotatable = False
-    INTERACTIVE = False
 
     def __init__(self, x=0, y=0, type_=0):
         """Initializes a Tile instance
@@ -51,12 +49,12 @@ class Tile(Copyable):
 
         self.pos = Vec(x, y)
         self.type = type_
-        self.name = self._tiles[self.type]
+        self.name = self._TILES[self.type]
         self.texture = Texture(self.name, self.type) if self.name else None
         self.neighbors = 0
     
     def __setattr__(self, name, value):
-        if self.connected and name == "neighbors" and self.texture:
+        if self.CONNECTED and name == "neighbors" and self.texture:
             self.texture = Texture(self.texture.name, value)
         
         super().__setattr__(name, value)
@@ -85,10 +83,6 @@ class Tile(Copyable):
         
         if self.texture:
             self.texture.render(surface, pos, size)
-        
-        """
-        else:
-            pygame.draw.rect(surface, self.COLORS[self.type], (pos.x, pos.y-size, size, size))"""
     
     def __repr__(self):
         return f"<{self.__class__.__name__} Tile of type {self.type} at ({self.pos.x}, {self.pos.y})>"

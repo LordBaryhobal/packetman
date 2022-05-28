@@ -1,58 +1,73 @@
 #Packetman is a small game created in the scope of a school project
 #Copyright (C) 2022  Louis HEREDERO & Mathéo BENEY
 
+from classes.Event import Event, listener, on
 from classes.Tile import Tile
-from classes.Event import listener, on, Event
 
 class Electrical(Tile):
+    """Electrical component"""
     pass
 
 class Input(Electrical):
-    _tiles = {
+    """Input component which can produce electricity"""
+
+    _TILES = {
         0: "input"
     }
 
 class Output(Electrical):
-    _tiles = {
+    """Output component which does stuff when powered"""
+
+    _TILES = {
         0: "output"
     }
 
 @listener
 class Plate(Input):
-    _tiles = {
+    """Pressure plate"""
+
+    _TILES = {
         0: "plate"
     }
     
     def __init__(self, x=0, y=0, type_=0):
         super().__init__(x, y, type_)
         self.pressed = False
-        self.number_of_entities = 0
+        self.entity_count = 0
     
     @on(Event.ENTER_TILE)
     def on_enter(self, event):
         if self in event.tiles:
-            if self.number_of_entities == 0:
+            if self.entity_count == 0:
                 self.change_pressed(True)
-            self.number_of_entities += 1
+            self.entity_count += 1
     
     @on(Event.EXIT_TILE)
     def on_exit(self, event):
         if self in event.tiles:
-            self.number_of_entities -= 1
-            if self.number_of_entities == 0:
+            self.entity_count -= 1
+            if self.entity_count == 0:
                 self.change_pressed(False)
     
     def change_pressed(self, pressed):
+        """Updates pressed state
+
+        Arguments:
+            pressed {bool} -- new pressed state
+        """
+
         self.pressed = pressed
         self.texture.id = int(self.pressed)
     
 @listener
 class Button(Input):
-    _tiles = {
+    """Togglable button"""
+
+    _TILES = {
         0: "button"
     }
-    INTERACTIVE = True
 
+    interactive = True
     pressed = False
     rotatable = True
     
@@ -67,6 +82,12 @@ class Button(Input):
             self.set_pressed(not self.pressed)
     
     def set_pressed(self, pressed=True):
+        """Sets pressed state
+
+        Keyword Arguments:
+            pressed {bool} -- new pressed state (default: {True})
+        """
+
         self.pressed = pressed
         self.update_texture()
     
@@ -83,13 +104,18 @@ class Button(Input):
         
 
 class Wire(Electrical):
-    _tiles = {
+    """Conductive wire"""
+
+    _TILES = {
         0: "wire"
     }
-    connected = True
-    connect_strict = True
+
+    CONNECTED = True
+    CONNECT_STRICT = True
 
 class Gate(Electrical):
-    _tiles = {
+    """Logical gate"""
+    
+    _TILES = {
         0: "gate"
     }

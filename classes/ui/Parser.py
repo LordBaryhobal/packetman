@@ -1,19 +1,25 @@
 #Packetman is a small game created in the scope of a school project
 #Copyright (C) 2022  Louis HEREDERO & Mathéo BENEY
 
-from classes.ui.Constraints import *
-from classes.ui.Component import Component
-from classes.ui.Menu import Menu
-from classes.ui.Label import Label
-from classes.ui.Button import Button
-from classes.ui.Checkbox import Checkbox
-from classes.ui.Slider import Slider
-from classes.ui.Flex import Flex
-from classes.ui.Input import Input
-from classes.Logger import Logger
 import json
 
+from classes.Logger import Logger
+from classes.ui.Button import Button
+from classes.ui.Checkbox import Checkbox
+from classes.ui.Component import Component
+from classes.ui.Constraints import *
+from classes.ui.Flex import Flex
+from classes.ui.Input import Input
+from classes.ui.Label import Label
+from classes.ui.Menu import Menu
+from classes.ui.Slider import Slider
+
 class Parser:
+    """Menu file parser
+    
+    Can load and initialize UI components from JSON files
+    """
+
     def __init__(self, game):
         """Initializes a Parser instance
 
@@ -132,9 +138,3 @@ class Parser:
                     d[k] = self.parse_param(v, parent)
                 
                 return d
-            
-
-if __name__ == "__main__":
-    #p = Parser(None)
-    #m = p.parse("")
-    pass

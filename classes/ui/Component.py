@@ -1,12 +1,12 @@
 #Packetman is a small game created in the scope of a school project
 #Copyright (C) 2022  Louis HEREDERO & Mathéo BENEY
 
-from classes.Copyable import Copyable
 import pygame
-from .Constraints import *
+from classes.Copyable import Copyable
+from classes.ui.Constraints import *
 
 class Component(Copyable):
-    """Basic UI component extend by all other UI elements"""
+    """Basic UI component extended by all other UI elements"""
 
     def __init__(self, name=None):
         """Initializes a Component instance
@@ -15,7 +15,7 @@ class Component(Copyable):
             name {str} -- component's name (default: {None})
         """
 
-        self.cm = Manager() # Constraints manager
+        self.cm = Manager()  # Constraints manager
         self.name = name
 
         self.parent = None
@@ -29,7 +29,7 @@ class Component(Copyable):
         self.changed = 2
     
     def __repr__(self) -> str:
-        return f"<{self.__class__.__qualname__} \"{self.name}\" {self.cm}>"
+        return f"<{self.__class__.__name__} \"{self.name}\" {self.cm}>"
     
     def print_tree(self, level=0):
         """Prints a tree-like representation of this element and its children recursively
@@ -138,7 +138,8 @@ class Component(Copyable):
     def get_by_name(self, name):
         """Gets an element by its name
 
-        This method is called recursively for each child until it finds the element or has checked the whole tree
+        This method is called recursively for each child until it finds
+        the element or has checked the whole tree
 
         Arguments:
             name {str} -- name of the element to get
@@ -192,7 +193,7 @@ class Component(Copyable):
 
         handled = False
 
-        #Reverse to process children in front first
+        # Reverse to process children in front first
         for child in self.children[::-1]:
             if handled:
                 break
