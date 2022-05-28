@@ -32,7 +32,7 @@ class Tile(Copyable):
         0: None
     }
     CONNECTED = False
-    CONNECT_STRICT = False
+    CONNECT_TO = None
 
     interactive = False
     solid = False
