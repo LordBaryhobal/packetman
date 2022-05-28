@@ -7,6 +7,7 @@ from classes.Tile import Tile
 class Electrical(Tile):
     """Electrical component"""
     pass
+Electrical.CONNECT_TO = (Electrical, )
 
 class Input(Electrical):
     """Input component which can produce electricity"""
@@ -111,7 +112,6 @@ class Wire(Electrical):
     }
 
     CONNECTED = True
-    CONNECT_STRICT = True
 
 class Gate(Electrical):
     """Logical gate"""
