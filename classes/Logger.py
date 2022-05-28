@@ -1,12 +1,10 @@
 #Packetman is a small game created in the scope of a school project
 #Copyright (C) 2022  Louis HEREDERO & Mathéo BENEY
 
-import time
+from time import strftime
 
 class Logger:
-    """
-    Utility static class used for logging info to the console.
-    """
+    """Utility static class used for logging info to the console."""
 
     INFO = 1
     WARN = 2
@@ -33,7 +31,7 @@ class Logger:
         if level & Logger.level == 0:
             return
 
-        print(time.strftime("[%Y-%m-%d %H:%M:%S] "), end="")
+        print(strftime("[%Y-%m-%d %H:%M:%S] "), end="")
 
         if level == Logger.INFO:
             print("[INFO] ", end="")

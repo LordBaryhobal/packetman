@@ -1,12 +1,13 @@
 #Packetman is a small game created in the scope of a school project
 #Copyright (C) 2022  Louis HEREDERO & Mathéo BENEY
 
+import pygame
+
 from classes.Copyable import Copyable
-from .Vec import Vec
-from .Rect import Rect
-import pygame, random
+from classes.Rect import Rect
 from classes.Texture import Texture
-from .Utility import import_class
+from classes.Utility import import_class
+from classes.Vec import Vec
 
 ENTITIES = {
     "Bullet": "classes.entities.Bullet",
@@ -17,22 +18,19 @@ ENTITIES = {
 }
 
 class Entity(Copyable):
-    """
-    Non grid-locked entity, either alive or not
+    """Non grid-locked entity, either alive or not
+    
     Subject to physics
     """
     
-    SIZE = Vec(0.5,0.5)
-    
-    GRAVITY = True
-    
-    _entity = {
+    _no_save = ["type", "pos", "vel", "acc", "box", "highlight", "texture", "world"]
+    _ENTITIES = {
         0: None
     }
-
-    _no_save = ["type", "pos", "vel", "acc", "box", "highlight", "texture", "world"]
+    SIZE = Vec(0.5,0.5)
     
-    INTERACTIVE = False
+    gravity = True
+    interactive = False
 
     def __init__(self, pos=None, vel=None, acc=None, type_=None, highlight=False, world=None):
         """Initializes an Entity instance
@@ -56,10 +54,10 @@ class Entity(Copyable):
         self.acc = acc
 
         self.type = type_
-        self.name = self._entity[self.type]
+        self.name = self._ENTITIES[self.type]
         self.texture = Texture(self.name, 0) if self.name else None
 
-        self.box = Rect(self.pos.x, self.pos.y, self.SIZE.x, self.SIZE.y) # width and height in tiles
+        self.box = Rect(self.pos.x, self.pos.y, self.SIZE.x, self.SIZE.y)
 
         self.on_ground = False
         
@@ -90,25 +88,30 @@ class Entity(Copyable):
             size {int} -- size of a tile in pixels
             dimension {Vec} -- dimensions of the object in tiles (default: {None})
         """
+
         if dimensions is None:
             dimensions = self.SIZE
         
+        rect = (pos.x, pos.y-self.box.h*size, self.box.w*size, self.box.h*size)
+
         if self.texture:
             self.texture.render(surface, pos, size, dimensions)
         else:
-            pygame.draw.rect(surface, (100,100,100), (pos.x, pos.y-self.box.h*size, self.box.w*size, self.box.h*size))
+            pygame.draw.rect(surface, (100,100,100), rect)
+        
         if self.highlight:
-            pygame.draw.rect(surface, (255,255,255), (pos.x, pos.y-self.box.h*size, self.box.w*size, self.box.h*size), 2)
+            pygame.draw.rect(surface, (255,255,255), rect, 2)
             
 
     def physics(self, delta):
         """Simulates physics
 
         Arguments:
-            delta {float} -- time elapsed in last fram in seconds
+            delta {float} -- time elapsed in last frame in seconds
         """
-        if self.GRAVITY:
-            self.acc = Vec(0,-20)
+
+        if self.gravity:
+            self.acc = Vec(0, -20)
 
         self.pos += self.vel * delta
         self.vel += self.acc * delta
@@ -135,5 +138,6 @@ class Entity(Copyable):
     
     def update_texture(self):
         """Updates the entity's texture"""
-        self.name = self._entity[self.type]
+        
+        self.name = self._ENTITIES[self.type]
         self.texture = Texture(self.name, 0) if self.name else None

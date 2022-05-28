@@ -1,18 +1,21 @@
 #Packetman is a small game created in the scope of a school project
 #Copyright (C) 2022  Louis HEREDERO & Mathéo BENEY
 
-from .Component import Component
 import pygame
 
+from classes.ui.Component import Component
+
 class Input(Component):
+    """Input field"""
+
+    FONTS = {}
     VALID = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-"
 
     font_family = "Arial"
-    fonts = {}
-    color = (255,255,255)
-    placeholder_color = (175,175,175)
     border_color = (255,255,255)
     border_focus_color = (80,140,227)
+    color = (255,255,255)
+    placeholder_color = (175,175,175)
 
     def __init__(self, default="", placeholder="", font_size=20, name=None):
         """Initializes an Input instance
@@ -29,18 +32,12 @@ class Input(Component):
         self.placeholder = placeholder
         self.focused = False
         
-        if not font_size in Input.fonts.keys():
-            Input.fonts[font_size] = pygame.font.SysFont(self.font_family, font_size)
+        if not font_size in Input.FONTS.keys():
+            Input.FONTS[font_size] = pygame.font.SysFont(self.font_family, font_size)
         
-        self.font = Input.fonts[font_size]
+        self.font = Input.FONTS[font_size]
     
     def render(self, surface):
-        """Renders the component
-
-        Arguments:
-            surface {pygame.Surface} -- surface to render the component on
-        """
-        
         super().render(surface)
         
         if self.value:
@@ -53,7 +50,9 @@ class Input(Component):
 
         surface.blit(text, [X, Y])
         if self.focused and self.value:
-            pygame.draw.line(surface, (255,255,255), [X+text.get_width(), Y], [X+text.get_width(), Y+text.get_height()])
+            start = [X+text.get_width(), Y]
+            end = [X+text.get_width(), Y+text.get_height()]
+            pygame.draw.line(surface, self.color, start, end)
         pygame.draw.rect(surface, self.border_focus_color if self.focused else self.border_color, [x,y,w,h], 1)
     
     def on_click(self, event):

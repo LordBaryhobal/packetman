@@ -1,26 +1,26 @@
 #Packetman is a small game created in the scope of a school project
 #Copyright (C) 2022  Louis HEREDERO & Mathéo BENEY
 
-import numpy as np
-from .Tile import Tile
-from .Vec import Vec
-from .Rect import Rect
-from .Entity import Entity
-from .Player import Player
-from .Logger import Logger
 from math import floor, copysign
-import struct, pickle
+
+import numpy as np
+import pickle
 import pygame
-from .Event import Event
+import struct
+
+from classes.Entity import Entity
+from classes.Event import Event
+from classes.Logger import Logger
+from classes.Player import Player
+from classes.Rect import Rect
+from classes.Tile import Tile
+from classes.Vec import Vec
 
 class World:
-    """
-    World class holding world tiles and entities. Also processes physics.
-    """
+    """World class holding world tiles and entities. Also processes physics."""
 
     WIDTH = 1
     HEIGHT = 1
-    
 
     def __init__(self, game):
         """Initializes a World instance
@@ -32,7 +32,7 @@ class World:
         self.game = game
         self.tiles = np.array([[Tile()]], dtype='object')
         self.entities = []
-        self.player = Player(Vec(1,1),world=self)
+        self.player = Player(Vec(1, 1), world=self)
         self.entities.append(self.player)
     
     def physics(self, delta):
@@ -49,10 +49,11 @@ class World:
             self.check_collisions(entity, delta)
             entity.on_ground = False
             
+            # Check tiles a little bit below to see if entity is on the ground
             if entity.vel.y <= 0:
                 tiles_below = self.get_tiles_in_rect(
-                    floor( entity.pos+Vec(0,-0.001) ),
-                    floor( entity.pos+Vec(entity.box.w-0.001, -0.001) )
+                    floor( entity.pos + Vec(0, -0.001) ),
+                    floor( entity.pos + Vec(entity.box.w-0.001, -0.001) )
                 ).flatten()
 
                 tiles_below = list(filter(lambda t: t is not None and ((t.name and t.solid) or t.type == -1), tiles_below))
@@ -64,7 +65,7 @@ class World:
             if isinstance(entity, Player):
                 entity.vel.x *= 0.95
             
-
+            # Check entity/entity collisions
             if i != count-1:
                 for entity2 in self.entities[i+1:]:
                     if entity.box.overlaps(entity2.box):
@@ -72,11 +73,14 @@ class World:
                         event.entities = [entity, entity2]
                         self.game.events.append(event)
             
-            current_pos = [entity.pos+ entity.SIZE*Vec(0,1), entity.pos+ entity.SIZE*Vec(1,0)]
+            # Store current top-left and bottom-right corners
+            current_pos = [entity.pos + entity.SIZE*Vec(0, 1), entity.pos + entity.SIZE*Vec(1, 0)]
+
             if entity.last_pos is None:
                 entity.last_pos = current_pos
                 in_tiles = self.get_tiles_in_rect(*current_pos).flatten()
                 in_tiles = list(filter(lambda t: t.name, in_tiles))
+
                 if in_tiles:
                     event = Event(Event.ENTER_TILE)
                     event.tiles = in_tiles
@@ -90,16 +94,19 @@ class World:
                 new_tiles = self.get_tiles_in_rect(*current_pos).flatten()
                 enter_tiles = list(filter(lambda t: t not in last_tiles and t.name, new_tiles))
                 exit_tiles = list(filter(lambda t: t not in new_tiles and t.name, last_tiles))
+
                 if enter_tiles:
                     event = Event(Event.ENTER_TILE)
                     event.tiles = enter_tiles
                     event.entity = entity
                     self.game.events.append(event)
+                
                 if exit_tiles:
                     event = Event(Event.EXIT_TILE)
                     event.tiles = exit_tiles
                     event.entity = entity
                     self.game.events.append(event)
+                
                 entity.last_pos = current_pos
                     
     def get_tile(self, pos):
@@ -201,12 +208,15 @@ class World:
             tiles = np.append(tiles, Tile(floor(entity.pos.x), floor(entity.pos.y), -1))
             tiles = np.append(tiles, Tile(floor(entity.pos.x+1), floor(entity.pos.y), -1))
         
-        # order according to speed -> going right = sort from left to right
+        # Order according to speed -> going right = sort from left to right
         #                             going up = sort from botton to top
         tiles = sorted(tiles, key=lambda t: copysign(t.pos.x,vel.x)+copysign(t.pos.y,vel.y))
 
         for tile in tiles:
-            if ((tile.name and tile.solid) or tile.type == -1) and entity.box.overlaps(Rect(tile.pos.x, tile.pos.y,1,1)):
+            solid_tile = ((tile.name and tile.solid) or tile.type == -1)
+            overlaps = entity.box.overlaps(Rect(tile.pos.x, tile.pos.y, 1, 1))
+
+            if solid_tile and overlaps:
                 dx, dy = 0, 0
                 if vel.x < 0:
                     dx = tile.pos.x+1 - entity.pos.x
@@ -225,8 +235,6 @@ class World:
                 d2 = abs(v * dy / vel.y) if vel.y != 0 else 0
 
                 d = min(d1, d2) if d1*d2 != 0 else max(d1, d2)
-                
-                #entity.pos -= vel.normalize()*d
                 
                 if d != 0:
                     if d1 != 0 and (d2 == 0 or d1 < d2):
@@ -267,10 +275,10 @@ class World:
         
         if xpad != 0 or ypad != 0:
             self.tiles = np.pad(self.tiles, ((0, ypad),(0, xpad)), "constant", constant_values=0)
-            for x in range(self.WIDTH):
-                for y in range(self.HEIGHT):
-                    if self.tiles[y][x] == 0:
-                        self.tiles[y][x] = Tile(x, y, 0)
+            for y in range(self.HEIGHT):
+                for x in range(self.WIDTH):
+                    if self.tiles[y, x] == 0:
+                        self.tiles[y, x] = Tile(x, y, 0)
     
     def save(self, filename):
         """Saves the current level
@@ -295,7 +303,7 @@ class World:
             buf_tile.extend(struct.pack(">H", tile.type))
             buf_tile.extend(struct.pack(">H", tile.pos.x))
             buf_tile.extend(struct.pack(">H", tile.pos.y))
-            buf_tile.extend(bytearray(tile.__class__.__qualname__, "utf-8"))
+            buf_tile.extend(bytearray(tile.__class__.__name__, "utf-8"))
             buf_tile.append(0)
             attrs = tile.__dict__.copy()
 
@@ -322,7 +330,7 @@ class World:
             buf_entity.extend(struct.pack(">f", entity.pos.y))
             buf_entity.extend(struct.pack(">f", entity.vel.x))
             buf_entity.extend(struct.pack(">f", entity.vel.y))
-            buf_entity.extend(bytearray(entity.__class__.__qualname__, "utf-8"))
+            buf_entity.extend(bytearray(entity.__class__.__name__, "utf-8"))
             buf_entity.append(0)
             attrs = entity.__dict__.copy()
 
@@ -381,8 +389,6 @@ class World:
 
                 attrs = pickle.loads(f.read(size - len(cls) - 7))
 
-                #cls = globals()[str(cls, "utf-8")]
-                #tile = cls(x, y, type_)
                 cls = str(cls, "utf-8")
                 tile = Tile.get_cls(cls)(x, y, type_)
                 for k, v in attrs.items():
@@ -413,8 +419,6 @@ class World:
                 
                 attrs = pickle.loads(f.read(size - len(cls) - 19))
 
-                #cls = globals()[str(cls, "utf-8")]
-                #entity = cls(pos=Vec(x, y), vel=Vec(vx, vy), type_=type_)
                 cls = str(cls, "utf-8")
                 entity = Entity.get_cls(cls)(pos=Vec(x,y), vel=Vec(vx, vy), type_=type_)
 
@@ -447,15 +451,15 @@ class World:
             place_empty {bool} -- wether to override if placing empty tiles (default: {False})
         """
 
-        self.modify_tilelistlen(pos+Vec(len(selection[0]), len(selection)))
+        self.modify_tilelistlen(pos + Vec(selection.shape[1], selection.shape[0]))
 
-        for y in range(len(selection)):
-            for x in range(len(selection[0])):
-                t = selection[y][x]
+        for y in range(selection.shape[0]):
+            for x in range(selection.shape[1]):
+                t = selection[y, x]
                 if not t.name and not place_empty:
                     continue
                 
-                self.set_tile(t, pos+Vec(x, y))
+                self.set_tile(t, pos + Vec(x, y))
     
     def update_tile(self, pos):
         """Updates a tile
@@ -467,7 +471,7 @@ class World:
         """
         
         tile = self.get_tile(pos)
-        offsets = [Vec(0,1), Vec(1,0), Vec(0,-1), Vec(-1,0)]
+        offsets = [Vec(0, 1), Vec(1, 0), Vec(0, -1), Vec(-1, 0)]
         
         for i, off in enumerate(offsets):
             bit, bit2 = 2**i, 2**((i+2)%4)
@@ -517,21 +521,28 @@ class World:
         self.game.camera.update_visible_entities()
         
     def handle_events(self, events):
+        """Handle pygame events
+
+        Arguments:
+            events {list[pygame.Event]} -- list of pygame events
+        """
+
         for event in events:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_e and not self.game.config["edition"] and not self.game.paused:
-                    #get the tile around the player
+                    # Get the tiles around the player
                     player = self.player
                     
-                    pos1 = player.pos + (player.SIZE*Vec(0, 1))+Vec(-0.25,0.25)
-                    pos2 = player.pos + (player.SIZE*Vec(1, 0))+Vec(0.25,-0.25)
+                    pos1 = player.pos + (player.SIZE * Vec(0, 1)) + Vec(-0.25, 0.25)
+                    pos2 = player.pos + (player.SIZE * Vec(1, 0)) + Vec(0.25, -0.25)
                     
                     tiles = self.get_tiles_in_rect(pos1, pos2)
-                    interactive_tiles = list(filter(lambda t: t.INTERACTIVE, list(tiles.flatten())))
+                    interactive_tiles = list(filter(lambda t: t.interactive, list(tiles.flatten())))
                     
                     entities = self.get_entities_in_rect(pos1, pos2)
-                    interactive_entities = list(filter(lambda e: e.INTERACTIVE, entities))
-                    if len(interactive_entities) > 0 or len(interactive_tiles)>0:
+                    interactive_entities = list(filter(lambda e: e.interactive, entities))
+
+                    if interactive_entities or interactive_tiles:
                         event = Event(Event.INTERACTION)
                         event.tiles = interactive_tiles
                         event.entities = interactive_entities

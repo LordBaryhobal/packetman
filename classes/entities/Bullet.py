@@ -2,22 +2,20 @@
 #Copyright (C) 2022  Louis HEREDERO & Mathéo BENEY
 
 from classes.Entity import Entity
+from classes.Event import Event, listener, on
 from classes.Vec import Vec
-from classes.Event import listener, on, Event
 
 @listener
 class Bullet(Entity):
-    """
-        simple bullet object that moves in a straight line
-    """
+    """Simple bullet object that moves in a straight line"""
     
-    GRAVITY = False
-    
-    _entity = {
+    _ENTITIES = {
         0: "bullet",
         1: "bit"
     }
     SIZE = Vec(0.2,0.2)
+
+    gravity = False
 
     @on(Event.COLLISION_WORLD)
     def on_collision_world(self, event):
@@ -32,7 +30,15 @@ class Bullet(Entity):
                 self.destroy()
     
     def destroy(self):
+        """Destroys this bullet"""
+
         self.world.remove_entity(self)
     
     def hit(self, entity):
+        """Processes a hit with an entity
+
+        Arguments:
+            entity {Entity} -- entity hit by this bullet
+        """
+
         print(f"Hit {entity}")

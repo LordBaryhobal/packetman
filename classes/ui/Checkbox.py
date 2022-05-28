@@ -1,11 +1,14 @@
 #Packetman is a small game created in the scope of a school project
 #Copyright (C) 2022  Louis HEREDERO & Mathéo BENEY
 
-from .Label import Label
-from classes.Logger import Logger
 import pygame
 
+from classes.Logger import Logger
+from classes.ui.Label import Label
+
 class Checkbox(Label):
+    """Togglable checkbox"""
+
     def __init__(self, text="", callback=lambda *args, **kwargs: None, args=(), halign="center", valign="center", font_size=30, name=None):
         """Initializes a Checkbox instance
 
@@ -24,20 +27,13 @@ class Checkbox(Label):
         super().__init__(text, halign, valign, font_size, name)
         self.callback = callback
         self.args = args
-        Logger.debug(f"Args: {args}")
-
         self.checked = False
     
     def render(self, surface):
-        """Renders the component
-
-        Arguments:
-            surface {pygame.Surface} -- surface to render the component on
-        """
-
         x, y, w, h = self.get_shape()
         h12 = h/12
         
+        # Path to draw the X
         pts = [
             (x+3*h12, y+2*h12),
             (x+6*h12, y+5*h12),
@@ -62,17 +58,6 @@ class Checkbox(Label):
         super().render(surface)
     
     def on_release(self, event):
-        """Callback called when the component is released (after being pressed)
-
-        If it was pressed with the left button, the checked state is toggled and the checkbox' callback is called
-
-        Arguments:
-            event {pygame.Event} -- pygame MOUSEBUTTONUP event
-
-        Returns:
-            bool -- True if event has been handled and shouldn't be passed further, False otherwise
-        """
-
         if event.button == 1:
             self.checked = not self.checked
             self.set_changed(1)

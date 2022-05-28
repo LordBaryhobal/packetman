@@ -1,11 +1,11 @@
 #Packetman is a small game created in the scope of a school project
 #Copyright (C) 2022  Louis HEREDERO & Mathéo BENEY
 
-import time
+from time import time
 
 class Animation:
-    """
-    Class used to animate attribute values of a particular object.
+    """Class used to animate attribute values of a particular object.
+    
     Examples of use:
     - camera movement
     - color transition
@@ -18,7 +18,7 @@ class Animation:
     FORWARDS = 0
     ALTERNATE = 1
 
-    animations = []
+    ANIMATIONS = []
 
     def __init__(self, obj, attr_, val_a, val_b, duration, start=True, loop=None, type_=FLOAT):
         """Initializes an Animation instance
@@ -51,7 +51,7 @@ class Animation:
         if start:
             self.start()
         
-        Animation.animations.append(self)
+        Animation.ANIMATIONS.append(self)
     
     def start(self):
         """Starts the animation.
@@ -62,7 +62,7 @@ class Animation:
 
         if self.start_time is None:
             self.finished = False
-            self.start_time = time.time()
+            self.start_time = time()
             return True
         
         return False
@@ -70,10 +70,10 @@ class Animation:
     def update(self): 
         """Updates the value at the current time
 
-        Updates the value at current time, stopping the animation if completed
+        Stops the animation if completed
         """
 
-        t = time.time()
+        t = time()
         ratio = (t-self.start_time)/self.duration
 
         if ratio > 1:

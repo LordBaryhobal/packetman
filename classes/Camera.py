@@ -1,8 +1,9 @@
 #Packetman is a small game created in the scope of a school project
 #Copyright (C) 2022  Louis HEREDERO & Mathéo BENEY
 
-from classes.Vec import Vec
 from math import floor
+
+from classes.Vec import Vec
 
 class Camera:
     """
@@ -18,7 +19,7 @@ class Camera:
             game {Game} -- Game instance
         """
 
-        #camera's coordinates are in the bottom left corner of the screen
+        # Coordinates are in pixels from the bottom-left corner of the screen
         self.pos = Vec(0,0)
         self.game = game
         self.follow_player = True
@@ -53,7 +54,6 @@ class Camera:
                 self.pos.y -= player_br.y-H+H4
             
             self.pos = self.pos.max(Vec(0,0))
-
             
             if prev_pos != self.pos:
                 self.update_visible_tiles()
@@ -62,22 +62,22 @@ class Camera:
     def update_visible_tiles(self):
         """Updates the list of visible tiles"""
 
-        self.pos = self.pos.max(Vec()) #clamp to (0;0)
+        self.pos = self.pos.max(Vec())  # clamp to (0;0)
         
-        #according to the screen
-        bottomright = self.screen_to_world(Vec(self.game.WIDTH,self.game.HEIGHT))
-        topleft = self.screen_to_world(Vec(0,0))
+        # According to the screen
+        bottomright = self.screen_to_world(Vec(self.game.WIDTH, self.game.HEIGHT))
+        topleft = self.screen_to_world(Vec())
         
         self.visible_tiles = self.game.world.get_tiles_in_rect(topleft, bottomright).flatten()
     
     def update_visible_entities(self):
         """Updates the list of visible entities"""
 
-        self.pos = self.pos.max(Vec()) #clamp to (0;0)
+        self.pos = self.pos.max(Vec())  # clamp to (0;0)
         
-        #according to the screen
-        bottomright = self.screen_to_world(Vec(self.game.WIDTH,self.game.HEIGHT))
-        topleft = self.screen_to_world(Vec(0,0))
+        # According to the screen
+        bottomright = self.screen_to_world(Vec(self.game.WIDTH, self.game.HEIGHT))
+        topleft = self.screen_to_world(Vec())
 
         self.visible_entities = self.game.world.get_entities_in_rect(topleft, bottomright)
 
@@ -105,11 +105,15 @@ class Camera:
 
         Arguments:
             pos {Vec} -- screen coordinates
+        
+        Keyword Arguments:
+            round_ {bool} -- wether to floor the resulting coordinates (i.e. tile coordinates) (default: {True})
 
         Returns:
             Vec -- world coordinates
         """
-        pos = (Vec(pos.x,self.game.HEIGHT-pos.y) + self.pos)/self.tilesize
+
+        pos = (Vec(pos.x, self.game.HEIGHT-pos.y) + self.pos)/self.tilesize
         return floor(pos) if round_ else pos
 
     def world_to_screen(self, pos):
@@ -122,4 +126,7 @@ class Camera:
             Vec -- screen coordinates
         """
 
-        return Vec(pos.x*self.tilesize, self.game.HEIGHT-pos.y*self.tilesize) + Vec(-self.pos.x,self.pos.y)
+        return Vec(
+            pos.x*self.tilesize - self.pos.x,
+            self.game.HEIGHT - pos.y*self.tilesize + self.pos.y
+        )

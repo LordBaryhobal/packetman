@@ -1,10 +1,12 @@
 #Packetman is a small game created in the scope of a school project
 #Copyright (C) 2022  Louis HEREDERO & Mathéo BENEY
 
-from .Component import Component
-from .Constraints import *
+from classes.ui.Component import Component
+from classes.ui.Constraints import *
 
 class Menu(Component):
+    """Fullscreen container of components"""
+
     def __init__(self, game, name=None):
         """Initializes a Menu instance
 
@@ -26,61 +28,17 @@ class Menu(Component):
         self.bg_color = (0,0,0)
     
     def on_click(self, event):
-        """Callback (can be overwritten by subclasses)
-
-        Called when this component's pressed state changes to True
-        Always returns True to catch events
-
-        Arguments:
-            event {pygame.Event} -- MOUSEBUTTONDOWN event
-
-        Returns:
-            bool -- wether this event has been handled and shouldn't be passed further
-        """
-
+        # Always returns True to catch events
         return True
     
     def on_release(self, event):
-        """Callback (can be overwritten by subclasses)
-
-        Called when this component's pressed state changes to False
-        Always returns True to catch events
-
-        Arguments:
-            event {pygame.Event} -- MOUSEBUTTONUP event
-
-        Returns:
-            bool -- wether this event has been handled and shouldn't be passed further
-        """
-
+        # Always returns True to catch events
         return True
     
     def on_mouse_down(self, event):
-        """Callback (can be overwritten by subclasses)
-
-        Called when a mouse button is pressed down on the component
-        Always returns True to catch events
-
-        Arguments:
-            event {pygame.Event} -- MOUSEBUTTONDOWN event
-
-        Returns:
-            bool -- wether this event has been handled and shouldn't be passed further
-        """
-
+        # Always returns True to catch events
         return True
     
     def on_mouse_up(self, event):
-        """Callback (can be overwritten by subclasses)
-
-        Called when a mouse button is released on the component
-        Always returns True to catch events
-
-        Arguments:
-            event {pygame.Event} -- MOUSEBUTTONUP event
-
-        Returns:
-            bool -- wether this event has been handled and shouldn't be passed further
-        """
-
+        # Always returns True to catch events
         return True

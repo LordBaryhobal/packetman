@@ -1,23 +1,19 @@
 #Packetman is a small game created in the scope of a school project
 #Copyright (C) 2022  Louis HEREDERO & Mathéo BENEY
 
-from classes.World import World
-from classes.Camera import Camera
-from classes.Logger import Logger
-from classes.Event import Event
-from classes.Animation import Animation
-from classes.Editor import Editor
-import pygame, json
-from classes.ui.GUI import GUI
-from classes.ui.Button import Button
-from classes.ui.Constraints import *
-from classes.ui.Menu import Menu
-from classes.ui.Label import Label
-from classes.ui.Parser import Parser
+import json
 import os
 
-from classes.tiles.Bit import Bit
-from classes.tiles.Components import Button as ButtonTile
+import pygame
+
+from classes.Animation import Animation
+from classes.Camera import Camera
+from classes.Editor import Editor
+from classes.Logger import Logger
+from classes.World import World
+from classes.ui.Constraints import *
+from classes.ui.GUI import GUI
+from classes.ui.Parser import Parser
 
 class classproperty(property):
     """Utility class for annotating class properties. Parallel to `@property`"""
@@ -27,9 +23,7 @@ class classproperty(property):
 
 
 class Game:
-    """
-    Singleton class managing the interface, world rendering and simulation
-    """
+    """Singleton class managing the interface, world rendering and simulation"""
 
     WIDTH = 800
     HEIGHT = 600
@@ -54,10 +48,13 @@ class Game:
 
         self.running = True
         self.paused = True
+
         pygame.init()
         pygame.display.set_icon(pygame.image.load("./logo.png"))
         self.window = pygame.display.set_mode([Game.WIDTH, Game.HEIGHT])
-        self.menu_surf, self.editor_surf, self.hud_surf, self.world_surf = [pygame.Surface([Game.WIDTH, Game.HEIGHT], pygame.SRCALPHA) for i in range(4)]
+        self.menu_surf, self.editor_surf, self.hud_surf, self.world_surf = [
+            pygame.Surface([Game.WIDTH, Game.HEIGHT], pygame.SRCALPHA) for _ in range(4)
+        ]
         self.clock = pygame.time.Clock()
 
         self.events = []
@@ -91,7 +88,7 @@ class Game:
     def handle_events(self):
         """Handle events triggered during this game loop"""
 
-        #Pygame events
+        # Pygame events
         events = pygame.event.get()
         
         for event in events:
@@ -112,41 +109,33 @@ class Game:
                     elif self.settings_menu.visible:
                         #self.cb_exit_settings(None)
                         pass
-
+        
+        # Entities and World
         if not self.config["edition"]:
             for entity in self.world.entities:
                 entity.handle_events(events)
             self.world.handle_events(events)
-                    
 
-            
-        keys = pygame.key.get_pressed()
-
+        # GUI
         self.gui.handle_events(events)
         events = list(filter(lambda e: not (hasattr(e, "handled") and e.handled), events))
 
         if not self.paused:
+            # Editor
             if self.config["edition"]:
                 self.editor.handle_events(events)
-
             
-            for animation in Animation.animations:
+            # Animations
+            for animation in Animation.ANIMATIONS:
                 if not animation.start_time is None and not animation.finished:
                     animation.update()
             
-            Animation.animations = list(filter(lambda a: not a.finished, Animation.animations))
+            Animation.ANIMATIONS = list(filter(lambda a: not a.finished, Animation.ANIMATIONS))
 
-        #Custom events
+        # Custom events
         events = self.events
 
         for event in events:
-            """
-            if event.type == Event.NONE:
-                pass
-            
-            elif event.type == Event.UPDATED:
-                if hasattr(event.obj) and hasattr(event.callback):
-                    getattr(event.obj, event.callback).__call__(event)"""
             event.dispatch()
 
         self.events = []
@@ -171,10 +160,10 @@ class Game:
             self.gui.render(self.menu_surf)
 
         #self.editor_surf.set_alpha(200)
-        self.window.blit(self.world_surf, [0,0])
-        self.window.blit(self.editor_surf, [0,0])
-        self.window.blit(self.hud_surf, [0,0])
-        self.window.blit(self.menu_surf, [0,0])
+        self.window.blit(self.world_surf, [0, 0])
+        self.window.blit(self.editor_surf, [0, 0])
+        self.window.blit(self.hud_surf, [0, 0])
+        self.window.blit(self.menu_surf, [0, 0])
 
         pygame.display.flip()
         self.clock.tick(self.MAX_FPS)
@@ -185,7 +174,7 @@ class Game:
         self.running = False
     
     def animate(self, obj, attr_, val_a, val_b, duration, start=True, loop=None, type_=Animation.FLOAT):
-        """Initializes an Animation instance and adds it to the list of animations
+        """Initializes an Animation instance and adds it to the list of ANIMATIONS
 
         Arguments:
             obj {object} -- object to animate
@@ -202,7 +191,7 @@ class Game:
                            One of: Animation.FLOAT, Animation.INT
         """
 
-        Animation.animations.append(Animation(obj, attr_, val_a, val_b, duration, start, loop, type_))
+        Animation.ANIMATIONS.append(Animation(obj, attr_, val_a, val_b, duration, start, loop, type_))
     
     def init_gui(self):
         """Loads and initializes the GUI"""
@@ -324,12 +313,15 @@ class Game:
         else:
             entities = self.editor.selected_entities
         
-        vel = Vec(self.entity_menu.get_by_name("x_velocity").value,self.entity_menu.get_by_name("y_velocity").value)
+        vel = Vec(
+            self.entity_menu.get_by_name("x_velocity").value,
+            self.entity_menu.get_by_name("y_velocity").value
+        )
         
         value = self.entity_menu.get_by_name("type").value
         for entity in entities:
             entity.vel = vel.copy()
-            if value in entity._entity:
+            if value in entity._ENTITIES:
                 entity.type = value
                 entity.update_texture()
         return True
