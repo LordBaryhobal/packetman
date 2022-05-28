@@ -478,19 +478,31 @@ class World:
         for i, off in enumerate(offsets):
             bit, bit2 = 2**i, 2**((i+2)%4)
             tile2 = self.get_tile(pos+off)
-
-            t = not tile or tile.name
-            t2 = not tile2 or tile2.name
-
+            
+            # t --> does tile want to connect to tile2?
+            # t2 --> does tile2 want to connect to tile?
+            
+            # Verify that tile2 is not None
+            if not tile2:
+                t2 = False
+                if tile.CONNECTED:
+                    t = True
+            
+            else:
+                t = False
+                if tile.CONNECT_TO:
+                    t = tile.CONNECTED and isinstance(tile2, tile.CONNECT_TO)
+                
+                t2 = False
+                if tile2.CONNECT_TO:
+                    t2 = tile2.CONNECTED and isinstance(tile, tile2.CONNECT_TO)
+            
             if t:
-                if t2:
-                    if tile2:
-                        tile2.neighbors |= bit2
-                    
-                    if tile:
-                        tile.neighbors |= bit
-                elif tile:
-                    tile.neighbors &= ~bit
+                tile.neighbors |= bit
+            elif tile:
+                tile.neighbors &= ~bit
+            if t2:
+                tile2.neighbors |= bit2
             elif tile2:
                 tile2.neighbors &= ~bit2
             
