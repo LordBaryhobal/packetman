@@ -458,8 +458,10 @@ class World:
                 t = selection[y, x]
                 if not t.name and not place_empty:
                     continue
-                
-                self.set_tile(t, pos + Vec(x, y))
+                newpos = pos + Vec(x, y)
+                if newpos.x < 0 or newpos.y < 0:
+                    continue
+                self.set_tile(t, newpos)
     
     def update_tile(self, pos):
         """Updates a tile
