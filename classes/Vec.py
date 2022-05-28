@@ -6,9 +6,7 @@ import math
 from classes.Copyable import Copyable
 
 class Vec(Copyable):
-    """
-    Simple vector class
-    """
+    """Simple vector class"""
 
     def __init__(self, x=0, y=0):
         """Initializes a Vec instance
@@ -56,6 +54,7 @@ class Vec(Copyable):
         Returns:
             float -- dot product of `self` and `other`
         """
+
         return self.x * other.x + self.y * other.y
     
     @property
@@ -150,14 +149,36 @@ class Vec(Copyable):
         return Vec(int(self.x), int(self.y))
 
     def get_tl_br_corners(self,other):
-        tl = Vec(min(self.x,other.x),max(self.y,other.y))
-        br = Vec(max(self.x,other.x),min(self.y,other.y))
-        return tl,br
+        """Returns the top-left and bottom-right corners of the rectangle
+        formed by `self` and `other`
+
+        Arguments:
+            other {Vec} -- other vector
+
+        Returns:
+            Vec -- top-left corner
+            Vec -- bottom-right corner
+        """
+
+        tl = Vec(min(self.x, other.x), max(self.y, other.y))
+        br = Vec(max(self.x, other.x), min(self.y, other.y))
+        return tl, br
 
     def get_bl_tr_corners(self,other):
+        """Returns the bottom-left and top-right corners of the rectangle
+        formed by `self` and `other`
+
+        Arguments:
+            other {Vec} -- other vector
+
+        Returns:
+            Vec -- bottom-left corner
+            Vec -- top-right corner
+        """
+
         bl = self.min(other)
         tr = self.max(other)
-        return bl,tr
+        return bl, tr
     
     """The following methods make this class compatible with pygame"""
 

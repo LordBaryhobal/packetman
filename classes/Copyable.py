@@ -15,6 +15,9 @@ class Copyable:
         """Creates a new copy of this object. Keeps class and all properties
         
         Any property listed in self.__no_copy__ will not be copied
+
+        Returns:
+            object -- deepcopy of this instance
         """
 
         cls = self.__class__

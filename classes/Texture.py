@@ -2,9 +2,12 @@
 #Copyright (C) 2022  Louis HEREDERO & Mathéo BENEY
 
 import pygame
+
 from classes.Vec import Vec
 
 class Texture:
+    """Tile/Entity texture class"""
+    
     _cache = {}
 
     WIDTH, HEIGHT = 32, 32
@@ -51,15 +54,16 @@ class Texture:
             dimensions {Vec} -- dimensions of the texture (default: {Vec(1,1)})
         """
         
-        width, height = self.img.get_width()/self.WIDTH, self.img.get_height()/self.HEIGHT
+        width = self.img.get_width()/self.WIDTH
+        height = self.img.get_height()/self.HEIGHT
+        tw, th = tilesize*dimensions.x, tilesize*dimensions.y
 
-        #dimensions is the size of the object in tiles
-        img = pygame.transform.scale(self.img, (int(width*tilesize*dimensions.x), int(height*tilesize*dimensions.y)))
+        # dimensions is the size of the object in tiles
+        img = pygame.transform.scale(self.img, (int(width*tw), int(height*th)))
         
         x, y = 0, 0
         if not self.id is None:
-            x = (self.id%width)*tilesize*dimensions.x
-            y = (self.id//width)*tilesize*dimensions.y
+            x = (self.id % width) * tw
+            y = (self.id // width) * th
 
-        surface.blit(img, [pos.x, pos.y-tilesize*dimensions.y], [x, y, tilesize*dimensions.x, tilesize*dimensions.y])
-        #surface.blit(img, [pos.x, pos.y])
+        surface.blit(img, [pos.x, pos.y-th], [x, y, tw, th])

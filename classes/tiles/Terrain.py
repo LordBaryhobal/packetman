@@ -4,25 +4,27 @@
 from classes.Tile import Tile
 
 class Terrain(Tile):
-    solid = True
+    """Static tile used for world building and decoration"""
 
-    _tiles = {
+    _TILES = {
         0: "metal"
     }
+    CONNECTED = False
+
+    solid = True
     
-    connected = False
 
 class Insulator(Terrain):
-    _tiles = {
+    _TILES = {
         0: "insulator"
     }
 
 class Plastic(Terrain):
-    _tiles = {
+    _TILES = {
         0: "plastic"
     }
 
 class ThermalConductor(Terrain):
-    _tiles = {
+    _TILES = {
         0: "thermal_conductor"
     }

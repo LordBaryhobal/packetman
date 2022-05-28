@@ -1,15 +1,16 @@
 #Packetman is a small game created in the scope of a school project
 #Copyright (C) 2022  Louis HEREDERO & Mathéo BENEY
 
-import pickle, struct
-
 import numpy as np
-from classes.Logger import Logger
-from classes.Tile import Tile
-from classes.Entity import Entity
-from classes.Player import Player
-from classes.Vec import Vec
+import pickle
 import pygame
+import struct
+
+from classes.Entity import Entity
+from classes.Logger import Logger
+from classes.Player import Player
+from classes.Tile import Tile
+from classes.Vec import Vec
 
 def to_value(val):
     base = type(val)
@@ -317,7 +318,7 @@ class Browser:
                 y += t.get_height()
             
             elif hasattr(v, "__dict__"):
-                t = self.txt(f"<{v.__class__.__qualname__}> {{")
+                t = self.txt(f"<{v.__class__.__name__}> {{")
                 self.w.blit(t, [X2, y])
 
                 v._x, v._y = X, y
@@ -333,7 +334,7 @@ class Browser:
                 y += t.get_height()
             
             else:
-                t = self.txt(f"<{v.__class__.__qualname__}>")
+                t = self.txt(f"<{v.__class__.__name__}>")
                 self.w.blit(t, [X2, y])
 
                 v._x, v._y = X, y

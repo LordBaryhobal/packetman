@@ -2,10 +2,15 @@
 #Copyright (C) 2022  Louis HEREDERO & Mathéo BENEY
 
 from classes.Copyable import Copyable
-from classes.Vec import Vec
 from classes.Rect import Rect
+from classes.Vec import Vec
 
 class Manager(Copyable):
+    """Constraints manager
+    
+    Holds Constraint objects for x, y, w and h values.
+    """
+
     def __init__(self):
         """Initializes a Manager instance"""
 
@@ -166,6 +171,8 @@ class Manager(Copyable):
         return f"[{self.x}, {self.y}, {self.w}, {self.h}]"
 
 class Constraint(Copyable):
+    """Basic constraint class, parent of all constraint types"""
+
     def __init__(self, type_=None):
         """Initializes a Constraint instance
 
@@ -185,9 +192,11 @@ class Constraint(Copyable):
         self.type = type_
     
     def __repr__(self):
-        return f"<{self.__class__.__qualname__} Constraint>"
+        return f"<{self.__class__.__name__} Constraint>"
 
 class Center(Constraint):
+    """Centers the element on the given axis"""
+
     def get_val(self, manager, parent):
         """Computes the value
 
@@ -205,6 +214,8 @@ class Center(Constraint):
         return parent_size/2 - size/2
 
 class Absolute(Constraint):
+    """Returns a constant value"""
+
     def __init__(self, val=0, type_=None):
         """Initializes an Absolute instance
 
@@ -230,6 +241,8 @@ class Absolute(Constraint):
         return self.val
 
 class Relative(Constraint):
+    """Returns a value proportional to a parent's value"""
+
     def __init__(self, val=1, rel_type=None, type_=None):
         """Initializes a Relative instance
 
@@ -260,18 +273,16 @@ class Relative(Constraint):
         
         val = 0
 
-        if rel_type == "x":
-            val = parent.get_x()
-        elif rel_type == "y":
-            val = parent.get_y()
-        elif rel_type == "w":
-            val = parent.get_w()
-        elif rel_type == "h":
-            val = parent.get_h()
+        if rel_type == "x": val = parent.get_x()
+        elif rel_type == "y": val = parent.get_y()
+        elif rel_type == "w": val = parent.get_w()
+        elif rel_type == "h": val = parent.get_h()
         
         return self.val * val
 
 class Aspect(Constraint):
+    """Returns a value proportional to it's complementary value (width / height)"""
+    
     def __init__(self, val=1, type_=None):
         """Initializes a Relative instance
 
@@ -299,6 +310,8 @@ class Aspect(Constraint):
         return self.val * val
 
 class Math(Constraint):
+    """Returns a value computed from two other constraints using an operator"""
+
     def __init__(self, val1=None, val2=None, op=""):
         """Initializes a Math instance
 

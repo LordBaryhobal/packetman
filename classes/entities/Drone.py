@@ -1,30 +1,41 @@
 #Packetman is a small game created in the scope of a school project
 #Copyright (C) 2022  Louis HEREDERO & Mathéo BENEY
 
-import pygame
 from classes.Entity import Entity
-from classes.Vec import Vec
-from math import copysign, floor
 from classes.Event import Event, listener, on
+from classes.Vec import Vec
 
 @listener
 class Drone(Entity):
+    """Drone which can be interacted with by the player
+
+    Friendly drone which follows/unfollows the player when interacted with.
+    Can be used to keep pressure plates activated.
+    """
     
-    _entity = {
+    _ENTITIES = {
         0: "drone",
         1: "drone_pig"
     }
-    
-    SPEED = 2
     SIZE = Vec(0.7,0.7)
-    GRAVITY = True
-    INTERACTIVE = True
+
+    gravity = True
+    interactive = True
+    speed = 2
     
     def __init__(self, pos=None, vel=None, acc=None, type_=None, highlight=False, world=None):
         super().__init__(pos, vel, acc, type_, highlight, world)
         self.following = False
     
     def handle_events(self, events):
+        """Handles events
+
+        Actualizes velocity if following the player
+
+        Arguments:
+            events {list[pygame.Event]} -- list of pygame events
+        """
+
         if self.following:
             player = self.world.player
             player_pos = player.pos + player.SIZE/2
@@ -32,7 +43,7 @@ class Drone(Entity):
             current_pos = self.pos + self.SIZE/2
             
             direction = (player_pos-current_pos).normalize()
-            self.vel = direction * self.SPEED
+            self.vel = direction * self.speed
     
     @on(Event.INTERACTION)
     def on_interract(self, event):
@@ -40,10 +51,16 @@ class Drone(Entity):
             self.update_following(not self.following)
             
     def update_following(self, following):
+        """Update following state
+
+        Arguments:
+            following {bool} -- new following state
+        """
+
         self.following = following
         if not self.following:
             self.vel = Vec()
-            self.GRAVITY = True
+            self.gravity = True
         else:
-            self.GRAVITY = False
+            self.gravity = False
     

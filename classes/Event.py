@@ -56,6 +56,12 @@ class Event:
 
 
 def listener(cls):
+    """Class decorator to indicate that a class has event listener callback methods
+
+    Returns:
+        class -- the class
+    """
+    
     cls._listeners = {}
     cls._instances = []
 
