@@ -57,7 +57,7 @@ class Tile(Copyable):
     
     def __setattr__(self, name, value):
         if self.CONNECTED and name == "neighbors" and self.texture:
-            self.texture = Texture(self.texture.name, value)
+            self.texture.id = value
         
         super().__setattr__(name, value)
     
