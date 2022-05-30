@@ -8,6 +8,7 @@ import pickle
 import pygame
 import struct
 
+from classes.Circuit import Circuit
 from classes.Entity import Entity
 from classes.Event import Event
 from classes.Logger import Logger
@@ -34,6 +35,7 @@ class World:
         self.entities = []
         self.player = Player(Vec(1, 1), world=self)
         self.entities.append(self.player)
+        self.circuit = Circuit(self)
     
     def physics(self, delta):
         """Simulates physics
