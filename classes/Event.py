@@ -35,6 +35,8 @@ class Event:
     ENTER_TILE = 6
     EXIT_TILE = 7
     WORLD_LOADED = 8
+    CIRCUIT_CHANGE = 9
+    GATE_INPUT = 10
     
 
     def __init__(self, type_):
