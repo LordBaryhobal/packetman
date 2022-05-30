@@ -112,6 +112,23 @@ class Wire(Electrical):
     }
 
     CONNECTED = True
+    
+    def __init__(self, x=0, y=0, type_=0, world=None):
+        super().__init__(x, y, type_, world)
+        self.powered = False
+        self.powered_by = []
+    
+    def update_power(self):
+        """Updates power state"""
+        if self.powered_by:
+            self.powered = True
+            self.update_texture()
+        else:
+            self.powered = False
+            self.update_texture()
+    
+    def update_texture(self):
+        self.texture.id = self.neighbors + 16 * int(self.powered)
 
 class Gate(Electrical):
     """Logical gate"""
