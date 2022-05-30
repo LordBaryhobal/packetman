@@ -60,6 +60,7 @@ class Editor:
             self.game.camera.pos += (self.move[1]-newpos)*mvec
             self.move[1] = newpos
             self.game.camera.update_visible_tiles()
+            self.game.camera.update_visible_entities()
             
         # placing == 1 --> placing tiles
         if self.placing == 1:
