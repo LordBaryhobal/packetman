@@ -3,6 +3,7 @@
 
 from classes.Event import Event, listener, on
 from classes.Tile import Tile
+from classes.Vec import Vec
 
 class Electrical(Tile):
     """Electrical component"""
@@ -15,6 +16,19 @@ class Input(Electrical):
     _TILES = {
         0: "input"
     }
+    
+    def create_event(self, pressed):
+        neighbors = []
+        for i, delta in enumerate((Vec(0, 1), Vec(1, 0), Vec(0, -1), Vec(-1, 0))):
+            ntile = self.world.get_tile(self.pos+delta)
+            if isinstance(ntile, Electrical):
+                neighbors.append((i,ntile))
+        if neighbors:
+            event = Event(Event.CIRCUIT_CHANGE)
+            event.power = pressed
+            event.input = self
+            event.tiles = neighbors
+            self.world.game.events.append(event)
 
 class Output(Electrical):
     """Output component which does stuff when powered"""
@@ -56,7 +70,7 @@ class Plate(Input):
         Arguments:
             pressed {bool} -- new pressed state
         """
-
+        self.create_event(pressed=pressed)
         self.pressed = pressed
         self.texture.id = int(self.pressed)
     
@@ -88,7 +102,8 @@ class Button(Input):
         Keyword Arguments:
             pressed {bool} -- new pressed state (default: {True})
         """
-
+        if self.pressed != pressed:
+            self.create_event(pressed=pressed)
         self.pressed = pressed
         self.update_texture()
     
