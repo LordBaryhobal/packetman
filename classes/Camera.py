@@ -90,7 +90,7 @@ class Camera:
             editor_surf {pygame.Surface} -- surface to render selections on
         """
         
-        world_surf.fill((0,0,0))
+        world_surf.fill((40,40,40))
         for tile in self.visible_tiles:
             tile.render(world_surf, self.world_to_screen(tile.pos), self.tilesize)
         

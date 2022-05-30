@@ -8,7 +8,9 @@ import pygame
 
 from classes.Animation import Animation
 from classes.Camera import Camera
+from classes.Cutscene import Cutscene
 from classes.Editor import Editor
+from classes.Event import Event
 from classes.Logger import Logger
 from classes.World import World
 from classes.ui.Constraints import *
@@ -45,6 +47,9 @@ class Game:
 
         self.world = World(self)
         self.camera = Camera(self)
+        
+        if self.config["edition"]:
+            self.camera.follow_player = False
 
         self.running = True
         self.paused = True
@@ -61,6 +66,8 @@ class Game:
 
         self.gui = GUI(self)
         self.init_gui()
+
+        self.cutscene = False
     
     @classproperty
     def instance(cls):
@@ -75,12 +82,19 @@ class Game:
         """Main game loop, calls the simulation and rendering functions"""
 
         while self.running:
-            self.handle_events()
-
-            if not self.config["edition"] and not self.paused:
-                self.physics()
+            if self.cutscene:
+                self.cutscene.mainloop()
             
-            self.render()
+            else:
+                self.handle_events()
+
+                if self.cutscene:
+                    continue
+
+                if not self.config["edition"] and not self.paused:
+                    self.physics()
+                
+                self.render()
         
         pygame.display.quit()
         pygame.quit()
@@ -109,9 +123,12 @@ class Game:
                     elif self.settings_menu.visible:
                         #self.cb_exit_settings(None)
                         pass
+            
+                elif event.key == pygame.K_c:
+                    self.cutscene = Cutscene(self, "level", "test_tiles")
         
         # Entities and World
-        if not self.config["edition"]:
+        if not self.config["edition"] and not self.paused and not self.cutscene:
             for entity in self.world.entities:
                 entity.handle_events(events)
             self.world.handle_events(events)
@@ -129,6 +146,12 @@ class Game:
             for animation in Animation.ANIMATIONS:
                 if not animation.start_time is None and not animation.finished:
                     animation.update()
+                
+                if animation.finished:
+                    Logger.debug("Game: "+animation.attr)
+                    event = Event(Event.ANIMATION_FINISH)
+                    event.animation = animation
+                    self.events.append(event)
             
             Animation.ANIMATIONS = list(filter(lambda a: not a.finished, Animation.ANIMATIONS))
 
@@ -270,10 +293,14 @@ class Game:
         
         #TODO: empty world if new
         if path != "new":
-            self.world.load(path)
+            if self.config["edition"]:
+                self.world.load(path)
+            
+            else:
+                self.cutscene = Cutscene(self, None, path)
         
-        self.camera.update_visible_tiles()
-        self.camera.update_visible_entities()
+        #self.camera.update_visible_tiles()
+        #self.camera.update_visible_entities()
         
         self.levels_menu.set_visible(False)
         self.paused = False
