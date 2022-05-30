@@ -130,6 +130,15 @@ class Wire(Electrical):
     def update_texture(self):
         self.texture.id = self.neighbors + 16 * int(self.powered)
 
+class InsulatedWire(Wire):
+    """Insulated wire"""
+
+    _TILES = {
+        0: "insulated_wire"
+    }
+    
+    solid = True
+
 class Gate(Electrical):
     """Logical gate"""
     

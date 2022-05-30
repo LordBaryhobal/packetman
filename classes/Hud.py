@@ -37,7 +37,7 @@ class Hud:
         self.hotbar = 0
         self.hotbars = [
             [Aluminium(), Brass(), Copper(), Gold(), Iron(), Lead(), Zinc()],
-            [Insulator(), Plastic(), ThermalConductor(), Plate(), Button(), Wire(), Gate()],
+            [Insulator(), Plastic(), ThermalConductor(), Plate(), Button(), Wire(), InsulatedWire(), Gate()],
             [Entity(), Bullet(), Hacker(), Robot(), Drone(type_=1)]
         ]
 
