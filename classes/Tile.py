@@ -26,7 +26,7 @@ TILES = {
 class Tile(Copyable):
     """World tile, can be solid, interactive, etc."""
 
-    _no_save = ["type", "pos", "texture"]
+    _no_save = ["type", "pos", "texture", "world"]
     _TILES = {
         -1: None,
         0: None
@@ -38,13 +38,14 @@ class Tile(Copyable):
     solid = False
     rotatable = False
 
-    def __init__(self, x=0, y=0, type_=0):
+    def __init__(self, x=0, y=0, type_=0, world=None):
         """Initializes a Tile instance
 
         Keyword Arguments:
             x {int} -- x coordinate (default: {0})
             y {int} -- y coordinate (default: {0})
             type_ {int} -- tile type, 0 if empty (default: {0})
+            world {World} -- world the tile is in (default: {None})
         """
 
         self.pos = Vec(x, y)
@@ -52,6 +53,7 @@ class Tile(Copyable):
         self.name = self._TILES[self.type]
         self.texture = Texture(self.name, self.type) if self.name else None
         self.neighbors = 0
+        self.world = world
     
     def __setattr__(self, name, value):
         if self.CONNECTED and name == "neighbors" and self.texture:

@@ -31,8 +31,8 @@ class Plate(Input):
         0: "plate"
     }
     
-    def __init__(self, x=0, y=0, type_=0):
-        super().__init__(x, y, type_)
+    def __init__(self, x=0, y=0, type_=0, world=None):
+        super().__init__(x, y, type_, world)
         self.pressed = False
         self.entity_count = 0
     
@@ -72,8 +72,8 @@ class Button(Input):
     pressed = False
     rotatable = True
     
-    def __init__(self, x=0, y=0, type_=0):
-        super().__init__(x, y, type_)
+    def __init__(self, x=0, y=0, type_=0, world=None):
+        super().__init__(x, y, type_, world)
         self.rotation = 0
         self.set_pressed(False)
 

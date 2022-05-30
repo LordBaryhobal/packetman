@@ -30,7 +30,7 @@ class World:
         """
 
         self.game = game
-        self.tiles = np.array([[Tile()]], dtype='object')
+        self.tiles = np.array([[Tile(world=self)]], dtype='object')
         self.entities = []
         self.player = Player(Vec(1, 1), world=self)
         self.entities.append(self.player)
@@ -390,7 +390,7 @@ class World:
                 attrs = pickle.loads(f.read(size - len(cls) - 7))
 
                 cls = str(cls, "utf-8")
-                tile = Tile.get_cls(cls)(x, y, type_)
+                tile = Tile.get_cls(cls)(x, y, type_, self)
                 for k, v in attrs.items():
                     setattr(tile, k, v)
                 
