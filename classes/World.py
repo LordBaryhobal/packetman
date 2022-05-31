@@ -487,6 +487,8 @@ class World:
             # t2 --> does tile2 want to connect to tile?
             
             # Verify that tile2 is not None
+            t, t2 = False, False
+            
             if not tile2:
                 t2 = False
                 if tile.CONNECTED:
