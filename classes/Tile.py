@@ -19,6 +19,7 @@ TILES = {
     "InsulatedWire": "classes.tiles.Components",
     "Iron": "classes.tiles.Metals",
     "Lead": "classes.tiles.Metals",
+    "NotGate": "classes.tiles.Components",
     "OrGate": "classes.tiles.Components",
     "Plastic": "classes.tiles.Terrain",
     "Plate": "classes.tiles.Components",
