@@ -131,7 +131,7 @@ class Wire(Electrical):
     def __init__(self, x=0, y=0, type_=0, world=None):
         super().__init__(x, y, type_, world)
         self.powered = False
-        self.powered_by = []
+        self.powered_by = [] # optimizable ( change to a number instead of list of tiles)
     
     def update_power(self):
         """Updates power state"""
@@ -154,9 +154,74 @@ class InsulatedWire(Wire):
     
     solid = True
 
-class Gate(Electrical):
+class Gate(Output, Input):
     """Logical gate"""
     
     _TILES = {
         0: "gate"
     }
+
+    DIRECTION = (Vec(0, 1), Vec(1, 0), Vec(0, -1), Vec(-1, 0))
+
+    def create_event(self, pressed):
+        neighbors = []
+        tile = self.world.get_tile(self.pos+self.DIRECTION[self.rotation])
+        if isinstance(tile, Electrical):
+            neighbors.append((self.rotation, tile))
+        if neighbors:
+            event = Event(Event.CIRCUIT_CHANGE)
+            event.power = pressed
+            event.input = self
+            event.tiles = neighbors
+            self.world.game.events.append(event)
+
+@listener
+class Buffer_Gate(Gate):
+    """Buffer_Gate let the power flow only in one direction"""
+
+    _TILES = {
+        0: "test_gate"
+    }
+
+    rotatable = True
+
+    def __init__(self, x=0, y=0, type_=0, world=None):
+        super().__init__(x, y, type_, world)
+        self.rotation = 0
+        self.powered_by = [[]]
+        self.powered = False
+        #according to the rotation
+        self.input_direction = (2,)
+    
+    def rotate(self):
+        self.rotation = (self.rotation + 1) % 4
+        self.update_texture()
+    
+    def update_texture(self):
+        self.texture.id = self.rotation + 4*int(self.powered)
+    
+    @on(Event.WORLD_LOADED)
+    def on_world_loaded(self, event):
+        self.update_texture()
+
+    @on(Event.GATE_INPUT)
+    def update_input(self, event):
+        for i, d in enumerate(self.input_direction):
+            if (self.rotation + d)%4 == event.connected_from:
+                if event.power:
+                    self.powered_by[i].append(event.input)
+                else:
+                    self.powered_by[i].remove(event.input)
+                self.update_activation()
+    
+    def update_activation(self):
+        """Updates activation state"""
+        if self.powered_by[0]:
+            new_powered = True
+        else:
+            new_powered = False
+        if self.powered != new_powered:
+            self.powered = new_powered
+            self.create_event(pressed=self.powered)
+
+            self.update_texture()

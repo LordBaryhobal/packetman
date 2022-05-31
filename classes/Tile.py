@@ -9,6 +9,7 @@ from classes.Vec import Vec
 TILES = {
     "Aluminium": "classes.tiles.Metals",
     "Brass": "classes.tiles.Metals",
+    "Buffer_Gate": "classes.tiles.Components",
     "Button": "classes.tiles.Components",
     "Copper": "classes.tiles.Metals",
     "Gate": "classes.tiles.Components",
@@ -27,7 +28,7 @@ TILES = {
 class Tile(Copyable):
     """World tile, can be solid, interactive, etc."""
 
-    _no_save = ["type", "pos", "texture", "world"]
+    _no_save = ["type", "pos", "texture", "world", "powered", "powered_by"]
     _TILES = {
         -1: None,
         0: None
