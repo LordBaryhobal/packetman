@@ -183,6 +183,7 @@ class Gate(Output, Input):
     @on(Event.WORLD_LOADED)
     def on_world_loaded(self, event):
         self.update_texture()
+        self.update_activation()
     
     def update_texture(self):
         self.texture.id = self.rotation + 4*int(self.powered)
@@ -222,6 +223,36 @@ class BufferGate(Gate):
             new_powered = True
         else:
             new_powered = False
+        if self.powered != new_powered:
+            self.powered = new_powered
+            self.create_event(pressed=self.powered)
+
+            self.update_texture()
+
+@listener
+class NotGate(Gate):
+    """NotGate let the power flow only in one direction"""
+
+    _TILES = {
+        0: "not_gate"
+    }
+
+    rotatable = True
+
+    def __init__(self, x=0, y=0, type_=0, world=None):
+        super().__init__(x, y, type_, world)
+        self.rotation = 0
+        self.powered_by = [[]]
+        self.powered = False
+        #according to the rotation
+        self.input_direction = (2,)
+    
+    def update_activation(self):
+        """Updates activation state"""
+        if self.powered_by[0]:
+            new_powered = False
+        else:
+            new_powered = True
         if self.powered != new_powered:
             self.powered = new_powered
             self.create_event(pressed=self.powered)
