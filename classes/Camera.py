@@ -39,19 +39,19 @@ class Camera:
             player_br = self.world_to_screen(Vec(player.pos.x+player.box.w, player.pos.y))
             
             W, H = self.game.WIDTH, self.game.HEIGHT
-            W4, H4 = W/4, H/4
+            hm, vm = W/3, H/3
 
             prev_pos = self.pos.copy()
 
-            if player_tl.x < W4:                # left
-                self.pos.x -= W4-player_tl.x
-            elif player_br.x > W-W4:            # right
-                self.pos.x += player_br.x-W+W4
+            if player_tl.x < hm:                # left
+                self.pos.x -= hm-player_tl.x
+            elif player_br.x > W-hm:            # right
+                self.pos.x += player_br.x-W+hm
             
-            if player_tl.y < H4:                # bottom
-                self.pos.y += H4-player_tl.y
-            elif player_br.y > H-H4:            # top
-                self.pos.y -= player_br.y-H+H4
+            if player_tl.y < vm:                # bottom
+                self.pos.y += vm-player_tl.y
+            elif player_br.y > H-vm:            # top
+                self.pos.y -= player_br.y-H+vm
             
             self.pos = self.pos.max(Vec(0,0))
             
