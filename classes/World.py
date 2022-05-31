@@ -311,7 +311,8 @@ class World:
 
             if hasattr(tile, "_no_save"):
                 for a in tile._no_save:
-                    del attrs[a]
+                    if a in attrs:
+                        del attrs[a]
             
             attrs = pickle.dumps(attrs)
             buf_tile.extend(attrs)
@@ -338,7 +339,8 @@ class World:
 
             if hasattr(entity, "_no_save"):
                 for a in entity._no_save:
-                    del attrs[a]
+                    if a in attrs:
+                        del attrs[a]
             
             attrs = pickle.dumps(attrs)
             buf_entity.extend(attrs)
