@@ -38,14 +38,14 @@ class Game:
         with open("./config.json", "r") as f:
             self.config = json.loads(f.read())
             
-        if self.config["edition"]:
-            self.editor = Editor(self)
-        
         Logger.level = self.config["loglevel"]
 
         self.world = World(self)
         self.camera = Camera(self)
 
+        if self.config["edition"]:
+            self.editor = Editor(self)
+        
         self.running = True
         self.paused = True
 
