@@ -11,9 +11,7 @@ class Texture(Copyable):
     
     _cache = {}
 
-    WIDTH, HEIGHT = 32, 32
-
-    def __init__(self, name=None, id_=None):
+    def __init__(self, name=None, id_=None, width=32, height=32):
         """Initializes a Texture instance
 
         Keyword Arguments:
@@ -24,6 +22,8 @@ class Texture(Copyable):
         self.name = name
         self.id = id_
         self.img = Texture.get(self.name, self.id) if name else None
+        self.WIDTH = width
+        self.HEIGHT = height
     
     def get(name, id_):
         """Returns a texture from name and id
@@ -48,7 +48,7 @@ class Texture(Copyable):
 
         Arguments:
             surface {pygame.Surface} -- surface to render the texture on
-            pos {Vec} -- pixel coordinates where to render on the surface
+            pos {Vec} -- pixel coordinates where to render on the surface (bottom left corner)
             tilesize {int} -- size of a tile in pixels
             dimensions {Vec} -- dimensions of the texture (default: {Vec(1,1)})
         """

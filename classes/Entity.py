@@ -23,7 +23,7 @@ class Entity(Copyable):
     Subject to physics
     """
     
-    _no_save = ["type", "pos", "vel", "acc", "box", "highlight", "texture", "world"]
+    _no_save = ["type", "pos", "vel", "acc", "box", "highlight", "texture", "world", "interact_hint", "Last_pos", "hint_texture"]
     _ENTITIES = {
         0: None
     }
@@ -31,6 +31,8 @@ class Entity(Copyable):
     
     gravity = True
     interactive = False
+    
+    HINT_SIZE = Vec(0.3,0.3)
 
     def __init__(self, pos=None, vel=None, acc=None, type_=None, highlight=False, world=None):
         """Initializes an Entity instance
@@ -64,6 +66,9 @@ class Entity(Copyable):
         self.highlight = highlight
         self.world = world
         self.last_pos = None
+
+        self.interact_hint = False
+        self.hint_texture = Texture("interaction_hint", 0, width=64, height=64)
     
     def get_cls(cls):
         """Get class from class name
@@ -101,6 +106,12 @@ class Entity(Copyable):
         
         if self.highlight:
             pygame.draw.rect(surface, (255,255,255), rect, 2)
+        
+        if self.interact_hint:
+            hintpos = pos + Vec((self.SIZE.x - self.HINT_SIZE.x)*size/2, self.HINT_SIZE.y*size)
+            self.hint_texture.render(surface, hintpos, size, self.HINT_SIZE)
+            self.interact_hint = False
+
             
 
     def physics(self, delta):
