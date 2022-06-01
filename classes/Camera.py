@@ -23,7 +23,7 @@ class Camera:
         self.pos = Vec(0,0)
         self.game = game
         self.follow_player = True
-        self.tilesize = self.game.HEIGHT//10
+        self.tilesize = self.game.HEIGHT//self.game.config["number_of_tiles"]
         self.update_visible_tiles()
         self.update_visible_entities()
     

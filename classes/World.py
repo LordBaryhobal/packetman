@@ -8,6 +8,7 @@ import pickle
 import pygame
 import struct
 
+from classes.Circuit import Circuit
 from classes.Entity import Entity
 from classes.Event import Event
 from classes.Logger import Logger
@@ -30,10 +31,11 @@ class World:
         """
 
         self.game = game
-        self.tiles = np.array([[Tile()]], dtype='object')
+        self.tiles = np.array([[Tile(world=self)]], dtype='object')
         self.entities = []
         self.player = Player(Vec(1, 1), world=self)
         self.entities.append(self.player)
+        self.circuit = Circuit(self)
     
     def physics(self, delta):
         """Simulates physics
@@ -309,7 +311,8 @@ class World:
 
             if hasattr(tile, "_no_save"):
                 for a in tile._no_save:
-                    del attrs[a]
+                    if a in attrs:
+                        del attrs[a]
             
             attrs = pickle.dumps(attrs)
             buf_tile.extend(attrs)
@@ -336,7 +339,8 @@ class World:
 
             if hasattr(entity, "_no_save"):
                 for a in entity._no_save:
-                    del attrs[a]
+                    if a in attrs:
+                        del attrs[a]
             
             attrs = pickle.dumps(attrs)
             buf_entity.extend(attrs)
@@ -390,7 +394,7 @@ class World:
                 attrs = pickle.loads(f.read(size - len(cls) - 7))
 
                 cls = str(cls, "utf-8")
-                tile = Tile.get_cls(cls)(x, y, type_)
+                tile = Tile.get_cls(cls)(x, y, type_, self)
                 for k, v in attrs.items():
                     setattr(tile, k, v)
                 
@@ -458,8 +462,10 @@ class World:
                 t = selection[y, x]
                 if not t.name and not place_empty:
                     continue
-                
-                self.set_tile(t, pos + Vec(x, y))
+                newpos = pos + Vec(x, y)
+                if newpos.x < 0 or newpos.y < 0:
+                    continue
+                self.set_tile(t, newpos)
     
     def update_tile(self, pos):
         """Updates a tile
@@ -476,19 +482,33 @@ class World:
         for i, off in enumerate(offsets):
             bit, bit2 = 2**i, 2**((i+2)%4)
             tile2 = self.get_tile(pos+off)
-
-            t = not tile or tile.name
-            t2 = not tile2 or tile2.name
-
+            
+            # t --> does tile want to connect to tile2?
+            # t2 --> does tile2 want to connect to tile?
+            
+            # Verify that tile2 is not None
+            t, t2 = False, False
+            
+            if not tile2:
+                t2 = False
+                if tile.CONNECTED:
+                    t = True
+            
+            else:
+                t = False
+                if tile.CONNECT_TO:
+                    t = tile.CONNECTED and isinstance(tile2, tile.CONNECT_TO)
+                
+                t2 = False
+                if tile2.CONNECT_TO:
+                    t2 = tile2.CONNECTED and isinstance(tile, tile2.CONNECT_TO)
+            
             if t:
-                if t2:
-                    if tile2:
-                        tile2.neighbors |= bit2
-                    
-                    if tile:
-                        tile.neighbors |= bit
-                elif tile:
-                    tile.neighbors &= ~bit
+                tile.neighbors |= bit
+            elif tile:
+                tile.neighbors &= ~bit
+            if t2:
+                tile2.neighbors |= bit2
             elif tile2:
                 tile2.neighbors &= ~bit2
             

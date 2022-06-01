@@ -3,10 +3,12 @@
 
 from classes.Event import Event, listener, on
 from classes.Tile import Tile
+from classes.Vec import Vec
 
 class Electrical(Tile):
     """Electrical component"""
     pass
+Electrical.CONNECT_TO = (Electrical, )
 
 class Input(Electrical):
     """Input component which can produce electricity"""
@@ -14,6 +16,18 @@ class Input(Electrical):
     _TILES = {
         0: "input"
     }
+    
+    def create_event(self, pressed):
+        neighbors = []
+        for i, delta in enumerate((Vec(0, 1), Vec(1, 0), Vec(0, -1), Vec(-1, 0))):
+            ntile = self.world.get_tile(self.pos+delta)
+            if isinstance(ntile, Electrical):
+                neighbors.append((i,ntile))
+        if neighbors:
+            event = Event(Event.CIRCUIT_CHANGE)
+            event.power = pressed
+            event.tiles = neighbors
+            self.world.game.events.append(event)
 
 class Output(Electrical):
     """Output component which does stuff when powered"""
@@ -30,8 +44,8 @@ class Plate(Input):
         0: "plate"
     }
     
-    def __init__(self, x=0, y=0, type_=0):
-        super().__init__(x, y, type_)
+    def __init__(self, x=0, y=0, type_=0, world=None):
+        super().__init__(x, y, type_, world)
         self.pressed = False
         self.entity_count = 0
     
@@ -55,7 +69,7 @@ class Plate(Input):
         Arguments:
             pressed {bool} -- new pressed state
         """
-
+        self.create_event(pressed=pressed)
         self.pressed = pressed
         self.texture.id = int(self.pressed)
     
@@ -71,8 +85,8 @@ class Button(Input):
     pressed = False
     rotatable = True
     
-    def __init__(self, x=0, y=0, type_=0):
-        super().__init__(x, y, type_)
+    def __init__(self, x=0, y=0, type_=0, world=None):
+        super().__init__(x, y, type_, world)
         self.rotation = 0
         self.set_pressed(False)
 
@@ -87,7 +101,8 @@ class Button(Input):
         Keyword Arguments:
             pressed {bool} -- new pressed state (default: {True})
         """
-
+        if self.pressed != pressed:
+            self.create_event(pressed=pressed)
         self.pressed = pressed
         self.update_texture()
     
@@ -111,11 +126,222 @@ class Wire(Electrical):
     }
 
     CONNECTED = True
-    CONNECT_STRICT = True
+    
+    def __init__(self, x=0, y=0, type_=0, world=None):
+        super().__init__(x, y, type_, world)
+        self.powered = False
+        self.powered_by = 0
+    
+    def update_power(self):
+        """Updates power state"""
+        self.powered_by = max(self.powered_by, 0)  # can be a problem
+        if self.powered_by > 0:
+            self.powered = True
+            self.update_texture()
+        else:
+            self.powered = False
+            self.update_texture()
+    
+    def update_texture(self):
+        self.texture.id = self.neighbors + 16 * int(self.powered)
+        
 
-class Gate(Electrical):
+class InsulatedWire(Wire):
+    """Insulated wire"""
+
+    _TILES = {
+        0: "insulated_wire"
+    }
+    
+    solid = True
+
+@listener
+class Gate(Output, Input):
     """Logical gate"""
     
     _TILES = {
         0: "gate"
     }
+
+    DIRECTION = (Vec(0, 1), Vec(1, 0), Vec(0, -1), Vec(-1, 0))
+
+    def create_event(self, pressed):
+        neighbors = []
+        tile = self.world.get_tile(self.pos+self.DIRECTION[self.rotation])
+        if isinstance(tile, Electrical):
+            neighbors.append((self.rotation, tile))
+        if neighbors:
+            event = Event(Event.CIRCUIT_CHANGE)
+            event.power = pressed
+            event.tiles = neighbors
+            self.world.game.events.append(event)
+    
+    def rotate(self):
+        self.rotation = (self.rotation + 1) % 4
+        self.update_texture()
+    
+    @on(Event.WORLD_LOADED)
+    def on_world_loaded(self, event):
+        self.update_texture()
+        self.update_activation()
+    
+    def update_texture(self):
+        self.texture.id = self.rotation + 4*int(self.powered)
+    
+    @on(Event.GATE_INPUT)
+    def update_input(self, event):
+        if event.tile == self:
+            for i, d in enumerate(self.input_direction):
+                if (self.rotation + d)%4 == event.connected_from:
+                    if event.power:
+                        self.powered_by[i] += 1
+                    else:
+                        self.powered_by[i] -= 1
+                    self.update_activation()
+
+class BufferGate(Gate):
+    """BufferGate let the power flow only in one direction"""
+
+    _TILES = {
+        0: "buffer_gate"
+    }
+
+    rotatable = True
+
+    def __init__(self, x=0, y=0, type_=0, world=None):
+        super().__init__(x, y, type_, world)
+        self.rotation = 0
+        self.powered_by = [0]
+        self.powered = False
+        #according to the rotation
+        self.input_direction = (2,)
+    
+    def update_activation(self):
+        """Updates activation state"""
+        self.powered_by = [max(self.powered_by[0], 0)]  # can be a problem
+        if self.powered_by[0] > 0:
+            new_powered = True
+        else:
+            new_powered = False
+        if self.powered != new_powered:
+            self.powered = new_powered
+            self.create_event(pressed=self.powered)
+
+            self.update_texture()
+
+class NotGate(Gate):
+    """NotGate let the power flow only in one direction"""
+
+    _TILES = {
+        0: "not_gate"
+    }
+
+    rotatable = True
+
+    def __init__(self, x=0, y=0, type_=0, world=None):
+        super().__init__(x, y, type_, world)
+        self.rotation = 0
+        self.powered_by = [0]
+        self.powered = False
+        #according to the rotation
+        self.input_direction = (2,)
+    
+    def update_activation(self):
+        """Updates activation state"""
+        self.powered_by = [max(self.powered_by[0], 0)]  # can be a problem
+        if self.powered_by[0] > 0:
+            new_powered = False
+        else:
+            new_powered = True
+        if self.powered != new_powered:
+            self.powered = new_powered
+            self.create_event(pressed=self.powered)
+
+            self.update_texture()
+
+class AndGate(Gate):
+    """AndGate let the power flow only in one direction"""
+
+    _TILES = {
+        0: "and_gate"
+    }
+
+    rotatable = True
+
+    def __init__(self, x=0, y=0, type_=0, world=None):
+        super().__init__(x, y, type_, world)
+        self.rotation = 0
+        self.powered_by = [0,0]
+        self.powered = False
+        #according to the rotation
+        self.input_direction = (1,3)
+    
+    def update_activation(self):
+        """Updates activation state"""
+        self.powered_by = [max(self.powered_by[0], 0),max(self.powered_by[1], 0)]  # can be a problem
+        if self.powered_by[0] > 0 and self.powered_by[1] > 0:
+            new_powered = True
+        else:
+            new_powered = False
+        if self.powered != new_powered:
+            self.powered = new_powered
+            self.create_event(pressed=self.powered)
+
+            self.update_texture()
+
+class OrGate(Gate):
+    """OrGate let the power flow only in one direction"""
+
+    _TILES = {
+        0: "or_gate"
+    }
+
+    rotatable = True
+
+    def __init__(self, x=0, y=0, type_=0, world=None):
+        super().__init__(x, y, type_, world)
+        self.rotation = 0
+        self.powered_by = [0,0]
+        self.powered = False
+        #according to the rotation
+        self.input_direction = (1,3)
+    
+    def update_activation(self):
+        """Updates activation state"""
+        self.powered_by = [max(self.powered_by[0], 0),max(self.powered_by[1], 0)]  # can be a problem
+        if self.powered_by[0] > 0 or self.powered_by[1] > 0:
+            new_powered = True
+        else:
+            new_powered = False
+        if self.powered != new_powered:
+            self.powered = new_powered
+            self.create_event(pressed=self.powered)
+
+            self.update_texture()
+
+@listener
+class PuzzleDoor(Wire):
+    """PuzzleDoor"""
+
+    
+
+    _TILES = {
+        0: "puzzle_door"
+    }
+
+    solid = True
+
+    CONNECTED = True
+
+    def update_power(self):
+        """Updates power state"""
+        self.powered_by = max(self.powered_by, 0)  # can be a problem
+        if self.powered_by > 0:
+            self.powered = True
+            self.solid = False
+            self.update_texture()
+        else:
+            self.powered = False
+            self.solid = True
+            self.update_texture()
+PuzzleDoor.CONNECT_TO = (PuzzleDoor, )

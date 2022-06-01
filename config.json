@@ -1,6 +1,7 @@
 {
     "edition": true,
     "loglevel": 15,
+    "number_of_tiles":10,
 
     "gui": {
         "editor": {

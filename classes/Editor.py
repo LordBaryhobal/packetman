@@ -4,6 +4,7 @@
 import pygame
 
 from classes.Entity import Entity
+from classes.Event import Event
 from classes.Hud import Hud
 from classes.Logger import Logger
 from classes.Player import Player
@@ -371,6 +372,17 @@ class Editor:
                     tile = self.game.world.get_tile(world_mouse_pos)
                     if tile.rotatable:
                         tile.rotate()
+                
+                elif event.key == pygame.K_e:
+                    world_mouse_pos = self.game.camera.screen_to_world(self.get_mousepos())
+                    tile = self.game.world.get_tile(world_mouse_pos)
+                    if tile.interactive:
+                        event = Event(Event.INTERACTION)
+                        event.tiles = [tile]
+                        event.entities = []
+                        self.game.events.append(event)
+                        
+                        
     
     
     def modify_selection(self, cls, type):
