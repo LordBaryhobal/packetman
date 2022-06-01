@@ -199,6 +199,8 @@ class Component(Copyable):
                 in_elmt = True
 
         handled = False
+        if hasattr(event, "handled"):
+            handled = event.handled
 
         #Reverse to process children in front first
         for child in self.children[::-1]:

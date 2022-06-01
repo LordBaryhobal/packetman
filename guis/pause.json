@@ -1,6 +1,10 @@
 {
     "class": "Menu",
-    "params": [ "${game}" ],
+    "params": [
+        "${game}",
+        "${game.close_menu}",
+        {"name": "name", "val": "pause_menu"}
+    ],
     "children": [
         {
             "class": "Flex",

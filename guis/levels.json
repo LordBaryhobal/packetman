@@ -1,6 +1,11 @@
 {
     "class": "Menu",
-    "params": [ "${game}" ],
+    "params": [
+        "${game}",
+        "${game.switch_menu}",
+        [ "main_menu" ],
+        {"name": "name", "val": "levels_menu"}
+    ],
     "children": [
         {
             "class": "Flex",

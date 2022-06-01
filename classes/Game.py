@@ -101,17 +101,9 @@ class Game:
             
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
-                    if self.paused and self.pause_menu.visible:
-                        self.resume()
-                    elif not self.paused:
+                    if not self.paused:
                         self.pause()
-                    
-                    elif self.levels_menu.visible:
-                        self.cb_exit_levels(None)
-                    
-                    elif self.settings_menu.visible:
-                        #self.cb_exit_settings(None)
-                        pass
+                        event.handled = True
 
         if not self.config["edition"]:
             for entity in self.world.entities:
@@ -340,3 +332,13 @@ class Game:
         new_text = current_text.split(":")[0] + ":" + str(round(value,1))
         label.set_text(new_text)
         return True
+    
+    def switch_menu(self, cur_menu, name):
+        cur_menu.set_visible(False)
+        self.gui.get_by_name(name).set_visible(True)
+    
+    def close_menu(self, cur_menu):
+        cur_menu.set_visible(False)
+        
+        if cur_menu.name == "pause_menu":
+            self.resume()
