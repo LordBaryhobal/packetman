@@ -199,7 +199,6 @@ class Gate(Output, Input):
                         self.powered_by[i] -= 1
                     self.update_activation()
 
-@listener
 class BufferGate(Gate):
     """BufferGate let the power flow only in one direction"""
 
@@ -230,7 +229,6 @@ class BufferGate(Gate):
 
             self.update_texture()
 
-@listener
 class NotGate(Gate):
     """NotGate let the power flow only in one direction"""
 
@@ -261,7 +259,6 @@ class NotGate(Gate):
 
             self.update_texture()
 
-@listener
 class AndGate(Gate):
     """AndGate let the power flow only in one direction"""
 
@@ -292,7 +289,6 @@ class AndGate(Gate):
 
             self.update_texture()
 
-@listener
 class OrGate(Gate):
     """OrGate let the power flow only in one direction"""
 
@@ -322,3 +318,30 @@ class OrGate(Gate):
             self.create_event(pressed=self.powered)
 
             self.update_texture()
+
+@listener
+class PuzzleDoor(Wire):
+    """PuzzleDoor"""
+
+    
+
+    _TILES = {
+        0: "puzzle_door"
+    }
+
+    solid = True
+
+    CONNECTED = True
+
+    def update_power(self):
+        """Updates power state"""
+        self.powered_by = max(self.powered_by, 0)  # can be a problem
+        if self.powered_by > 0:
+            self.powered = True
+            self.solid = False
+            self.update_texture()
+        else:
+            self.powered = False
+            self.solid = True
+            self.update_texture()
+PuzzleDoor.CONNECT_TO = (PuzzleDoor, )
