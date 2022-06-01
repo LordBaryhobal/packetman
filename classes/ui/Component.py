@@ -185,6 +185,8 @@ class Component(Copyable):
             bool -- wether this event has been handled and shouldn't be passed further
         """
 
+        #TODO: don't pass events outside of self to children (i.e. flex)
+
         if not self.visible:
             return False
         
