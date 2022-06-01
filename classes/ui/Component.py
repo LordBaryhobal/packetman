@@ -173,24 +173,30 @@ class Component(Copyable):
         self.set_changed()
         return self
     
-    def handle_event(self, event):
+    def handle_event(self, event, in_parent=True):
         """Processes a mouse or keyboard event
 
         This method first passes the event to its children recursively
 
         Arguments:
             event {pygame.Event} -- event to process
+        
+        Keyword Arguments:
+            in_parent {bool} -- True if event happened in the parent
 
         Returns:
             bool -- wether this event has been handled and shouldn't be passed further
         """
 
-        #TODO: don't pass events outside of self to children (i.e. flex)
-
         if not self.visible:
             return False
         
         x, y, w, h = self.get_shape()
+        in_elmt = False
+
+        if in_parent and hasattr(event, "pos"):
+            if x <= event.pos[0] < x+w and y <= event.pos[1] < y+h:
+                in_elmt = True
 
         handled = False
 
@@ -199,10 +205,10 @@ class Component(Copyable):
             if handled:
                 break
             
-            handled = child.handle_event(event)
+            handled = child.handle_event(event, in_elmt)
         
         if event.type == pygame.MOUSEBUTTONDOWN:
-            if x <= event.pos[0] < x+w and y <= event.pos[1] < y+h:
+            if in_parent and x <= event.pos[0] < x+w and y <= event.pos[1] < y+h:
                 self.pressed = True
                 if self.on_click(event):
                     handled = True
@@ -220,7 +226,7 @@ class Component(Copyable):
             if self.on_mouse_move(event):
                 handled = True
 
-            if x <= event.pos[0] < x+w and y <= event.pos[1] < y+h:
+            if in_parent and x <= event.pos[0] < x+w and y <= event.pos[1] < y+h:
                 if not self.hover:
                     self.hover = True
                     if self.on_enter(event):
