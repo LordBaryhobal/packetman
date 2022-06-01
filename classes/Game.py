@@ -262,8 +262,10 @@ class Game:
     def cb_lvl(self, button, path):
         Logger.debug(f"Selected level {path}")
         
-        #TODO: empty world if new
-        if path != "new":
+        if path == "new":
+            self.world = World(self)
+        
+        else:
             self.world.load(path)
         
         self.camera.update_visible_tiles()
