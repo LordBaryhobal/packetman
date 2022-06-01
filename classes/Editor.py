@@ -297,13 +297,6 @@ class Editor():
                 elif event.key == pygame.K_s and event.mod & pygame.KMOD_CTRL:
                     self.game.gui.switch_menu("save_menu")
                 
-                #load world
-                elif event.key == pygame.K_l and event.mod & pygame.KMOD_CTRL:
-                    path = input("Open level: ")
-                    self.game.world.load(path)
-                    self.game.camera.update_visible_tiles()
-                    self.game.camera.update_visible_entities()
-                
                 #copy the selection
                 elif event.key == pygame.K_c and event.mod & pygame.KMOD_CTRL and self.selection[0] ==2 and self.placing == 0:
                     v1,v2 = self.selection[1].get_tl_br_corners(self.selection[2])
