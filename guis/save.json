@@ -1,0 +1,72 @@
+{
+    "class": "Menu",
+    "params": [
+        "${game}",
+        "${#}",
+        {"name": "name", "val": "save_menu"}
+    ],
+    "children": [
+        {
+            "class": "Flex",
+            "params": [
+                {"name": "justify", "val": "space-evenly"}
+            ],
+            "w": {"type": "Relative", "val": 1.0},
+            "h": {"type": "Relative", "val": 1.0},
+            "children": [
+                {
+                    "class": "Label",
+                    "params": [
+                        "Save level as"
+                    ],
+                    "x": {"type": "Center"},
+                    "y": {"type": "Absolute", "val": 0},
+                    "w": {"type": "Relative", "val": 0.5},
+                    "h": {"type": "Relative", "val": 0.1}
+                },
+                {
+                    "class": "Input",
+                    "params": [
+                        "",
+                        "Level name",
+                        {"name": "name", "val": "level_name"}
+                    ],
+                    "x": {"type": "Center"},
+                    "y": {"type": "Center"},
+                    "w": {"type": "Relative", "val": 0.5},
+                    "h": {"type": "Relative", "val": 0.1}
+                },
+                {
+                    "class": "Flex",
+                    "params": [
+                        {"name": "justify", "val": "space-between"},
+                        {"name": "dir_", "val": "row"}
+                    ],
+                    "x": {"type": "Center"},
+                    "w": {"type": "Relative", "val": 0.5},
+                    "h": {"type": "Relative", "val": 0.1},
+                    "children": [
+                        {
+                            "class": "Button",
+                            "params": [
+                                "Cancel",
+                                "${#}"
+                            ],
+                            "w": {"type": "Relative", "val": 0.4},
+                            "h": {"type": "Relative", "val": 1.0}
+                        },
+                        {
+                            "class": "Button",
+                            "params": [
+                                "Save",
+                                "${game.cb_save_lvl}"
+                            ],
+                            "w": {"type": "Relative", "val": 0.4},
+                            "h": {"type": "Relative", "val": 1.0}
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

@@ -1,6 +1,9 @@
 {
     "class": "Menu",
-    "params": [ "${game}" ],
+    "params": [
+        "${game}",
+        {"name": "name", "val": "main_menu"}
+    ],
     "children": [
         {
             "class": "Flex",

@@ -299,15 +299,7 @@ class Editor:
                             
                 # Save the world
                 elif event.key == pygame.K_s and event.mod & pygame.KMOD_CTRL:
-                    path = input("Save level as: ")
-                    self.game.world.save(path)
-                
-                # Load world
-                elif event.key == pygame.K_l and event.mod & pygame.KMOD_CTRL:
-                    path = input("Open level: ")
-                    self.game.world.load(path)
-                    self.game.camera.update_visible_tiles()
-                    self.game.camera.update_visible_entities()
+                    self.game.gui.switch_menu("save_menu")
                 
                 # Copy the selection
                 elif event.key == pygame.K_c and event.mod & pygame.KMOD_CTRL and self.selection[0] == 2 and self.placing == 0:

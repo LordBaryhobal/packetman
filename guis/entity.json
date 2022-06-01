@@ -1,6 +1,10 @@
 {
     "class": "Menu",
-    "params": [ "${game}" ],
+    "params": [
+        "${game}",
+        "${#}",
+        {"name": "name", "val": "entity_menu"}
+    ],
     "children": [
         {
             "class": "Flex",

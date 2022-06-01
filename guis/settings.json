@@ -1,6 +1,10 @@
 {
     "class": "Menu",
-    "params": [ "${game}" ],
+    "params": [
+        "${game}",
+        "${>main_menu}",
+        {"name": "name", "val": "settings_menu"}
+    ],
     "children": [
         {
             "class": "Flex",
@@ -26,7 +30,7 @@
                     "class": "Checkbox",
                     "params": [
                         "Test checkbox",
-                        "${game.cb_checkbox}",
+                        "${game.cb_test}",
                         [ "test_checkbox" ],
                         { "name": "name", "val": "test_checkbox" }
                     ],
@@ -40,7 +44,7 @@
                         0,
                         10,
                         1,
-                        "${game.cb_checkbox}",
+                        "${game.cb_test}",
                         [ "test_slider" ],
                         { "name": "name", "val": "test_slider" }
                     ],

@@ -97,7 +97,14 @@ class Parser:
         """
         
         if isinstance(param, str):
-            if param.startswith("${") and param.endswith("}"):
+            if param.startswith("${>") and param.endswith("}"):
+                menu = param[3:-1]
+                return lambda *a, **kwa: self.game.gui.switch_menu(menu)
+            
+            elif param == "${#}":
+                return lambda *a, **kwa: self.game.gui.close_menu()
+
+            elif param.startswith("${") and param.endswith("}"):
                 path = param[2:-1].split(".")
 
                 obj = None

@@ -95,22 +95,6 @@ class Game:
             if event.type == pygame.QUIT:
                 if self.quit():
                     return
-            
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
-                    if self.paused and self.pause_menu.visible:
-                        self.resume()
-                    elif not self.paused:
-                        self.pause()
-                    
-                    elif self.levels_menu.visible:
-                        self.cb_exit_levels(None)
-                    
-                    elif self.settings_menu.visible:
-                        #self.cb_exit_settings(None)
-                        pass
-        
-        # Entities and World
         if not self.config["edition"]:
             for entity in self.world.entities:
                 entity.handle_events(events)
@@ -203,9 +187,10 @@ class Game:
         self.levels_menu = self.parser.parse("levels")
         self.level_comp = self.parser.parse("level")
         self.entity_menu = self.parser.parse("entity")
+        self.save_menu = self.parser.parse("save")
 
-        self.main_menu.set_visible(True)
-        self.entity_menu.set_visible(False)
+        #self.main_menu.set_visible(True)
+        #self.entity_menu.set_visible(False)
 
         self.pause_menu.bg_color = (100,100,100,200)
         self.entity_menu.bg_color = (100,150,100)
@@ -215,19 +200,21 @@ class Game:
         self.gui.add(self.settings_menu)
         self.gui.add(self.levels_menu)
         self.gui.add(self.entity_menu)
+        self.gui.add(self.save_menu)
+
+        self.gui.switch_menu("main_menu")
     
-    def resume(self):
+    def resume(self, *args, **kwargs):
         """Closes pause menu and resumes the game"""
 
-        self.pause_menu.set_visible(False)
+        self.gui.close_menu()
         self.paused = False
     
     def pause(self):
         """Pauses the game and opens pause menu"""
 
         self.paused = True
-        self.pause_menu.set_visible(True)
-        self.entity_menu.set_visible(False)
+        self.gui.switch_menu("pause_menu")
     
     def load_settings(self):
         #menu = self.settings_menu
@@ -237,9 +224,6 @@ class Game:
     def save_settings(self):
         #self.config[""]
         pass
-
-    def cb_resume(self, button):
-        self.resume()
     
     def cb_quit(self, button):
         self.quit()
@@ -262,50 +246,41 @@ class Game:
                 level.text = l[:-4]
                 container.add(level)
 
-        self.levels_menu.set_visible(True)
-        self.main_menu.set_visible(False)
+        self.gui.switch_menu("levels_menu")
     
     def cb_lvl(self, button, path):
         Logger.debug(f"Selected level {path}")
         
-        #TODO: empty world if new
-        if path != "new":
+        if path == "new":
+            self.world = World(self)
+        
+        else:
             self.world.load(path)
         
         self.camera.update_visible_tiles()
         self.camera.update_visible_entities()
         
-        self.levels_menu.set_visible(False)
+        self.gui.close_menu()
         self.paused = False
 
     def cb_settings(self, button):
         self.load_settings()
-        self.main_menu.set_visible(False)
-        self.settings_menu.set_visible(True)
-    
-    def cb_exit_pause(self, button):
-        self.main_menu.set_visible(True)
-        self.pause_menu.set_visible(False)
+        self.gui.switch_menu("settings_menu")
     
     def cb_exit_settings(self, button):
         self.save_settings()
-        self.main_menu.set_visible(True)
-        self.settings_menu.set_visible(False)
+        self.gui.switch_menu("main_menu")
     
-    def cb_exit_levels(self, button):
-        self.main_menu.set_visible(True)
-        self.levels_menu.set_visible(False)
-    
-    def cb_checkbox(self, checkbox, *args, **kwargs):
-        pass
+    def cb_test(self, checkbox, *args, **kwargs):
+        return True
 
     def cb_exit_entity_settings(self, button):
         self.save_entity_settings()
-        self.entity_menu.set_visible(False)
+        self.gui.close_menu()
     
     def open_entity_settings(self, single_entity=False):
         self.single_entity = single_entity
-        self.entity_menu.set_visible(True)
+        self.gui.switch_menu("entity_menu")
         
     def save_entity_settings(self):   
         if self.single_entity:
@@ -331,4 +306,10 @@ class Game:
         current_text = label.text
         new_text = current_text.split(":")[0] + ":" + str(round(value,1))
         label.set_text(new_text)
+        return True
+    
+    def cb_save_lvl(self, button):
+        level_name = self.save_menu.get_by_name("level_name").value
+        self.world.save(level_name)
+        self.gui.close_menu()
         return True
