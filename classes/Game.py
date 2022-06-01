@@ -307,8 +307,8 @@ class Game:
         self.main_menu.set_visible(True)
         self.levels_menu.set_visible(False)
     
-    def cb_checkbox(self, checkbox, *args, **kwargs):
-        pass
+    def cb_test(self, checkbox, *args, **kwargs):
+        return True
 
     def cb_exit_entity_settings(self, button):
         self.save_entity_settings()
