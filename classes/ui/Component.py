@@ -240,12 +240,12 @@ class Component(Copyable):
                     handled = True
         
         elif event.type == pygame.KEYDOWN:
-            if self.on_key_down(event):
-                self.handled = True
+            if not handled and self.on_key_down(event):
+                handled = True
         
         elif event.type == pygame.KEYUP:
-            if self.on_key_up(event):
-                self.handled = True
+            if not handled and self.on_key_up(event):
+                handled = True
 
         return handled
     

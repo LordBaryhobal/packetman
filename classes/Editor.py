@@ -295,8 +295,7 @@ class Editor():
                             
                 #save the world
                 elif event.key == pygame.K_s and event.mod & pygame.KMOD_CTRL:
-                    path = input("Save level as: ")
-                    self.game.world.save(path)
+                    self.game.gui.switch_menu("save_menu")
                 
                 #load world
                 elif event.key == pygame.K_l and event.mod & pygame.KMOD_CTRL:

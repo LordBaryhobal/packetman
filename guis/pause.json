@@ -2,7 +2,7 @@
     "class": "Menu",
     "params": [
         "${game}",
-        "${game.close_menu}",
+        "${game.resume}",
         {"name": "name", "val": "pause_menu"}
     ],
     "children": [
@@ -29,7 +29,7 @@
                     "class": "Button",
                     "params": [
                         "Resume",
-                        "${game.cb_resume}"
+                        "${game.resume}"
                     ],
                     "x": {"type": "Center"},
                     "w": {"type": "Relative", "val": 0.5},
@@ -39,7 +39,7 @@
                     "class": "Button",
                     "params": [
                         "Return to main menu",
-                        "${game.cb_exit_pause}"
+                        "${>main_menu}"
                     ],
                     "x": {"type": "Center"},
                     "w": {"type": "Relative", "val": 0.5},

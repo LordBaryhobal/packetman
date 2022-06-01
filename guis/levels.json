@@ -2,8 +2,7 @@
     "class": "Menu",
     "params": [
         "${game}",
-        "${game.switch_menu}",
-        [ "main_menu" ],
+        "${>main_menu}",
         {"name": "name", "val": "levels_menu"}
     ],
     "children": [
@@ -42,7 +41,7 @@
                     "class": "Button",
                     "params": [
                         "Back to main menu",
-                        "${game.cb_exit_levels}"
+                        "${>main_menu}"
                     ],
                     "x": {"type": "Center"},
                     "w": {"type": "Relative", "val": 0.5},
