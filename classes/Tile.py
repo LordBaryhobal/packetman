@@ -30,7 +30,7 @@ TILES = {
 class Tile(Copyable):
     """World tile, can be solid, interactive, etc."""
 
-    _no_save = ["type", "pos", "texture", "world"]
+    _no_save = ["type", "pos", "texture", "world", "powered", "powered_by"]
     _TILES = {
         -1: None,
         0: None

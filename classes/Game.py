@@ -123,7 +123,6 @@ class Game:
             event.dispatch()
 
         self.events = []
-        self.world.circuit.current_circuit = set()
         if not self.config["edition"]:
             self.camera.update()
 

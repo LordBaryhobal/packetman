@@ -26,6 +26,7 @@ class Input(Electrical):
         if neighbors:
             event = Event(Event.CIRCUIT_CHANGE)
             event.power = pressed
+            event.input = self
             event.tiles = neighbors
             self.world.game.events.append(event)
 
@@ -130,12 +131,11 @@ class Wire(Electrical):
     def __init__(self, x=0, y=0, type_=0, world=None):
         super().__init__(x, y, type_, world)
         self.powered = False
-        self.powered_by = []
+        self.powered_by = [] # optimizable ( change to a number instead of list of tiles)
     
     def update_power(self):
         """Updates power state"""
-        self.powered_by = max(self.powered_by, 0)  # can be a problem
-        if self.powered_by > 0:
+        if self.powered_by:
             self.powered = True
             self.update_texture()
         else:
@@ -144,7 +144,6 @@ class Wire(Electrical):
     
     def update_texture(self):
         self.texture.id = self.neighbors + 16 * int(self.powered)
-        
 
 class InsulatedWire(Wire):
     """Insulated wire"""
@@ -229,6 +228,36 @@ class Buffer_Gate(Gate):
             self.update_texture()
 
 @listener
+class NotGate(Gate):
+    """NotGate let the power flow only in one direction"""
+
+    _TILES = {
+        0: "not_gate"
+    }
+
+    rotatable = True
+
+    def __init__(self, x=0, y=0, type_=0, world=None):
+        super().__init__(x, y, type_, world)
+        self.rotation = 0
+        self.powered_by = [[]]
+        self.powered = False
+        #according to the rotation
+        self.input_direction = (2,)
+    
+    def update_activation(self):
+        """Updates activation state"""
+        if self.powered_by[0]:
+            new_powered = False
+        else:
+            new_powered = True
+        if self.powered != new_powered:
+            self.powered = new_powered
+            self.create_event(pressed=self.powered)
+
+            self.update_texture()
+
+@listener
 class AndGate(Gate):
     """AndGate let the power flow only in one direction"""
 
@@ -246,23 +275,39 @@ class AndGate(Gate):
         #according to the rotation
         self.input_direction = (1,3)
     
-    @on(Event.WORLD_LOADED)
-    def on_world_loaded(self, event):
-        self.update_texture()
+    def update_activation(self):
+        """Updates activation state"""
+        if self.powered_by[0] and self.powered_by[1]:
+            new_powered = True
+        else:
+            new_powered = False
+        if self.powered != new_powered:
+            self.powered = new_powered
+            self.create_event(pressed=self.powered)
 
-    @on(Event.GATE_INPUT)
-    def update_input(self, event):
-        for i, d in enumerate(self.input_direction):
-            if (self.rotation + d)%4 == event.connected_from:
-                if event.power:
-                    self.powered_by[i].append(event.input)
-                else:
-                    self.powered_by[i].remove(event.input)
-                self.update_activation()
+            self.update_texture()
+
+@listener
+class OrGate(Gate):
+    """OrGate let the power flow only in one direction"""
+
+    _TILES = {
+        0: "or_gate"
+    }
+
+    rotatable = True
+
+    def __init__(self, x=0, y=0, type_=0, world=None):
+        super().__init__(x, y, type_, world)
+        self.rotation = 0
+        self.powered_by = [[],[]]
+        self.powered = False
+        #according to the rotation
+        self.input_direction = (1,3)
     
     def update_activation(self):
         """Updates activation state"""
-        if self.powered_by[0]:
+        if self.powered_by[0] or self.powered_by[1]:
             new_powered = True
         else:
             new_powered = False

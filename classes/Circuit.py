@@ -15,7 +15,8 @@ class Circuit:
     @on(Event.CIRCUIT_CHANGE)
     def on_circuit_change(self, event):
         """Updates circuit when circuit change event is triggered"""
-        #self.current_circuit = set()
+        self.current_circuit = set()
+        self.input = event.input
         # events.tiles are tuple containing the tiles and the direction from where they are connected
         for tile in event.tiles:
             self.power_tiles(tile[1], tile[0], power=event.power)
@@ -41,7 +42,7 @@ class Circuit:
             event.tile = tile
             event.power = power
             event.input = self.input
-            event.connected_from = (connected_from+2)%2
+            event.connected_from = (connected_from+2)%4
             self.world.game.events.append(event)
             return
 
@@ -49,9 +50,9 @@ class Circuit:
             return
             
         if power:
-            tile.powered_by += 1
+            tile.powered_by.append(self.input)
         else:
-            tile.powered_by -= 1
+            tile.powered_by.remove(self.input)
         tile.update_power()
 
         
