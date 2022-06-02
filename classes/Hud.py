@@ -38,8 +38,7 @@ class Hud:
         w = self.game.world
         self.hotbars = [
             [Aluminium(), Brass(), Copper(), Gold(), Iron(), Lead(), Zinc()],
-            [Insulator(), Plastic(), ThermalConductor()],
-            [Plate(world=w), Button(world=w), Wire(world=w), InsulatedWire(world=w), BufferGate(world=w), AndGate(world=w), OrGate(world=w), NotGate(world=w), PuzzleDoor(world=w)],
+            [Insulator(), Plastic(), ThermalConductor(), Plate(), Button(), Wire(), InsulatedWire(), Gate()],
             [Entity(), Bullet(), Hacker(), Robot(), Drone(type_=1)]
         ]
 
