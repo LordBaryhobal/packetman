@@ -198,8 +198,8 @@ class Gate(Output, Input):
                     self.update_activation()
 
 @listener
-class Buffer_Gate(Gate):
-    """Buffer_Gate let the power flow only in one direction"""
+class BufferGate(Gate):
+    """BufferGate let the power flow only in one direction"""
 
     _TILES = {
         0: "test_gate"
