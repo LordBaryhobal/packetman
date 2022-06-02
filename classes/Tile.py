@@ -8,8 +8,8 @@ from classes.Vec import Vec
 
 TILES = {
     "Aluminium": "classes.tiles.Metals",
-    "AndGate": "classes.tiles.Components",
     "Brass": "classes.tiles.Metals",
+    "Buffer_Gate": "classes.tiles.Components",
     "Button": "classes.tiles.Components",
     "Copper": "classes.tiles.Metals",
     "Gold": "classes.tiles.Metals",
@@ -17,8 +17,6 @@ TILES = {
     "InsulatedWire": "classes.tiles.Components",
     "Iron": "classes.tiles.Metals",
     "Lead": "classes.tiles.Metals",
-    "NotGate": "classes.tiles.Components",
-    "OrGate": "classes.tiles.Components",
     "Plastic": "classes.tiles.Terrain",
     "Plate": "classes.tiles.Components",
     "PuzzleDoor": "classes.tiles.Components",
