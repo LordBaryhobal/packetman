@@ -10,7 +10,6 @@ TILES = {
     "Aluminium": "classes.tiles.Metals",
     "AndGate": "classes.tiles.Components",
     "Brass": "classes.tiles.Metals",
-    "BufferGate": "classes.tiles.Components",
     "Button": "classes.tiles.Components",
     "Copper": "classes.tiles.Metals",
     "Gold": "classes.tiles.Metals",
