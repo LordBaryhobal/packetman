@@ -92,7 +92,8 @@ def listener(cls):
     old_del = cls.__del__ if hasattr(cls, "__del__") else lambda *a, **kwa: None
     def del_(self, *args, **kwargs):
         old_del(self, *args, **kwargs)
-        cls._instances.remove(self)
+        if self in cls._instances:
+            cls._instances.remove(self)
     cls.__del__ = del_
 
     return cls
