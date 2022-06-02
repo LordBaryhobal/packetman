@@ -311,7 +311,8 @@ class World:
 
             if hasattr(tile, "_no_save"):
                 for a in tile._no_save:
-                    del attrs[a]
+                    if a in attrs:
+                        del attrs[a]
             
             attrs = pickle.dumps(attrs)
             buf_tile.extend(attrs)
@@ -338,7 +339,8 @@ class World:
 
             if hasattr(entity, "_no_save"):
                 for a in entity._no_save:
-                    del attrs[a]
+                    if a in attrs:
+                        del attrs[a]
             
             attrs = pickle.dumps(attrs)
             buf_entity.extend(attrs)
@@ -485,6 +487,8 @@ class World:
             # t2 --> does tile2 want to connect to tile?
             
             # Verify that tile2 is not None
+            t, t2 = False, False
+            
             if not tile2:
                 t2 = False
                 if tile.CONNECTED:
