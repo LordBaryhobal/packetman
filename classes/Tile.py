@@ -12,6 +12,7 @@ TILES = {
     "Buffer_Gate": "classes.tiles.Components",
     "Button": "classes.tiles.Components",
     "Copper": "classes.tiles.Metals",
+    "Gate": "classes.tiles.Components",
     "Gold": "classes.tiles.Metals",
     "Insulator": "classes.tiles.Terrain",
     "InsulatedWire": "classes.tiles.Components",
