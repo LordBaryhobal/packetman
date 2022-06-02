@@ -34,7 +34,6 @@ class Circuit:
             return
         if tile in self.current_circuit:
             return
-        self.current_circuit.add(tile)
         
         if isinstance(tile, Output):
             event = Event(Event.GATE_INPUT)
@@ -43,6 +42,8 @@ class Circuit:
             event.connected_from = (connected_from+2)%4
             self.world.game.events.append(event)
             return
+        
+        self.current_circuit.add(tile)
 
         if isinstance(tile, Input):
             return
