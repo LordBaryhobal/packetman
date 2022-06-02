@@ -37,10 +37,11 @@ class Circuit:
         self.current_circuit.add(tile)
         
         if isinstance(tile, Output):
-            event = Event(Event.GATE_INPUT)
+            event = Event(event.GATE_INPUT)
             event.tile = tile
             event.power = power
-            event.connected_from = (connected_from+2)%4
+            event.input = self.input
+            event.connected_from = (connected_from+2)%2
             self.world.game.events.append(event)
             return
 
