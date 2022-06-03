@@ -56,6 +56,9 @@ class Event:
                 for f in cls._listeners[self.type]:  # for all listeners for this type
                     for i in cls._instances:         # for all instances of this class
                         f(i, self)
+    
+    def __repr__(self):
+        return f"Event({self.type})"
 
 
 def listener(cls):
