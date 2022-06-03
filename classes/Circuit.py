@@ -11,12 +11,15 @@ class Circuit:
     
     def __init__(self, world):
         self.world = world
+        self.counter = 0
     
     @on(Event.CIRCUIT_CHANGE)
     def on_circuit_change(self, event):
         """Updates circuit when circuit change event is triggered"""
-        #self.current_circuit = set()
+        self.current_circuit = set()
         # events.tiles are tuple containing the tiles and the direction from where they are connected
+        if self.counter > 1000:
+            return
         for tile in event.tiles:
             self.power_tiles(tile[1], tile[0], power=event.power)
     
@@ -34,7 +37,6 @@ class Circuit:
             return
         if tile in self.current_circuit:
             return
-        self.current_circuit.add(tile)
         
         if isinstance(tile, Output):
             event = Event(Event.GATE_INPUT)
@@ -43,6 +45,9 @@ class Circuit:
             event.connected_from = (connected_from+2)%4
             self.world.game.events.append(event)
             return
+        self.counter += 1
+        
+        self.current_circuit.add(tile)
 
         if isinstance(tile, Input):
             return
