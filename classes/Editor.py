@@ -416,9 +416,6 @@ class Editor:
             hud_surf {pygame.Surface} -- surface to render the hud on
             editor_surf {pygame.Surface} -- surface to render the selections on
         """
-        
-        hud_surf.fill((0,0,0,0))
-        editor_surf.fill((0,0,0,0))
 
         self.hud.render(hud_surf)
         
@@ -445,7 +442,7 @@ class Editor:
                 
                 # Render moving tiles
                 for tile in self.selected_tiles.flatten():
-                    tile.render(editor_surf, self.game.camera.world_to_screen(tile.pos+displacement), self.game.camera.tilesize)
+                    tile.render(editor_surf, hud_surf, self.game.camera.world_to_screen(tile.pos+displacement), self.game.camera.tilesize)
                 
                 # Render moving entities
                 if self.select_entities:  # TODO fix entity rendering layer
@@ -469,7 +466,7 @@ class Editor:
             pos = self.game.camera.screen_to_world(self.get_mousepos())
             for y,row in enumerate(self.copied_tiles):
                 for x,tile in enumerate(row):
-                    tile.render(editor_surf, self.game.camera.world_to_screen(pos+Vec(x, y)), self.game.camera.tilesize)
+                    tile.render(editor_surf, hud_surf, self.game.camera.world_to_screen(pos+Vec(x, y)), self.game.camera.tilesize)
 
             size = Vec(
                 len(self.copied_tiles[0]) - 1,
@@ -489,7 +486,7 @@ class Editor:
             if len(self.copied_entities) != 0:
                 for entity in self.copied_entities:
                     # entity.pos is relative to the bottom-left corner of the selection
-                    entity.render(editor_surf, self.game.camera.world_to_screen(pos+entity.pos), self.game.camera.tilesize)
+                    entity.render(editor_surf, hud_surf, self.game.camera.world_to_screen(pos+entity.pos), self.game.camera.tilesize)
         
         # Modify the selected entity position to the mouse position
         if self.move_selected_entity:

@@ -91,11 +91,14 @@ class Camera:
         """
         
         world_surf.fill((0,0,0))
+        hud_surf.fill((0,0,0,0))
+        editor_surf.fill((0,0,0,0))
+
         for tile in self.visible_tiles:
-            tile.render(world_surf, self.world_to_screen(tile.pos), self.tilesize)
+            tile.render(world_surf, hud_surf, self.world_to_screen(tile.pos), self.tilesize)
         
         for entity in self.visible_entities:
-            entity.render(world_surf, self.world_to_screen(entity.pos), self.tilesize)
+            entity.render(world_surf, hud_surf, self.world_to_screen(entity.pos), self.tilesize)
 
         if self.game.config["edition"]:
             self.game.editor.render(hud_surf, editor_surf)

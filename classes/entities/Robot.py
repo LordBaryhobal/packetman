@@ -63,10 +63,10 @@ class Robot(Entity):
             if player_pos.y - self.pos.y - self.SIZE.y/2 > 0.5:
                 self.jump()
     
-    def render(self, surface, pos, size, dimensions=None):
-        super().render(surface, pos, size, dimensions)
+    def render(self, surface, hud_surf, pos, size, dimensions=None):
+        super().render(surface, hud_surf, pos, size, dimensions)
         #render the viewdistance
         """pos = floor(pos + self.SIZE*Vec(1,-1)*size/2)
-        pygame.draw.circle(surface, (0,255,0), pos, int(self.VIEW_DISTANCE*size),1)"""
+        pygame.draw.circle(hud_surf, (0,255,0), pos, int(self.VIEW_DISTANCE*size),1)"""
         
     
