@@ -190,10 +190,12 @@ class Editor:
                 elif event.button == 4:
                     self.hud.slot -= 1
                     self.hud.slot %= 9
+                    self.hud.show_name()
                 
                 elif event.button == 5:
                     self.hud.slot += 1
                     self.hud.slot %= 9
+                    self.hud.show_name()
             
             
             elif event.type == pygame.MOUSEBUTTONUP:

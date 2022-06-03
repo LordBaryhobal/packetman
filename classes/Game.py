@@ -135,7 +135,6 @@ class Game:
                     animation.update()
                 
                 if animation.finished:
-                    Logger.debug("Game: "+animation.attr)
                     event = Event(Event.ANIMATION_FINISH)
                     event.animation = animation
                     self.events.append(event)
