@@ -23,16 +23,17 @@ class Entity(Copyable):
     Subject to physics
     """
     
-    _no_save = ["type", "pos", "vel", "acc", "box", "highlight", "texture", "world", "interact_hint", "Last_pos", "hint_texture"]
+    _no_save = ["type", "pos", "vel", "acc", "box", "highlight", "texture", "world", "interact_hint", "last_pos"]
     _ENTITIES = {
         0: None
     }
+    HINT_SIZE = Vec(0.3,0.3)
+    HINT_TEXTURE = Texture("interaction_hint", 0, width=64, height=64)
     SIZE = Vec(0.5,0.5)
     
     gravity = True
     interactive = False
     
-    HINT_SIZE = Vec(0.3,0.3)
 
     def __init__(self, pos=None, vel=None, acc=None, type_=None, highlight=False, world=None):
         """Initializes an Entity instance
@@ -68,7 +69,6 @@ class Entity(Copyable):
         self.last_pos = None
 
         self.interact_hint = False
-        self.hint_texture = Texture("interaction_hint", 0, width=64, height=64)
     
     def get_cls(cls):
         """Get class from class name
@@ -109,10 +109,8 @@ class Entity(Copyable):
         
         if self.interact_hint:
             hintpos = pos + Vec((self.SIZE.x - self.HINT_SIZE.x)*size/2, self.HINT_SIZE.y*size)
-            self.hint_texture.render(surface, hintpos, size, self.HINT_SIZE)
+            self.HINT_TEXTURE.render(surface, hintpos, size, self.HINT_SIZE)
             self.interact_hint = False
-
-            
 
     def physics(self, delta):
         """Simulates physics

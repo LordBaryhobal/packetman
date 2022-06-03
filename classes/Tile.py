@@ -31,19 +31,19 @@ TILES = {
 class Tile(Copyable):
     """World tile, can be solid, interactive, etc."""
 
-    _no_save = ["type", "pos", "texture", "world", "interact_hint", "hint_texture"]
+    _no_save = ["type", "pos", "texture", "world", "interact_hint", "HINT_TEXTURE"]
     _TILES = {
         -1: None,
         0: None
     }
     CONNECTED = False
     CONNECT_TO = None
+    HINT_SIZE = Vec(0.3, 0.3)
+    HINT_TEXTURE = Texture("interaction_hint", 0, width=64, height=64)
 
     interactive = False
     solid = False
     rotatable = False
-    
-    HINT_SIZE = Vec(0.3, 0.3)
 
     def __init__(self, x=0, y=0, type_=0, world=None):
         """Initializes a Tile instance
@@ -62,7 +62,6 @@ class Tile(Copyable):
         self.neighbors = 0
         self.world = world
         self.interact_hint = False
-        self.hint_texture = Texture("interaction_hint", 0, width=64, height=64)
     
     def __setattr__(self, name, value):
         if self.CONNECTED and name == "neighbors" and self.texture:
@@ -97,7 +96,7 @@ class Tile(Copyable):
         
         if self.interact_hint:
             hintpos = pos + Vec((1 - self.HINT_SIZE.x)*size/2, self.HINT_SIZE.y*size)
-            self.hint_texture.render(surface, hintpos, size, self.HINT_SIZE)
+            self.HINT_TEXTURE.render(surface, hintpos, size, self.HINT_SIZE)
             self.interact_hint = False
     
     def __repr__(self):
