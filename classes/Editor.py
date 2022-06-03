@@ -495,6 +495,8 @@ class Editor:
         # Modify the selected entity position to the mouse position
         if self.move_selected_entity:
             pos = self.game.camera.screen_to_world(self.get_mousepos(), round_=False)
+            if pygame.key.get_pressed()[pygame.K_LSHIFT]:
+                pos = round(pos, 1)
             self.selected_entity.pos = pos
             self.selected_entity.update()
     
