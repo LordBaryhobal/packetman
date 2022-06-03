@@ -79,7 +79,7 @@ class Camera:
         bottomright = self.screen_to_world(Vec(self.game.WIDTH, self.game.HEIGHT))
         topleft = self.screen_to_world(Vec())
 
-        self.visible_entities = self.game.world.get_entities_in_rect(topleft, bottomright)
+        self.visible_entities = self.game.world.get_entities_in_rect(topleft, bottomright, True)
 
     def render(self, world_surf, hud_surf, editor_surf):
         """Renders the visible tiles and entities

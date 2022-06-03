@@ -163,7 +163,7 @@ class World:
 
         return self.tiles[bottomright.y:topleft.y+1, topleft.x:bottomright.x+1]
     
-    def get_entities_in_rect(self, topleft, bottomright):
+    def get_entities_in_rect(self, topleft, bottomright, with_force_render=False):
         """Get entities overlapping with rectangle
 
         Returns a list of entities which overlap with the rectangle
@@ -173,13 +173,17 @@ class World:
             topleft {Vec} -- top-left world coordinates of the rectangle
             bottomright {Vec} -- bottom-right world coordinates of the rectangle
 
+        Keyword Arguments:
+            with_force_render {bool} -- include entities with force_render=True
+
         Returns:
             list[Entity] -- array of entities
         """
 
         rect = Rect(topleft.x, bottomright.y, bottomright.x-topleft.x, topleft.y-bottomright.y)
 
-        return list(filter(lambda e: e.box.overlaps(rect), self.entities))
+        return list(filter(lambda e: e.box.overlaps(rect) \
+            or (with_force_render and e.force_render), self.entities))
     
     def check_collisions(self, entity, delta):
         """Checks and handles collisions for a given entity

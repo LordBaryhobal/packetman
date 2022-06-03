@@ -7,9 +7,7 @@ import threading
 import pygame
 
 from classes.Animation import Animation
-from classes.Event import Event, listener, on, listener_classes
-from classes.Logger import Logger
-from classes.World import World
+from classes.Event import Event, listener, on
 
 @listener
 class Cutscene:
@@ -38,7 +36,6 @@ class Cutscene:
         self.bars_height = 0 if from_lvl else self.BARS_HEIGHT
         self.black_opacity = 0 if from_lvl else 255
 
-        self.loading_world = None
         self.load_thread = None
 
         self.overlay = pygame.Surface([self.game.WIDTH, self.game.HEIGHT], pygame.SRCALPHA)
@@ -70,15 +67,13 @@ class Cutscene:
         self.load_thread.start()
     
     def load_thread_func(self):
-        self.loading_world = World(self.game)
-        #sleep(5)
-        self.loading_world.load(self.to_lvl)
-        self.loading_world.player.pos.x -= self.PLAYER_SPEED * (self.FADE_DURATION + self.BARS_DURATION)
+        self.game.world.load(self.to_lvl)
+        self.game.world.player.pos.x -= self.PLAYER_SPEED * (self.FADE_DURATION + self.BARS_DURATION)
 
     def end_load(self):
         self.state = self.LOADED
 
-        self.game.world = self.loading_world
+        self.game.world.player.force_render = True
         self.game.camera.update_visible_tiles()
         self.game.camera.update_visible_entities()
         Animation(self, "black_opacity", 255, 0, self.FADE_DURATION)
@@ -181,6 +176,7 @@ class Cutscene:
             self.stop()
         
         elif self.state == self.END:
+            self.game.world.player.force_render = False
             self.game.world.player.vel.x = 0
             self.game.world.player.vel.y = 0
             self.game.cutscene = None

@@ -29,6 +29,7 @@ class Entity(Copyable):
     }
     SIZE = Vec(0.5,0.5)
     
+    force_render = False
     gravity = True
     interactive = False
 
