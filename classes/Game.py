@@ -139,7 +139,8 @@ class Game:
             event.dispatch()
 
         self.events = []
-        self.world.circuit.current_circuit = set()
+        #self.world.circuit.current_circuit = set() # used when circuit are limited to one update per tile
+        self.world.circuit.counter = 0
         if not self.config["edition"]:
             self.camera.update()
 
