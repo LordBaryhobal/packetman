@@ -275,9 +275,10 @@ class Editor:
                 
                 elif event.key == pygame.K_BACKSPACE:
                     # Remove the selected entity
-                    if self.selected_entity is not None:
-                        self.game.world.remove_entity(self.selected_entity)
-                        self.selected_entity = None
+                    if self.selected_entity:
+                        if not isinstance(self.selected_entity, Player):
+                            self.game.world.remove_entity(self.selected_entity)
+                            self.selected_entity = None
                     
                     # Remove the tiles in the selection
                     if self.selection[0] == 2:
@@ -484,6 +485,8 @@ class Editor:
         # Modify the selected entity position to the mouse position
         if self.move_selected_entity:
             pos = self.game.camera.screen_to_world(self.get_mousepos(), round_=False)
+            if pygame.key.get_pressed()[pygame.K_LSHIFT]:
+                pos = round(pos, 1)
             self.selected_entity.pos = pos
             self.selected_entity.update()
     
