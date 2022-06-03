@@ -550,22 +550,28 @@ class World:
         Arguments:
             events {list[pygame.Event]} -- list of pygame events
         """
+        interactive_tiles, interactive_entities = [], []
+        if not self.game.config["edition"] and not self.game.paused:
+            # Get the tiles around the player
+            player = self.player
+            
+            pos1 = player.pos + (player.SIZE * Vec(0, 1)) + Vec(-0.25, 0.25)
+            pos2 = player.pos + (player.SIZE * Vec(1, 0)) + Vec(0.25, -0.25)
+            
+            tiles = self.get_tiles_in_rect(pos1, pos2)
+            interactive_tiles = list(filter(lambda t: t.interactive, list(tiles.flatten())))
+            
+            entities = self.get_entities_in_rect(pos1, pos2)
+            interactive_entities = list(filter(lambda e: e.interactive, entities))
+            for entity in interactive_entities:
+                entity.interact_hint = True
+            
+            for tile in interactive_tiles:
+                tile.interact_hint = True
 
         for event in events:
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_e and not self.game.config["edition"] and not self.game.paused:
-                    # Get the tiles around the player
-                    player = self.player
-                    
-                    pos1 = player.pos + (player.SIZE * Vec(0, 1)) + Vec(-0.25, 0.25)
-                    pos2 = player.pos + (player.SIZE * Vec(1, 0)) + Vec(0.25, -0.25)
-                    
-                    tiles = self.get_tiles_in_rect(pos1, pos2)
-                    interactive_tiles = list(filter(lambda t: t.interactive, list(tiles.flatten())))
-                    
-                    entities = self.get_entities_in_rect(pos1, pos2)
-                    interactive_entities = list(filter(lambda e: e.interactive, entities))
-
+                if event.key == pygame.K_e:
                     if interactive_entities or interactive_tiles:
                         event = Event(Event.INTERACTION)
                         event.tiles = interactive_tiles

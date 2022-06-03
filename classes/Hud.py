@@ -93,7 +93,7 @@ class Hud:
 
             if self.hotbar < len(self.hotbars) and i < len(self.hotbars[self.hotbar]):
                 # dimension = Vec(1,1) because we want the entity to be scaled at 1x1 tile
-                self.hotbars[self.hotbar][i].render(surface, Vec(x+margin, y+slot_size-margin), slot_size*0.8, dimensions=Vec(1,1))
+                self.hotbars[self.hotbar][i].render(surface, surface, Vec(x+margin, y+slot_size-margin), slot_size*0.8, dimensions=Vec(1,1))
         
         if hotbar_pos == 0:
             w, h = slot_size*0.75, self.MARGIN/4

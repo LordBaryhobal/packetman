@@ -23,15 +23,18 @@ class Entity(Copyable):
     Subject to physics
     """
     
-    _no_save = ["type", "pos", "vel", "acc", "box", "highlight", "texture", "world"]
+    _no_save = ["type", "pos", "vel", "acc", "box", "highlight", "texture", "world", "interact_hint", "last_pos"]
     _ENTITIES = {
         0: None
     }
+    HINT_SIZE = Vec(0.3,0.3)
+    HINT_TEXTURE = Texture("interaction_hint", 0, width=64, height=64)
     SIZE = Vec(0.5,0.5)
     
     force_render = False
     gravity = True
     interactive = False
+    
 
     def __init__(self, pos=None, vel=None, acc=None, type_=None, highlight=False, world=None):
         """Initializes an Entity instance
@@ -65,6 +68,8 @@ class Entity(Copyable):
         self.highlight = highlight
         self.world = world
         self.last_pos = None
+
+        self.interact_hint = False
     
     def get_cls(cls):
         """Get class from class name
@@ -78,13 +83,14 @@ class Entity(Copyable):
         
         return import_class(ENTITIES, cls)
 
-    def render(self, surface, pos, size, dimensions=None):
+    def render(self, surface, hud_surf, pos, size, dimensions=None):
         """Renders the entity
 
         Renders the entity on a given surface at a given position and scale
 
         Arguments:
             surface {pygame.Surface} -- surface to render the entity on
+            hud_surf {pygame.Surface} -- surface to render the hud elements on
             pos {Vec} -- pixel coordinates where to render on the surface
             size {int} -- size of a tile in pixels
             dimension {Vec} -- dimensions of the object in tiles (default: {None})
@@ -101,8 +107,12 @@ class Entity(Copyable):
             pygame.draw.rect(surface, (100,100,100), rect)
         
         if self.highlight:
-            pygame.draw.rect(surface, (255,255,255), rect, 2)
-            
+            pygame.draw.rect(hud_surf, (255,255,255), rect, 2)
+        
+        if self.interact_hint:
+            hintpos = pos + Vec((self.SIZE.x - self.HINT_SIZE.x)*size/2, self.HINT_SIZE.y*size)
+            self.HINT_TEXTURE.render(hud_surf, hintpos, size, self.HINT_SIZE)
+            self.interact_hint = False
 
     def physics(self, delta):
         """Simulates physics

@@ -31,13 +31,15 @@ TILES = {
 class Tile(Copyable):
     """World tile, can be solid, interactive, etc."""
 
-    _no_save = ["type", "pos", "texture", "world", "powered", "powered_by"]
+    _no_save = ["type", "pos", "texture", "world", "powered", "powered_by", "interact_hint"]
     _TILES = {
         -1: None,
         0: None
     }
     CONNECTED = False
     CONNECT_TO = None
+    HINT_SIZE = Vec(0.3, 0.3)
+    HINT_TEXTURE = Texture("interaction_hint", 0, width=64, height=64)
 
     interactive = False
     solid = False
@@ -59,6 +61,7 @@ class Tile(Copyable):
         self.texture = Texture(self.name, self.type) if self.name else None
         self.neighbors = 0
         self.world = world
+        self.interact_hint = False
     
     def __setattr__(self, name, value):
         if self.CONNECTED and name == "neighbors" and self.texture:
@@ -78,11 +81,12 @@ class Tile(Copyable):
         
         return import_class(TILES, cls)
     
-    def render(self, surface, pos, size, dimensions=None):
+    def render(self, surface, hud_surf, pos, size, dimensions=None):
         """Renders the tile
 
         Arguments:
             surface {pygame.Surface} -- surface to render the tile on
+            surface {pygame.Surface} -- surface to render the hud elements on
             pos {Vec} -- pixel coordinates where to render on the surface
             size {int} -- size of a tile in pixels
             dimensions {Vec} -- dimensions of the tile (default: {None})
@@ -90,6 +94,22 @@ class Tile(Copyable):
         
         if self.texture:
             self.texture.render(surface, pos, size)
+        
+        if self.interact_hint:
+            if self.rotatable:
+                offset = [(0, -1), (1, 0), (0, 1), (-1, 0)][self.rotation]
+                hintpos = pos + Vec(0.5 + offset[0]*0.5, -0.5 + offset[1]*0.5)*size
+
+                hintpos -= Vec(
+                    self.HINT_SIZE.x*size*(0.5 - offset[0]*0.5),
+                    self.HINT_SIZE.y*size*(-0.5 - offset[1]*0.5)
+                )
+            
+            else:
+                hintpos = pos + Vec(0.5 - self.HINT_SIZE.x*0.5, self.HINT_SIZE.y)*size
+
+            self.HINT_TEXTURE.render(hud_surf, hintpos, size, self.HINT_SIZE)
+            self.interact_hint = False
     
     def __repr__(self):
         return f"<{self.__class__.__name__} Tile of type {self.type} at ({self.pos.x}, {self.pos.y})>"
