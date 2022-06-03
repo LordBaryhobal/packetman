@@ -116,6 +116,8 @@ class Button(Input):
     @on(Event.WORLD_LOADED)
     def on_world_loaded(self, event):
         self.update_texture()
+        if self.pressed:
+            self.create_event(pressed=self.pressed)
         
 
 class Wire(Electrical):
@@ -126,6 +128,8 @@ class Wire(Electrical):
     }
 
     CONNECTED = True
+    
+    _no_save = ["type", "pos", "texture", "world", "powered", "powered_by"]
     
     def __init__(self, x=0, y=0, type_=0, world=None):
         super().__init__(x, y, type_, world)
@@ -163,6 +167,8 @@ class Gate(Output, Input):
         0: "gate"
     }
 
+    _no_save = ["type", "pos", "texture", "world", "powered", "powered_by"]
+
     DIRECTION = (Vec(0, 1), Vec(1, 0), Vec(0, -1), Vec(-1, 0))
 
     def create_event(self, pressed):
@@ -180,11 +186,6 @@ class Gate(Output, Input):
         self.rotation = (self.rotation + 1) % 4
         self.update_texture()
     
-    @on(Event.WORLD_LOADED)
-    def on_world_loaded(self, event):
-        self.update_texture()
-        self.update_activation()
-    
     def update_texture(self):
         self.texture.id = self.rotation + 4*int(self.powered)
     
@@ -198,6 +199,10 @@ class Gate(Output, Input):
                     else:
                         self.powered_by[i] -= 1
                     self.update_activation()
+    @on(Event.WORLD_LOADED)
+    def on_world_loaded(self, event):
+        if self.rotatable:
+            self.update_texture()
 
 class BufferGate(Gate):
     """BufferGate let the power flow only in one direction"""
@@ -229,6 +234,7 @@ class BufferGate(Gate):
 
             self.update_texture()
 
+@listener
 class NotGate(Gate):
     """NotGate let the power flow only in one direction"""
 
@@ -258,6 +264,11 @@ class NotGate(Gate):
             self.create_event(pressed=self.powered)
 
             self.update_texture()
+    
+    @on(Event.WORLD_LOADED)
+    def on_world_loaded(self, event):
+        self.update_texture()
+        self.update_activation()
 
 class AndGate(Gate):
     """AndGate let the power flow only in one direction"""
