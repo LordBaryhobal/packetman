@@ -280,7 +280,7 @@ class Game:
         Logger.debug(f"Selected level {path}")
         
         if path == "new":
-            self.world = World(self)
+            self.world.reset()
         
         else:
             if self.config["edition"]:

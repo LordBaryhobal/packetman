@@ -577,3 +577,10 @@ class World:
                         event.tiles = interactive_tiles
                         event.entities = interactive_entities
                         self.game.events.append(event)
+    def reset(self):
+        self.tiles = np.array([[Tile(world=self)]], dtype='object')
+        self.entities = []
+        self.player = Player(Vec(1, 1), world=self)
+        self.entities.append(self.player)
+        self.WIDTH = 1
+        self.HEIGHT = 1
