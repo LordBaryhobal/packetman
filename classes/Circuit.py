@@ -51,6 +51,9 @@ class Circuit:
 
         if isinstance(tile, Input):
             return
+        
+        if not isinstance(tile, Electrical):    
+            return
             
         if power:
             tile.powered_by += 1
