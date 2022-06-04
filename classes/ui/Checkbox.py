@@ -57,10 +57,17 @@ class Checkbox(Label):
         
         super().render(surface)
     
+    def get_value(self):
+        return self.checked
+
+    def set_value(self, value):
+        if self.checked != value:
+            self.checked = value
+            self.set_changed(1)
+    
     def on_release(self, event):
         if event.button == 1:
-            self.checked = not self.checked
-            self.set_changed(1)
+            self.set_value(not self.checked)
             return self.callback(self, *self.args)
         
         return False

@@ -27,37 +27,64 @@
                     "h": {"type": "Relative", "val": 0.1}
                 },
                 {
+                    "class": "Flex",
+                    "params": [
+                        {"name": "dir_", "val": "row"},
+                        {"name": "justify", "val": "space-evenly"}
+                    ],
+                    "x": {"type": "Center"},
+                    "w": {"type": "Relative", "val": 0.5},
+                    "h": {"type": "Relative", "val": 0.05},
+                    "children": [
+                        {
+                            "class": "Label",
+                            "params": [
+                                "Volume",
+                                { "name": "font_size", "val": 30 }
+                            ],
+                            "y": {"type": "Center"},
+                            "w": {"type": "Relative", "val": 0.3},
+                            "h": {"type": "Relative", "val": 1.0}
+                        },
+                        {
+                            "class": "Slider",
+                            "params": [
+                                0,
+                                2,
+                                0.1,
+                                { "name": "name", "val": "volume" }
+                            ],
+                            "y": {"type": "Center"},
+                            "w": {"type": "Relative", "val": 0.6},
+                            "h": {"type": "Relative", "val": 1.0}
+                        }
+                    ]
+                },
+                {
                     "class": "Checkbox",
                     "params": [
-                        "Test checkbox",
-                        "${game.cb_test}",
-                        [ "test_checkbox" ],
-                        { "name": "name", "val": "test_checkbox" }
+                        "RTX Mode",
+                        { "name": "name", "val": "rtx_mode" }
                     ],
                     "x": {"type": "Center"},
                     "w": {"type": "Relative", "val": 0.4},
                     "h": {"type": "Relative", "val": 0.05}
                 },
                 {
-                    "class": "Slider",
+                    "class": "Checkbox",
                     "params": [
-                        0,
-                        10,
-                        1,
-                        "${game.cb_test}",
-                        [ "test_slider" ],
-                        { "name": "name", "val": "test_slider" }
+                        "Fullscreen",
+                        { "name": "name", "val": "fullscreen" }
                     ],
                     "x": {"type": "Center"},
-                    "w": {"type": "Relative", "val": 0.25},
+                    "w": {"type": "Relative", "val": 0.4},
                     "h": {"type": "Relative", "val": 0.05}
                 },
                 {
                     "class": "Input",
                     "params": [
-                        "the default",
-                        "the placeholder",
-                        { "name": "name", "val": "test_input" }
+                        "en",
+                        { "name": "name", "val": "lang" }
                     ],
                     "x": {"type": "Center"},
                     "w": {"type": "Relative", "val": 0.25},
