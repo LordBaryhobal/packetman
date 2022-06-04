@@ -27,8 +27,7 @@ class SoundManager:
         """
 
         elmts = sound.split(".")
-        path = Path("assets", "sounds", *elmts)+".ogg"
-
+        path = Path("assets", "sounds", *elmts)+".wav"
         return pygame.mixer.Sound(path)
 
     def play(sound):
