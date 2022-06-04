@@ -281,8 +281,10 @@ class Game:
             level.text = "New Level"
             container.add(level)
 
-        for l in levels[:self.cur_lvl+1]:
-            #if l.endswith(".dat"):
+        if not (self.config["edition"] or self.config["bypass_progress"]):
+            levels = levels[:self.cur_lvl+1]
+        
+        for l in levels:
             level = self.level_comp.copy()
             level.args = (l["level"], )
             level.text = l["name"]

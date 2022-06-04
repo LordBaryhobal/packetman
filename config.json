@@ -2,6 +2,7 @@
     "edition": true,
     "loglevel": 15,
     "number_of_tiles":10,
+    "bypass_progress": false,
 
     "gui": {
         "editor": {
