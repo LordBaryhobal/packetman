@@ -117,14 +117,15 @@ class Game:
                     return
             
             elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_c:
-                    self.cutscene = Cutscene(self, "level", "test_tiles")
-                
-                elif event.key == pygame.K_DOLLAR:
-                    self.cur_lvl = int(input("new cur_lvl: "))
-                
-                elif event.key == pygame.K_f:
-                    self.finish_level()
+                if not self.config["edition"]:
+                    if event.key == pygame.K_c:
+                        self.cutscene = Cutscene(self, "level", "test_tiles")
+                    
+                    elif event.key == pygame.K_DOLLAR:
+                        self.cur_lvl = int(input("new cur_lvl: "))
+                    
+                    elif event.key == pygame.K_f:
+                        self.finish_level()
         
         # Entities and World
         if not self.config["edition"] and not self.paused and not self.cutscene:
