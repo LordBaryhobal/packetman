@@ -13,6 +13,8 @@ from classes.Cutscene import Cutscene
 from classes.Editor import Editor
 from classes.Event import Event
 from classes.Logger import Logger
+from classes.Path import Path
+from classes.SoundManager import SoundManager
 from classes.World import World
 from classes.ui.Constraints import *
 from classes.ui.GUI import GUI
@@ -40,7 +42,7 @@ class Game:
     def __init__(self):
         """Initializes a Game instance. Should not be called manually"""
 
-        with open("./config.json", "r") as f:
+        with open(Path("config.json"), "r") as f:
             self.config = json.loads(f.read())
             
         Logger.level = self.config["loglevel"]
@@ -58,7 +60,9 @@ class Game:
         self.paused = True
 
         pygame.init()
-        pygame.display.set_icon(pygame.image.load("./logo.png"))
+        SoundManager()
+
+        pygame.display.set_icon(pygame.image.load(Path("logo.png")))
         self.window = pygame.display.set_mode([Game.WIDTH, Game.HEIGHT])
         self.menu_surf, self.editor_surf, self.hud_surf, self.world_surf = [
             pygame.Surface([Game.WIDTH, Game.HEIGHT], pygame.SRCALPHA) for _ in range(4)
@@ -379,7 +383,7 @@ class Game:
 
         levels = []
 
-        with open("./levels.json", "r") as f:
+        with open(Path("levels.json"), "r") as f:
             levels = json.loads(f.read())
         
         return levels

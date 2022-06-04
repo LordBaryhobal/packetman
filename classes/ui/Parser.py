@@ -4,6 +4,7 @@
 import json
 
 from classes.Logger import Logger
+from classes.Path import Path
 from classes.ui.Button import Button
 from classes.ui.Checkbox import Checkbox
 from classes.ui.Component import Component
@@ -39,7 +40,7 @@ class Parser:
             Component -- parsed component
         """
 
-        with open("./guis/"+name+".json", "r") as f:
+        with open(Path("guis", name+".json"), "r") as f:
             desc = json.loads(f.read())
         
         return self.parse_child(desc)

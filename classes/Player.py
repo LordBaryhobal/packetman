@@ -6,8 +6,11 @@ from math import copysign
 import pygame
 
 from classes.Entity import Entity
+from classes.Event import Event, listener, on
+from classes.SoundManager import SoundManager
 from classes.Vec import Vec
 
+@listener
 class Player(Entity):
     """Player class, extends Entity.
     
@@ -27,6 +30,7 @@ class Player(Entity):
 
         if self.on_ground:
             self.vel.y = self.JUMP_SPEED
+            SoundManager.play("entity.player.jump")
     
     def move(self, direction):
         """Moves the player horizontally
@@ -56,3 +60,8 @@ class Player(Entity):
         
         if keys[pygame.K_a]:
             self.move(-1)
+    
+    @on(Event.HIT_GROUND)
+    def on_hit_ground(self, event):
+        if event.entity is self:
+            SoundManager.play("entity.player.hit_ground")
