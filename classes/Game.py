@@ -14,6 +14,7 @@ from classes.Editor import Editor
 from classes.Event import Event
 from classes.Logger import Logger
 from classes.Path import Path
+from classes.SoundManager import SoundManager
 from classes.World import World
 from classes.ui.Constraints import *
 from classes.ui.GUI import GUI
@@ -59,6 +60,8 @@ class Game:
         self.paused = True
 
         pygame.init()
+        SoundManager()
+
         pygame.display.set_icon(pygame.image.load(Path("logo.png")))
         self.window = pygame.display.set_mode([Game.WIDTH, Game.HEIGHT])
         self.menu_surf, self.editor_surf, self.hud_surf, self.world_surf = [
