@@ -95,7 +95,7 @@ class World:
                 if in_tiles:
                     event = Event(Event.ENTER_TILE)
                     event.tiles = in_tiles
-                    event.entiy = entity
+                    event.entity = entity
                     self.game.events.append(event)
             else:
                 if floor(entity.last_pos[0]) == floor(current_pos[0]) and floor(entity.last_pos[1]) == floor(current_pos[1]):

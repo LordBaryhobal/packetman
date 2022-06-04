@@ -3,7 +3,6 @@
 
 from classes.Event import Event, listener, on
 from classes.Tile import Tile
-from classes.Player import Player
 
 
 @listener
@@ -26,8 +25,3 @@ class Detection_tile(Tile):
         """
         if self.world.game.config["edition"]:
             self.texture.render(surface, pos, size)
-    
-    @on(Event.ENTER_TILE)
-    def on_entity_enter(self, event):
-        if isinstance(event.entity, Player) and self in event.tiles:
-            self.world.game.finish_level()
