@@ -22,5 +22,9 @@
     {
         "name": "Hackers",
         "level": "hackerrrrrrrr"
+    },
+    {
+        "name": "Test triggers",
+        "level": "test_triggers"
     }
 ]

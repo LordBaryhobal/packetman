@@ -19,6 +19,7 @@ from classes.entities.Bullet import Bullet
 from classes.entities.Drone import Drone
 from classes.entities.Hacker import Hacker
 from classes.entities.Robot import Robot
+from classes.entities.Triggers import PlayerTrigger, TileTrigger
 
 @listener
 class Hud:
@@ -44,7 +45,7 @@ class Hud:
             [Insulator(), Plastic(), ThermalConductor()],
             [Plate(world=w), Button(world=w), Wire(world=w), InsulatedWire(world=w), BufferGate(world=w), AndGate(world=w), OrGate(world=w), NotGate(world=w), PuzzleDoor(world=w)],
             [DetectionTile(world=w)],
-            [Entity(), Bullet(), Hacker(), Robot(), Drone(type_=1)]
+            [Entity(), Bullet(), Hacker(), Robot(), Drone(type_=1), PlayerTrigger(world=w), TileTrigger(world=w)]
         ]
 
         self.sb_opacity_anim = None

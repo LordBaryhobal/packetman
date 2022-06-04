@@ -39,6 +39,7 @@ class Event:
     CIRCUIT_CHANGE = 10
     GATE_INPUT = 11
     HIT_GROUND = 12
+    TILE_TRIGGER_UPDATE = 13
     
 
     def __init__(self, type_):
