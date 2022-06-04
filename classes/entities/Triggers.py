@@ -18,7 +18,7 @@ class Trigger(Entity):
     
     def __init__(self, pos=None, vel=None, acc=None, type_=None, highlight=False, world=None):
         super().__init__(pos, vel, acc, type_, highlight, world)
-        self.text_id = None
+        self.text_id = ""
         self.triggered = False
 
     def trigger(self):
@@ -26,7 +26,7 @@ class Trigger(Entity):
             Logger.info(f"{self.__class__.__name__} triggered")
             self.triggered = True
             if self.text_id:
-                pass
+                Logger.info(self.text_id)
     
     def render(self, surface, hud_surf, pos, size, dimensions=None):
         if self.world.game.config["edition"]:

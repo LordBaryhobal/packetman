@@ -271,6 +271,7 @@ class Game:
     
     def cb_quit(self, button):
         self.quit()
+        return True
 
     def cb_choose_lvl(self, button):
         levels = self.get_levels()
@@ -294,6 +295,7 @@ class Game:
             container.add(level)
 
         self.gui.switch_menu("levels_menu")
+        return True
     
     def cb_lvl(self, button, path):
         Logger.debug(f"Selected level {path}")
@@ -312,15 +314,18 @@ class Game:
         
         self.gui.close_menu()
         self.paused = False
+        return True
 
     def cb_settings(self, button):
         self.settings.load()
         self.gui.switch_menu("settings_menu")
+        return True
     
     def cb_exit_settings(self, button):
         self.settings.save()
         SoundManager.set_volume(self.settings.get("volume"))
         self.gui.switch_menu("main_menu")
+        return True
     
     def cb_test(self, checkbox, *args, **kwargs):
         return True
@@ -328,6 +333,7 @@ class Game:
     def cb_exit_entity_settings(self, button):
         self.save_entity_settings()
         self.gui.close_menu()
+        return True
     
     def open_entity_settings(self, single_entity=False):
         self.single_entity = single_entity
@@ -344,7 +350,7 @@ class Game:
                 self.entity_menu.get_by_name("type").set_value(entity.type)
             self.gui.switch_menu("entity_menu")
         
-    def save_entity_settings(self):   
+    def save_entity_settings(self):
         if self.single_entity:
             entities = [self.editor.selected_entity]
         else:
@@ -361,7 +367,6 @@ class Game:
             if value in entity._ENTITIES:
                 entity.type = value
                 entity.update_texture()
-        return True
 
     def cb_entity_menu(self, slider, value, label_name, *args, **kwargs):
         label = self.entity_menu.get_by_name(label_name)
@@ -373,6 +378,12 @@ class Game:
     def cb_save_lvl(self, button):
         level_name = self.save_menu.get_by_name("level_name").value
         self.world.save(level_name)
+        self.gui.close_menu()
+        return True
+    
+    def cb_exit_trigger_settings(self, button):
+        text_id = self.trigger_menu.get_by_name("text_id").get_value()
+        self.editor.selected_entity.text_id = text_id
         self.gui.close_menu()
         return True
     

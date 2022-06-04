@@ -33,15 +33,14 @@
                         {"name": "justify", "val": "space-evenly"}
                     ],
                     "x": {"type": "Absolute", "val": 0},
-                    "y": {"type": "Absolute", "val": 0},
                     "w": {"type": "Relative", "val": 1},
-                    "h": {"type": "Relative", "val": 0.7},
+                    "h": {"type": "Relative", "val": 0.1},
                     "children": [
                         {
                             "class": "Label",
                             "params": [
                                 "Text id",
-                                { "name": "font_size", "val": 40 }
+                                { "name": "font_size", "val": 30 }
                             ],
                             "y": {"type": "Center"},
                             "w": {"type": "Relative", "val": 0.4},
