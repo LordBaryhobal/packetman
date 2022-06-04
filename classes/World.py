@@ -16,6 +16,7 @@ from classes.Player import Player
 from classes.Rect import Rect
 from classes.Tile import Tile
 from classes.Vec import Vec
+from classes.tiles.Components import Electrical
 
 class World:
     """World class holding world tiles and entities. Also processes physics."""
@@ -136,13 +137,23 @@ class World:
             tile {Tile} -- tile to set
             pos {Vec} -- world coordinates of the tile
         """
+        reset_circuit = False
 
         if pos.x >= self.WIDTH or pos.y >= self.HEIGHT:
             self.modify_tilelistlen(pos)
+        
+        if isinstance(self.get_tile(pos), Electrical) or isinstance(tile, Electrical):
+            reset_circuit = True
 
         tile.pos = pos.copy()
         self.tiles[pos.y, pos.x] = tile
         self.update_tile(pos)
+        if reset_circuit:
+            for offset in (Vec(1, 0), Vec(0, 1), Vec(-1, 0), Vec(0, -1)):
+                next_tile = self.get_tile(tile.pos+offset)
+                if next_tile and isinstance(next_tile, Electrical):
+                    self.game.editor.reset_circuit(next_tile)
+            self.game.editor.visited_tiles = set()
 
     def get_tiles_in_rect(self, topleft, bottomright):
         """Get tiles overlapping with rectangle
@@ -581,3 +592,10 @@ class World:
                         event.tiles = interactive_tiles
                         event.entities = interactive_entities
                         self.game.events.append(event)
+    def reset(self):
+        self.tiles = np.array([[Tile(world=self)]], dtype='object')
+        self.entities = []
+        self.player = Player(Vec(1, 1), world=self)
+        self.entities.append(self.player)
+        self.WIDTH = 1
+        self.HEIGHT = 1
