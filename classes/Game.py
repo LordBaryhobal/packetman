@@ -64,6 +64,7 @@ class Game:
 
         pygame.init()
         SoundManager()
+        SoundManager.set_volume(self.settings.get("volume"))
 
         pygame.display.set_icon(pygame.image.load(Path("logo.png")))
         self.window = pygame.display.set_mode([Game.WIDTH, Game.HEIGHT])
@@ -314,6 +315,7 @@ class Game:
     
     def cb_exit_settings(self, button):
         self.settings.save()
+        SoundManager.set_volume(self.settings.get("volume"))
         self.gui.switch_menu("main_menu")
     
     def cb_test(self, checkbox, *args, **kwargs):

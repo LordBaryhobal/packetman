@@ -12,7 +12,7 @@ class Settings:
     """Utility class to manage settings"""
 
     DEFAULTS = {
-        "volume": 1,
+        "volume": 0.5,
         "rtx_mode": False,
         "fullscreen": False,
         "lang": "en"
@@ -91,5 +91,5 @@ class Settings:
             key {str} -- setting id
             val {Any} -- setting value
         """
-        
+
         self.settings[key] = val

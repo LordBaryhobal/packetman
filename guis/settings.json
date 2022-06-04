@@ -50,8 +50,8 @@
                             "class": "Slider",
                             "params": [
                                 0,
-                                2,
-                                0.1,
+                                1,
+                                0.05,
                                 { "name": "name", "val": "volume" }
                             ],
                             "y": {"type": "Center"},
