@@ -51,6 +51,7 @@ class World:
             entity.physics(delta)
 
             self.check_collisions(entity, delta)
+            was_on_ground = entity.on_ground
             entity.on_ground = False
             
             # Check tiles a little bit below to see if entity is on the ground
@@ -68,6 +69,11 @@ class World:
             
             if isinstance(entity, Player):
                 entity.vel.x *= 0.95
+            
+            if entity.on_ground and not was_on_ground:
+                event = Event(Event.HIT_GROUND)
+                event.entity = entity
+                self.game.events.append(event)
             
             # Check entity/entity collisions
             if i != count-1:

@@ -38,6 +38,7 @@ class Event:
     WORLD_LOADED = 9
     CIRCUIT_CHANGE = 10
     GATE_INPUT = 11
+    HIT_GROUND = 12
     
 
     def __init__(self, type_):
