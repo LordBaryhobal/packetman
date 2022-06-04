@@ -10,7 +10,7 @@ from classes.Event import Event, listener, on
 from classes.SoundManager import SoundManager
 from classes.Vec import Vec
 from classes.Event import Event, listener, on
-from classes.tiles.Detection_tile import Detection_tile
+from classes.tiles.DetectionTile import DetectionTile
 
 @listener
 class Player(Entity):
@@ -71,7 +71,7 @@ class Player(Entity):
     def on_enter_tile(self, event):
         if event.entity is self:
             for tile in event.tiles:
-                if isinstance(tile, Detection_tile):
+                if isinstance(tile, DetectionTile):
                     if self.on_ground:
                         self.world.game.finish_level()
                     else:

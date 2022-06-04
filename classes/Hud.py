@@ -11,7 +11,7 @@ from classes.Tile import Tile
 from classes.Vec import Vec
 
 from classes.tiles.Components import *
-from classes.tiles.Detection_tile import Detection_tile
+from classes.tiles.DetectionTile import DetectionTile
 from classes.tiles.Metals import *
 from classes.tiles.Terrain import *
 
@@ -43,7 +43,7 @@ class Hud:
             [Aluminium(), Brass(), Copper(), Gold(), Iron(), Lead(), Zinc()],
             [Insulator(), Plastic(), ThermalConductor()],
             [Plate(world=w), Button(world=w), Wire(world=w), InsulatedWire(world=w), BufferGate(world=w), AndGate(world=w), OrGate(world=w), NotGate(world=w), PuzzleDoor(world=w)],
-            [Detection_tile(world=w)],
+            [DetectionTile(world=w)],
             [Entity(), Bullet(), Hacker(), Robot(), Drone(type_=1)]
         ]
 
