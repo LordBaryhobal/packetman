@@ -34,9 +34,10 @@ class Event:
     INTERACTION = 5
     ENTER_TILE = 6
     EXIT_TILE = 7
-    WORLD_LOADED = 8
-    CIRCUIT_CHANGE = 9
-    GATE_INPUT = 10
+    WORLD_SAVED = 8
+    WORLD_LOADED = 9
+    CIRCUIT_CHANGE = 10
+    GATE_INPUT = 11
     
 
     def __init__(self, type_):

@@ -1,0 +1,22 @@
+[
+    {
+        "name": "Level 1: door",
+        "level": "circuit_door"
+    },
+    {
+        "name": "Level 2: not",
+        "level": "circuit_not"
+    },
+    {
+        "name": "Level 3: or",
+        "level": "circuit_or"
+    },
+    {
+        "name": "Level 4: and",
+        "level": "circuit_and"
+    },
+    {
+        "name": "Level 5: gate",
+        "level": "circuit_gate"
+    }
+]

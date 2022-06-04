@@ -4,7 +4,7 @@
 import pygame
 
 from classes.Entity import Entity
-from classes.Event import Event
+from classes.Event import Event, listener, on
 from classes.Hud import Hud
 from classes.Logger import Logger
 from classes.Player import Player
@@ -12,6 +12,7 @@ from classes.Rect import Rect
 from classes.Tile import Tile
 from classes.Vec import Vec
 
+@listener
 class Editor:
     """Class that handles edition mode"""
     
@@ -512,3 +513,13 @@ class Editor:
 
         for entity in entities:
             entity.highlight = highlight
+
+    @on(Event.WORLD_LOADED)
+    def on_world_loaded(self, event):
+        if self.game.world.level_file:
+            self.game.gui.get_by_name("level_name").value = self.game.world.level_file
+
+    @on(Event.WORLD_SAVED)
+    def on_world_saved(self, event):
+        if self.game.world.level_file:
+            self.game.gui.get_by_name("level_name").value = self.game.world.level_file

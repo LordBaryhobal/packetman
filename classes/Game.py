@@ -3,6 +3,7 @@
 
 import json
 import os
+import struct
 
 import pygame
 
@@ -31,6 +32,8 @@ class Game:
     HEIGHT = 600
 
     MAX_FPS = 60
+
+    PROGRESS_VER = 0
 
     _instance = None
 
@@ -68,6 +71,9 @@ class Game:
         self.init_gui()
 
         self.cutscene = False
+
+        self.cur_lvl = 0
+        self.load_progress()
     
     @classproperty
     def instance(cls):
@@ -113,6 +119,12 @@ class Game:
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_c:
                     self.cutscene = Cutscene(self, "level", "test_tiles")
+                
+                elif event.key == pygame.K_DOLLAR:
+                    self.cur_lvl = int(input("new cur_lvl: "))
+                
+                elif event.key == pygame.K_f:
+                    self.finish_level()
         
         # Entities and World
         if not self.config["edition"] and not self.paused and not self.cutscene:
@@ -183,6 +195,7 @@ class Game:
         """Stops the game"""
 
         self.running = False
+        self.save_progress()
     
     def animate(self, obj, attr_, val_a, val_b, duration, start=True, loop=None, type_=Animation.FLOAT):
         """Initializes an Animation instance and adds it to the list of ANIMATIONS
@@ -256,7 +269,8 @@ class Game:
         self.quit()
 
     def cb_choose_lvl(self, button):
-        levels = os.listdir("./levels")
+        levels = self.get_levels()
+        
         container = self.levels_menu.get_by_name("levels")
         container.children = []
 
@@ -266,12 +280,12 @@ class Game:
             level.text = "New Level"
             container.add(level)
 
-        for l in levels:
-            if l.endswith(".dat"):
-                level = self.level_comp.copy()
-                level.args = (l[:-4], )
-                level.text = l[:-4]
-                container.add(level)
+        for l in levels[:self.cur_lvl+1]:
+            #if l.endswith(".dat"):
+            level = self.level_comp.copy()
+            level.args = (l["level"], )
+            level.text = l["name"]
+            container.add(level)
 
         self.gui.switch_menu("levels_menu")
     
@@ -343,3 +357,74 @@ class Game:
         self.world.save(level_name)
         self.gui.close_menu()
         return True
+    
+    def get_user_path(self):
+        home = os.path.expanduser("~")
+        dir_ = os.path.join(home, ".packetman")
+        
+        if not os.path.exists(dir_):
+            os.mkdir(dir_)
+        
+        return dir_
+    
+    def get_levels(self):
+        """Returns the list of levels
+
+        Returns:
+            list[dict] -- list of levels with name and filename
+        """
+
+        levels = []
+
+        with open("./levels.json", "r") as f:
+            levels = json.loads(f.read())
+        
+        return levels
+    
+    def load_progress(self):
+        """Loads current progress from progress file"""
+
+        path = self.get_user_path()
+        path = os.path.join(path, "progress.dat")
+        
+        if not os.path.exists(path):
+            self.save_progress()
+            return
+        
+        with open(path, "rb") as f:
+            ver = struct.unpack(">H", f.read(2))[0]
+
+            if ver != self.PROGRESS_VER:
+                Logger.error(f"Progress file of version {ver} cannot be loaded with current version set to {self.PROGRESS_VER}")
+            self.cur_lvl = struct.unpack(">H", f.read(2))[0]
+    
+    def save_progress(self):
+        """Saves current progress to progress file"""
+
+        path = self.get_user_path()
+        path = os.path.join(path, "progress.dat")
+        
+        with open(path, "wb") as f:
+            f.write(struct.pack(">H", self.PROGRESS_VER))
+            f.write(struct.pack(">H", self.cur_lvl))
+    
+    def finish_level(self):
+        """Completes the current level
+
+        Updates current progress and triggers cutscene
+        """
+
+        levels = self.get_levels()
+        for i, l in enumerate(levels):
+            if l["level"] == self.world.level_file:
+                self.cur_lvl = max(i+1, self.cur_lvl)
+                break
+        
+        if i+1 >= len(levels):
+            Logger.info("Congratulations, you finished the game !")
+            self.save_progress()
+            self.cutscene = Cutscene(self, self.world.level_file, None)
+            return
+        
+        self.save_progress()
+        self.cutscene = Cutscene(self, self.world.level_file, levels[i+1]["level"])

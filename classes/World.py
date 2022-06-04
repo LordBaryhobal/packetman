@@ -31,6 +31,7 @@ class World:
         """
 
         self.game = game
+        self.level_file = ""
         self.tiles = np.array([[Tile(world=self)]], dtype='object')
         self.entities = []
         self.player = Player(Vec(1, 1), world=self)
@@ -362,6 +363,8 @@ class World:
             f.write(buf_entities)
         
         Logger.info("Level saved successfully (maybe)")
+        self.level_file = filename
+        self.game.events.append(Event(Event.WORLD_SAVED))
 
     def load(self, filename):
         """Loads a level
@@ -438,6 +441,7 @@ class World:
                     self.player = entity
         
         Logger.info("Level loaded successfully (maybe)")
+        self.level_file = filename
         self.game.events.append(Event(Event.WORLD_LOADED))
 
         self.game.camera.update()
