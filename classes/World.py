@@ -12,6 +12,7 @@ from classes.Circuit import Circuit
 from classes.Entity import Entity
 from classes.Event import Event
 from classes.Logger import Logger
+from classes.Path import Path
 from classes.Player import Player
 from classes.Rect import Rect
 from classes.Tile import Tile
@@ -354,7 +355,8 @@ class World:
             buf_entities += buf_entity
         
         Logger.info("Writing to file")
-        with open("./levels/"+filename+".dat", "wb") as f:
+
+        with open(Path("levels", filename+".dat"), "wb") as f:
             f.write(struct.pack(">I", len(buf_tiles) ))
             f.write(struct.pack(">I", len(buf_entities) ))
             f.write(struct.pack(">H", max_x+1))
@@ -375,7 +377,7 @@ class World:
 
         Logger.info(f"Loading level '{filename}'")
 
-        with open(f"./levels/{filename}.dat", "rb") as f:
+        with open(Path("levels", filename+".dat"), "rb") as f:
             size_tiles = struct.unpack(">I", f.read(4))[0]
             size_entities = struct.unpack(">I", f.read(4))[0]
             self.WIDTH = struct.unpack(">H", f.read(2))[0]

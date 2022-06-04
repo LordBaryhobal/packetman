@@ -4,6 +4,7 @@
 import pygame
 
 from classes.Copyable import Copyable
+from classes.Path import Path
 from classes.Vec import Vec
 
 class Texture(Copyable):
@@ -39,7 +40,8 @@ class Texture(Copyable):
         """
 
         if not name in Texture._cache:
-            Texture._cache[name] = pygame.image.load(f"./assets/textures/{name}.png")
+            path = Path("assets", "textures", name+".png")
+            Texture._cache[name] = pygame.image.load(path)
         
         return Texture._cache[name]
 
