@@ -15,7 +15,8 @@ class Settings:
         "volume": 0.5,
         "rtx_mode": False,
         "fullscreen": False,
-        "lang": "en"
+        "lang": "en",
+        "interaction_hint": True
     }
 
     def __init__(self, game):

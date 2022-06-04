@@ -91,6 +91,16 @@
                     "h": {"type": "Relative", "val": 0.05}
                 },
                 {
+                    "class": "Checkbox",
+                    "params": [
+                        "Interaction hint",
+                        { "name": "name", "val": "interaction_hint" }
+                    ],
+                    "x": {"type": "Center"},
+                    "w": {"type": "Relative", "val": 0.4},
+                    "h": {"type": "Relative", "val": 0.05}
+                },
+                {
                     "class": "Button",
                     "params": [
                         "Return to main menu",
