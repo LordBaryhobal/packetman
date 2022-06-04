@@ -95,7 +95,7 @@ class World:
                 if in_tiles:
                     event = Event(Event.ENTER_TILE)
                     event.tiles = in_tiles
-                    event.entiy = entity
+                    event.entity = entity
                     self.game.events.append(event)
             else:
                 if floor(entity.last_pos[0]) == floor(current_pos[0]) and floor(entity.last_pos[1]) == floor(current_pos[1]):
@@ -583,14 +583,15 @@ class World:
             
             tiles = self.get_tiles_in_rect(pos1, pos2)
             interactive_tiles = list(filter(lambda t: t.interactive, list(tiles.flatten())))
-            
             entities = self.get_entities_in_rect(pos1, pos2)
             interactive_entities = list(filter(lambda e: e.interactive, entities))
-            for entity in interactive_entities:
-                entity.interact_hint = True
             
-            for tile in interactive_tiles:
-                tile.interact_hint = True
+            if self.game.settings.get("interaction_hint"):
+                for entity in interactive_entities:
+                    entity.interact_hint = True
+                
+                for tile in interactive_tiles:
+                    tile.interact_hint = True
 
         for event in events:
             if event.type == pygame.KEYDOWN:

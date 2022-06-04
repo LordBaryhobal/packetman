@@ -14,6 +14,7 @@ from classes.Editor import Editor
 from classes.Event import Event
 from classes.Logger import Logger
 from classes.Path import Path
+from classes.Settings import Settings
 from classes.SoundManager import SoundManager
 from classes.World import World
 from classes.ui.Constraints import *
@@ -47,6 +48,8 @@ class Game:
             
         Logger.level = self.config["loglevel"]
 
+        self.settings = Settings(self)
+
         self.world = World(self)
         self.camera = Camera(self)
         
@@ -61,6 +64,7 @@ class Game:
 
         pygame.init()
         SoundManager()
+        SoundManager.set_volume(self.settings.get("volume"))
 
         pygame.display.set_icon(pygame.image.load(Path("logo.png")))
         self.window = pygame.display.set_mode([Game.WIDTH, Game.HEIGHT])
@@ -261,15 +265,6 @@ class Game:
         self.paused = True
         self.gui.switch_menu("pause_menu")
     
-    def load_settings(self):
-        #menu = self.settings_menu
-        #menu.get_by_name("")
-        pass
-
-    def save_settings(self):
-        #self.config[""]
-        pass
-    
     def cb_quit(self, button):
         self.quit()
 
@@ -315,11 +310,12 @@ class Game:
         self.paused = False
 
     def cb_settings(self, button):
-        self.load_settings()
+        self.settings.load()
         self.gui.switch_menu("settings_menu")
     
     def cb_exit_settings(self, button):
-        self.save_settings()
+        self.settings.save()
+        SoundManager.set_volume(self.settings.get("volume"))
         self.gui.switch_menu("main_menu")
     
     def cb_test(self, checkbox, *args, **kwargs):
