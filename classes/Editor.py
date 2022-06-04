@@ -5,6 +5,8 @@ import pygame
 
 from classes.Entity import Entity
 from classes.Event import Event, listener, on
+from classes.tiles.Components import *
+from classes.Event import Event
 from classes.Hud import Hud
 from classes.Logger import Logger
 from classes.Player import Player
@@ -42,6 +44,8 @@ class Editor:
         self.selected_entity = None  # None = no entity selected | Entity = entity selected
         self.copied_entities = []
         self.hud = Hud(self.game)
+        
+        self.visited_tiles = set()
     
     def handle_events(self, events):
         """Handles events
@@ -381,7 +385,7 @@ class Editor:
                 elif event.key == pygame.K_e:
                     world_mouse_pos = self.game.camera.screen_to_world(self.get_mousepos())
                     tile = self.game.world.get_tile(world_mouse_pos)
-                    if tile.interactive:
+                    if tile and tile.interactive:
                         event = Event(Event.INTERACTION)
                         event.tiles = [tile]
                         event.entities = []
@@ -523,3 +527,21 @@ class Editor:
     def on_world_saved(self, event):
         if self.game.world.level_file:
             self.game.gui.get_by_name("level_name").value = self.game.world.level_file
+        
+    def reset_circuit(self, tile):
+        if tile in self.visited_tiles:
+            return
+        
+        self.visited_tiles.add(tile)
+        
+        if isinstance(tile, Input) and not isinstance(tile, Gate):
+            if tile.pressed:
+                tile.create_event(True)
+        
+        else:
+            tile.reset_power()
+        
+        for offset in (Vec(1, 0), Vec(0, 1), Vec(-1, 0), Vec(0, -1)):
+            next_tile = self.game.world.get_tile(tile.pos+offset)
+            if next_tile and isinstance(next_tile, Electrical):
+                self.reset_circuit(next_tile)
