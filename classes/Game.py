@@ -17,6 +17,7 @@ from classes.Path import Path
 from classes.Settings import Settings
 from classes.SoundManager import SoundManager
 from classes.World import World
+from classes.entities.Triggers import Trigger
 from classes.ui.Constraints import *
 from classes.ui.GUI import GUI
 from classes.ui.Parser import Parser
@@ -236,6 +237,7 @@ class Game:
         self.levels_menu = self.parser.parse("levels")
         self.level_comp = self.parser.parse("level")
         self.entity_menu = self.parser.parse("entity")
+        self.trigger_menu = self.parser.parse("trigger")
         self.save_menu = self.parser.parse("save")
 
         #self.main_menu.set_visible(True)
@@ -243,12 +245,14 @@ class Game:
 
         self.pause_menu.bg_color = (100,100,100,200)
         self.entity_menu.bg_color = (100,150,100)
+        self.trigger_menu.bg_color = (100,150,100)
 
         self.gui.add(self.main_menu)
         self.gui.add(self.pause_menu)
         self.gui.add(self.settings_menu)
         self.gui.add(self.levels_menu)
         self.gui.add(self.entity_menu)
+        self.gui.add(self.trigger_menu)
         self.gui.add(self.save_menu)
 
         self.gui.switch_menu("main_menu")
@@ -327,7 +331,18 @@ class Game:
     
     def open_entity_settings(self, single_entity=False):
         self.single_entity = single_entity
-        self.gui.switch_menu("entity_menu")
+        entity = self.editor.selected_entity
+        
+        if self.single_entity and isinstance(entity, Trigger):
+            self.trigger_menu.get_by_name("text_id").set_value(entity.text_id)
+            self.gui.switch_menu("trigger_menu")
+
+        else:
+            if self.single_entity:
+                self.entity_menu.get_by_name("x_velocity").set_value(entity.vel.x)
+                self.entity_menu.get_by_name("y_velocity").set_value(entity.vel.y)
+                self.entity_menu.get_by_name("type").set_value(entity.type)
+            self.gui.switch_menu("entity_menu")
         
     def save_entity_settings(self):   
         if self.single_entity:
