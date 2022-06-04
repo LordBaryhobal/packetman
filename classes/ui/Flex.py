@@ -67,11 +67,11 @@ class Flex(Component):
             
             gap = self.gap
             if self.justify == "space-between":
-                gap = remainder / (len(self.children)-1)
+                gap = remainder / max(1, (len(self.children)-1))
                 gap = max(gap, self.gap)
             
             elif self.justify == "space-around":
-                gap = remainder / len(self.children)
+                gap = remainder / max(1, len(self.children))
                 gap = max(gap, self.gap)
                 current += gap/2
             
