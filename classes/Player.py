@@ -9,6 +9,8 @@ from classes.Entity import Entity
 from classes.Event import Event, listener, on
 from classes.SoundManager import SoundManager
 from classes.Vec import Vec
+from classes.Event import Event, listener, on
+from classes.tiles.Detection_tile import Detection_tile
 
 @listener
 class Player(Entity):
@@ -24,6 +26,10 @@ class Player(Entity):
     SIZE = Vec(0.8,0.8)
     
     speed = 3
+    
+    def __init__(self, pos=None, vel=None, acc=None, type_=None, highlight=False, world=None):
+        super().__init__(pos, vel, acc, type_, highlight, world)
+        self.finishing_level = False
     
     def jump(self):
         """Makes the player jump if on the ground"""
@@ -61,7 +67,21 @@ class Player(Entity):
         if keys[pygame.K_a]:
             self.move(-1)
     
+    @on(Event.ENTER_TILE)
+    def on_enter_tile(self, event):
+        if event.entity is self:
+            for tile in event.tiles:
+                if isinstance(tile, Detection_tile):
+                    if self.on_ground:
+                        self.world.game.finish_level()
+                    else:
+                        self.finishing_level = True
+                    break
+    
     @on(Event.HIT_GROUND)
     def on_hit_ground(self, event):
         if event.entity is self:
             SoundManager.play("entity.player.hit_ground")
+            if self.finishing_level:
+                self.finishing_level = False
+                self.world.game.finish_level()

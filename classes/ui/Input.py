@@ -55,6 +55,14 @@ class Input(Component):
             pygame.draw.line(surface, self.color, start, end)
         pygame.draw.rect(surface, self.border_focus_color if self.focused else self.border_color, [x,y,w,h], 1)
     
+    def get_value(self):
+        return self.value
+
+    def set_value(self, value):
+        if self.value != value:
+            self.value = value
+            self.set_changed(1)
+
     def on_click(self, event):
         self.focused = True
         self.set_changed(1)
@@ -68,13 +76,11 @@ class Input(Component):
                 return True
             
             elif event.key == pygame.K_BACKSPACE:
-                self.value = self.value[:-1]
-                self.set_changed(1)
+                self.set_value(self.value[:-1])
                 return True
             
             elif event.unicode in self.VALID:
-                self.value += event.unicode
-                self.set_changed(1)
+                self.set_value(self.value + event.unicode)
                 return True
                 
         return False

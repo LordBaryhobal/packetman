@@ -63,6 +63,22 @@ class Slider(Component):
 
         super().render(surface)
 
+    def get_value(self):
+        return self.value
+
+    def set_value(self, value):
+        """Sets the slider's value
+
+        Arguments:
+            value {float} -- new value
+        """
+        
+        value = round_step(value, self.step, self.min, self.max)
+        if self.value != value:
+            if self.on_change(value):
+                self.value = value
+        self.thumb = (self.value-self.min)/self.range
+    
     def on_click(self, event):
         self.on_mouse_move(event)
         return True
@@ -77,16 +93,3 @@ class Slider(Component):
     def on_change(self, value):
         self.set_changed(1)
         return self.callback(self, value, *self.args)
-    
-    def set_value(self, value):
-        """Sets the slider's value
-
-        Arguments:
-            value {float} -- new value
-        """
-        
-        value = round_step(value, self.step, self.min, self.max)
-        if self.value != value:
-            if self.on_change(value):
-                self.value = value
-        self.thumb = (self.value-self.min)/self.range
