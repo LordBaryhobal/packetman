@@ -7,6 +7,7 @@ from classes.Entity import Entity
 from classes.Event import Event, listener, on
 from classes.Logger import Logger
 from classes.Rect import Rect
+from classes.TextManager import TextManager
 from classes.Vec import Vec
 
 class Trigger(Entity):
@@ -23,10 +24,11 @@ class Trigger(Entity):
 
     def trigger(self):
         if not self.triggered:
-            Logger.info(f"{self.__class__.__name__} triggered")
             self.triggered = True
             if self.text_id:
-                Logger.info(self.text_id)
+                TextManager.show(self.text_id)
+            else:
+                Logger.warn(f"{self.__class__.__name__} triggered but no text id was set")
     
     def render(self, surface, hud_surf, pos, size, dimensions=None):
         if self.world.game.config["edition"]:

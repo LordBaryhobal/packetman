@@ -54,7 +54,7 @@ class Hud:
         self.name_opacity_anim = None
         self.name_opacity = 0
         pygame.font.init()
-        self.name_font = pygame.font.SysFont("ubuntu", 20)
+        self.name_font = pygame.font.SysFont("Arial", 20)
     
     def get_type(self):
         """Returns the selected tile/entity class+type+instance

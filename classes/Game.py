@@ -16,6 +16,7 @@ from classes.Logger import Logger
 from classes.Path import Path
 from classes.Settings import Settings
 from classes.SoundManager import SoundManager
+from classes.TextManager import TextManager
 from classes.World import World
 from classes.entities.Triggers import Trigger
 from classes.ui.Constraints import *
@@ -66,6 +67,7 @@ class Game:
         pygame.init()
         SoundManager()
         SoundManager.set_volume(self.settings.get("volume"))
+        TextManager(self)
 
         pygame.display.set_icon(pygame.image.load(Path("logo.png")))
         self.window = pygame.display.set_mode([Game.WIDTH, Game.HEIGHT])
@@ -187,6 +189,7 @@ class Game:
         pygame.display.set_caption(f"Packetman - {self.clock.get_fps():.2f}fps")
 
         self.camera.render(self.world_surf, self.hud_surf, self.editor_surf)
+        TextManager.render(self.hud_surf)
 
         if self.gui.changed:
             self.menu_surf.fill((0,0,0,0))
