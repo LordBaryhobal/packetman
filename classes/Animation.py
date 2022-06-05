@@ -46,6 +46,7 @@ class Animation:
         self.loop = loop
         self.type = type_
         self.start_time = None
+        self.pause_time = None
         self.finished = False
 
         if start:
@@ -79,7 +80,7 @@ class Animation:
         if ratio > 1:
             if self.loop is None:
                 self.finished = True
-                return
+                ratio = 1
             
             elif self.loop == Animation.FORWARDS:
                 ratio %= 1
@@ -96,3 +97,15 @@ class Animation:
             val = int( ratio*(self.val_b - self.val_a) + self.val_a)
         
         setattr(self.obj, self.attr, val)
+
+    def pause_all():
+        for anim in Animation.ANIMATIONS:
+            anim.pause_time = time()
+    
+    def resume_all():
+        t = time()
+        for anim in Animation.ANIMATIONS:
+            if anim.start_time and anim.pause_time:
+                anim.start_time += t-anim.pause_time
+            
+            anim.pause_time = None

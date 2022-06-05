@@ -76,7 +76,7 @@ class Cutscene:
             self.load_thread.start()
         
         else:
-            self.game.paused = True
+            self.game.set_paused(True)
             self.game.gui.switch_menu("main_menu")
             self.end_cutscene()
             

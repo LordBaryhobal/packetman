@@ -204,6 +204,22 @@ class Game:
         pygame.display.flip()
         self.clock.tick(self.MAX_FPS)
     
+    def set_paused(self, paused=True):
+        """Sets paused state
+
+        Keyword Arguments:
+            paused {bool} -- new paused state (default: {True})
+        """
+
+        if self.paused != paused:
+            if paused:
+                Animation.pause_all()
+
+            else:
+                Animation.resume_all()
+            
+            self.paused = paused
+
     def quit(self):
         """Stops the game"""
 
@@ -264,12 +280,12 @@ class Game:
         """Closes pause menu and resumes the game"""
 
         self.gui.close_menu()
-        self.paused = False
+        self.set_paused(False)
     
     def pause(self):
         """Pauses the game and opens pause menu"""
 
-        self.paused = True
+        self.set_paused(True)
         self.gui.switch_menu("pause_menu")
     
     def cb_quit(self, button):
@@ -316,7 +332,7 @@ class Game:
         #self.camera.update_visible_entities()
         
         self.gui.close_menu()
-        self.paused = False
+        self.set_paused(False)
         return True
 
     def cb_settings(self, button):
