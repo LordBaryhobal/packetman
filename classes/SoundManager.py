@@ -3,8 +3,7 @@
 
 import pygame
 import os
-from random import randint
-from json import loads
+from random import choice
 
 from classes.Path import Path
 
@@ -32,13 +31,11 @@ class SoundManager:
         elmts = sound.split(".")
         path = Path("assets", "sounds", *elmts)
         
-        if os.path.exists(path+".json"):
-            with open(path+".json", "r") as f:
-                sound_property = loads(f.read())
+        if os.path.exists(path) and os.path.isdir(path):
+            sound_files = os.listdir(path)
             sound_list = []
-            p = Path("assets", "sounds", *sound_property["path"].split("."))
-            for i in range(sound_property["nb_of_sound"]):
-                sound_list.append(pygame.mixer.Sound(p+str(i)+".wav"))
+            for f in sound_files:
+                sound_list.append(pygame.mixer.Sound(os.path.join(path, f)))
             return sound_list
         
         
@@ -54,10 +51,9 @@ class SoundManager:
         if not sound in SoundManager._cache:
             SoundManager._cache[sound] = SoundManager.load(sound)
         
-        if type(SoundManager._cache[sound]) == list:
-            n = randint(0, len(SoundManager._cache[sound])-1)
-            print(SoundManager._cache[sound][n])
-            SoundManager._cache[sound][n].play().set_volume(SoundManager.volume)
+        if isinstance(SoundManager._cache[sound], list):
+            s = choice(SoundManager._cache[sound])
+            s.play().set_volume(SoundManager.volume)
         else:
             SoundManager._cache[sound].play().set_volume(SoundManager.volume)
     
