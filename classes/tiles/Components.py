@@ -4,6 +4,7 @@
 from classes.Event import Event, listener, on
 from classes.Tile import Tile
 from classes.Vec import Vec
+from classes.SoundManager import SoundManager
 
 class Electrical(Tile):
     """Electrical component"""
@@ -69,6 +70,7 @@ class Plate(Input):
         Arguments:
             pressed {bool} -- new pressed state
         """
+        SoundManager.play("tile.plate.toggle")
         self.create_event(pressed=pressed)
         self.pressed = pressed
         self.texture.id = int(self.pressed)
@@ -102,6 +104,7 @@ class Button(Input):
             pressed {bool} -- new pressed state (default: {True})
         """
         if self.pressed != pressed:
+            SoundManager.play("tile.button.toggle")
             self.create_event(pressed=pressed)
             self.pressed = pressed
             self.update_texture()
