@@ -3,6 +3,8 @@
 
 from classes.Entity import Entity
 from classes.Event import Event, listener, on
+from classes.Player import Player
+from classes.SoundManager import SoundManager
 from classes.Vec import Vec
 
 @listener
@@ -42,3 +44,5 @@ class Bullet(Entity):
         """
 
         print(f"Hit {entity}")
+        if isinstance(entity, Player):
+            SoundManager.play("entity.player.get_hit")

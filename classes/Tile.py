@@ -1,6 +1,8 @@
 #Packetman is a small game created in the scope of a school project
 #Copyright (C) 2022  Louis HEREDERO & Mathéo BENEY
 
+import pygame
+
 from classes.Copyable import Copyable
 from classes.Texture import Texture
 from classes.Utility import import_class
@@ -13,6 +15,7 @@ TILES = {
     "BufferGate": "classes.tiles.Components",
     "Button": "classes.tiles.Components",
     "Copper": "classes.tiles.Metals",
+    "DetectionTile": "classes.tiles.DetectionTile",
     "Gold": "classes.tiles.Metals",
     "Insulator": "classes.tiles.Terrain",
     "InsulatedWire": "classes.tiles.Components",
@@ -64,10 +67,10 @@ class Tile(Copyable):
         self.interact_hint = False
     
     def __setattr__(self, name, value):
-        if self.CONNECTED and name == "neighbors" and self.texture:
-            self.texture.id = value
-        
         super().__setattr__(name, value)
+        if self.CONNECTED and name == "neighbors" and self.texture:
+            self.update_texture()
+        
     
     def get_cls(cls):
         """Get class from class name
@@ -110,9 +113,14 @@ class Tile(Copyable):
 
             self.HINT_TEXTURE.render(hud_surf, hintpos, size, self.HINT_SIZE)
             self.interact_hint = False
+        """if hasattr(self, "powered") and self.powered:
+            pygame.draw.rect(hud_surf, (255, 0, 0), (pos.x, pos.y-size, size, size))"""
     
     def __repr__(self):
         return f"<{self.__class__.__name__} Tile of type {self.type} at ({self.pos.x}, {self.pos.y})>"
     
     def on_update(self):
         pass
+    
+    def update_texture(self):
+        self.texture.id = self.neighbors

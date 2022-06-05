@@ -14,7 +14,10 @@ ENTITIES = {
     "Drone": "classes.entities.Drone",
     "Hacker": "classes.entities.Hacker",
     "Player": "classes.Player",
-    "Robot": "classes.entities.Robot"
+    "Robot": "classes.entities.Robot",
+    "Trigger": "classes.entities.Triggers",
+    "PlayerTrigger": "classes.entities.Triggers",
+    "TileTrigger": "classes.entities.Triggers"
 }
 
 class Entity(Copyable):

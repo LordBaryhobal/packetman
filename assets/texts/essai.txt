@@ -1,0 +1,5 @@
+Voici un autre test !
+
+Avec un accent: é
+
+Yes, ça a marché !

@@ -3,6 +3,7 @@
 
 import pygame
 
+from classes.SoundManager import SoundManager
 from classes.ui.Label import Label
 
 class Button(Label):
@@ -34,6 +35,7 @@ class Button(Label):
     
     def on_release(self, event):
         if event.button == 1:
+            SoundManager.play("ui.click")
             return self.callback(self, *self.args)
         
         return False

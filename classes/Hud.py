@@ -5,11 +5,13 @@ import pygame
 
 from classes.Animation import Animation
 from classes.Entity import Entity
+from classes.Event import Event, listener, on
 from classes.Logger import Logger
 from classes.Tile import Tile
 from classes.Vec import Vec
 
 from classes.tiles.Components import *
+from classes.tiles.DetectionTile import DetectionTile
 from classes.tiles.Metals import *
 from classes.tiles.Terrain import *
 
@@ -17,7 +19,9 @@ from classes.entities.Bullet import Bullet
 from classes.entities.Drone import Drone
 from classes.entities.Hacker import Hacker
 from classes.entities.Robot import Robot
+from classes.entities.Triggers import PlayerTrigger, TileTrigger
 
+@listener
 class Hud:
     """Class to display editor hud"""
 
@@ -40,11 +44,17 @@ class Hud:
             [Aluminium(), Brass(), Copper(), Gold(), Iron(), Lead(), Zinc()],
             [Insulator(), Plastic(), ThermalConductor()],
             [Plate(world=w), Button(world=w), Wire(world=w), InsulatedWire(world=w), BufferGate(world=w), AndGate(world=w), OrGate(world=w), NotGate(world=w), PuzzleDoor(world=w)],
-            [Entity(), Bullet(), Hacker(), Robot(), Drone(type_=1)]
+            [DetectionTile(world=w)],
+            [Entity(), Bullet(), Hacker(), Robot(), Drone(type_=1), PlayerTrigger(world=w), TileTrigger(world=w)]
         ]
 
         self.sb_opacity_anim = None
         self.sb_opacity = 0
+
+        self.name_opacity_anim = None
+        self.name_opacity = 0
+        pygame.font.init()
+        self.name_font = pygame.font.SysFont("Arial", 20)
     
     def get_type(self):
         """Returns the selected tile/entity class+type+instance
@@ -129,6 +139,11 @@ class Hud:
 
             pygame.draw.rect(surface, (255,255,255, self.sb_opacity), [x, HEIGHT-5, x_thumb_w,5])
             pygame.draw.rect(surface, (255,255,255, self.sb_opacity), [0, y, 5, y_thumb_h])
+        
+        cls, type_, sel = self.get_type()
+        txt = self.name_font.render(cls.__name__, True, (255,255,255))
+        txt.set_alpha(self.name_opacity)
+        surface.blit(txt, [WIDTH/2 - txt.get_width()/2, HEIGHT-slot_size-self.MARGIN-txt.get_height()])
     
     def set_hotbar(self, i):
         """Sets which hotbar is currently selected
@@ -139,6 +154,7 @@ class Hud:
         
         if i < len(self.hotbars):
             self.hotbar = i
+            self.show_name()
         
         else:
             Logger.warn(f"Tried to set hotbar of index {i} but only {len(self.hotbars)} are defined")
@@ -159,4 +175,22 @@ class Hud:
             self.sb_opacity_anim.finished = True
         
         self.sb_opacity_anim = Animation(self, "sb_opacity", 255, 0, 1, type_=Animation.INT)
-        Animation.ANIMATIONS.append(self.sb_opacity_anim)
+    
+    def show_name(self):
+        self.name_opacity = 255
+
+        anim = self.name_opacity_anim
+        if anim and anim in Animation.ANIMATIONS:
+            Animation.ANIMATIONS.remove(anim)
+            self.name_opacity_anim = None
+        
+        self.name_opacity_anim = Animation(self, "name_wait", 0, 1, 1, type_=Animation.INT)
+    
+    def hide_name(self):
+        self.name_opacity_anim = Animation(self, "name_opacity", 255, 0, 0.5)
+    
+    @on(Event.ANIMATION_FINISH)
+    def on_anim_finished(self, event):
+        anim = event.animation
+        if anim.obj is self and anim.attr == "name_wait":
+            self.hide_name()

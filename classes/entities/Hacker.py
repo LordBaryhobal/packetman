@@ -9,6 +9,7 @@ import pygame
 from classes.entities.Bullet import Bullet
 from classes.Entity import Entity
 from classes.Vec import Vec
+from classes.SoundManager import SoundManager
 
 class Hacker(Entity):
     """Hacker ennemy
@@ -50,6 +51,7 @@ class Hacker(Entity):
             pos {Vec} -- target position
         """
 
+        SoundManager.play("entity.hacker.shoot")
         bullet_pos = self.pos + self.SIZE/2
         bullet_vel = (pos - bullet_pos).normalize() * self.BULLET_SPEED
         self.world.add_entity(Bullet(bullet_pos, bullet_vel))

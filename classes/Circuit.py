@@ -51,12 +51,18 @@ class Circuit:
 
         if isinstance(tile, Input):
             return
+        
+        if not isinstance(tile, Electrical):    
+            return
             
         if power:
             tile.powered_by += 1
         else:
             tile.powered_by -= 1
         tile.update_power()
+        event = Event(Event.TILE_TRIGGER_UPDATE)
+        event.tile = tile
+        self.world.game.events.append(event)
 
         
         if tile.neighbors & 1:

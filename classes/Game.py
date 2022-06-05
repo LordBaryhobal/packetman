@@ -3,6 +3,7 @@
 
 import json
 import os
+import struct
 
 import pygame
 
@@ -12,7 +13,12 @@ from classes.Cutscene import Cutscene
 from classes.Editor import Editor
 from classes.Event import Event
 from classes.Logger import Logger
+from classes.Path import Path
+from classes.Settings import Settings
+from classes.SoundManager import SoundManager
+from classes.TextManager import TextManager
 from classes.World import World
+from classes.entities.Triggers import Trigger
 from classes.ui.Constraints import *
 from classes.ui.GUI import GUI
 from classes.ui.Parser import Parser
@@ -32,15 +38,19 @@ class Game:
 
     MAX_FPS = 60
 
+    PROGRESS_VER = 0
+
     _instance = None
 
     def __init__(self):
         """Initializes a Game instance. Should not be called manually"""
 
-        with open("./config.json", "r") as f:
+        with open(Path("config.json"), "r") as f:
             self.config = json.loads(f.read())
             
         Logger.level = self.config["loglevel"]
+
+        self.settings = Settings(self)
 
         self.world = World(self)
         self.camera = Camera(self)
@@ -55,7 +65,11 @@ class Game:
         self.paused = True
 
         pygame.init()
-        pygame.display.set_icon(pygame.image.load("./logo.png"))
+        SoundManager()
+        SoundManager.set_volume(self.settings.get("volume"))
+        TextManager(self)
+
+        pygame.display.set_icon(pygame.image.load(Path("logo.png")))
         self.window = pygame.display.set_mode([Game.WIDTH, Game.HEIGHT])
         self.menu_surf, self.editor_surf, self.hud_surf, self.world_surf = [
             pygame.Surface([Game.WIDTH, Game.HEIGHT], pygame.SRCALPHA) for _ in range(4)
@@ -68,6 +82,9 @@ class Game:
         self.init_gui()
 
         self.cutscene = False
+
+        self.cur_lvl = 0
+        self.load_progress()
     
     @classproperty
     def instance(cls):
@@ -111,8 +128,15 @@ class Game:
                     return
             
             elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_c:
-                    self.cutscene = Cutscene(self, "level", "test_tiles")
+                if not self.config["edition"]:
+                    if event.key == pygame.K_c:
+                        self.cutscene = Cutscene(self, "level", "test_tiles")
+                    
+                    elif event.key == pygame.K_DOLLAR:
+                        self.cur_lvl = int(input("new cur_lvl: "))
+                    
+                    elif event.key == pygame.K_f:
+                        self.finish_level()
         
         # Entities and World
         if not self.config["edition"] and not self.paused and not self.cutscene:
@@ -135,7 +159,6 @@ class Game:
                     animation.update()
                 
                 if animation.finished:
-                    Logger.debug("Game: "+animation.attr)
                     event = Event(Event.ANIMATION_FINISH)
                     event.animation = animation
                     self.events.append(event)
@@ -166,6 +189,7 @@ class Game:
         pygame.display.set_caption(f"Packetman - {self.clock.get_fps():.2f}fps")
 
         self.camera.render(self.world_surf, self.hud_surf, self.editor_surf)
+        TextManager.render(self.hud_surf)
 
         if self.gui.changed:
             self.menu_surf.fill((0,0,0,0))
@@ -180,10 +204,27 @@ class Game:
         pygame.display.flip()
         self.clock.tick(self.MAX_FPS)
     
+    def set_paused(self, paused=True):
+        """Sets paused state
+
+        Keyword Arguments:
+            paused {bool} -- new paused state (default: {True})
+        """
+
+        if self.paused != paused:
+            if paused:
+                Animation.pause_all()
+
+            else:
+                Animation.resume_all()
+            
+            self.paused = paused
+
     def quit(self):
         """Stops the game"""
 
         self.running = False
+        self.save_progress()
     
     def animate(self, obj, attr_, val_a, val_b, duration, start=True, loop=None, type_=Animation.FLOAT):
         """Initializes an Animation instance and adds it to the list of ANIMATIONS
@@ -215,6 +256,7 @@ class Game:
         self.levels_menu = self.parser.parse("levels")
         self.level_comp = self.parser.parse("level")
         self.entity_menu = self.parser.parse("entity")
+        self.trigger_menu = self.parser.parse("trigger")
         self.save_menu = self.parser.parse("save")
 
         #self.main_menu.set_visible(True)
@@ -222,12 +264,14 @@ class Game:
 
         self.pause_menu.bg_color = (100,100,100,200)
         self.entity_menu.bg_color = (100,150,100)
+        self.trigger_menu.bg_color = (100,150,100)
 
         self.gui.add(self.main_menu)
         self.gui.add(self.pause_menu)
         self.gui.add(self.settings_menu)
         self.gui.add(self.levels_menu)
         self.gui.add(self.entity_menu)
+        self.gui.add(self.trigger_menu)
         self.gui.add(self.save_menu)
 
         self.gui.switch_menu("main_menu")
@@ -236,28 +280,21 @@ class Game:
         """Closes pause menu and resumes the game"""
 
         self.gui.close_menu()
-        self.paused = False
+        self.set_paused(False)
     
     def pause(self):
         """Pauses the game and opens pause menu"""
 
-        self.paused = True
+        self.set_paused(True)
         self.gui.switch_menu("pause_menu")
-    
-    def load_settings(self):
-        #menu = self.settings_menu
-        #menu.get_by_name("")
-        pass
-
-    def save_settings(self):
-        #self.config[""]
-        pass
     
     def cb_quit(self, button):
         self.quit()
+        return True
 
     def cb_choose_lvl(self, button):
-        levels = os.listdir("./levels")
+        levels = self.get_levels()
+        
         container = self.levels_menu.get_by_name("levels")
         container.children = []
 
@@ -267,20 +304,23 @@ class Game:
             level.text = "New Level"
             container.add(level)
 
+        if not (self.config["edition"] or self.config["bypass_progress"]):
+            levels = levels[:self.cur_lvl+1]
+        
         for l in levels:
-            if l.endswith(".dat"):
-                level = self.level_comp.copy()
-                level.args = (l[:-4], )
-                level.text = l[:-4]
-                container.add(level)
+            level = self.level_comp.copy()
+            level.args = (l["level"], )
+            level.text = l["name"]
+            container.add(level)
 
         self.gui.switch_menu("levels_menu")
+        return True
     
     def cb_lvl(self, button, path):
         Logger.debug(f"Selected level {path}")
         
         if path == "new":
-            self.world = World(self)
+            self.world.reset()
         
         else:
             if self.config["edition"]:
@@ -292,15 +332,19 @@ class Game:
         #self.camera.update_visible_entities()
         
         self.gui.close_menu()
-        self.paused = False
+        self.set_paused(False)
+        return True
 
     def cb_settings(self, button):
-        self.load_settings()
+        self.settings.load()
         self.gui.switch_menu("settings_menu")
+        return True
     
     def cb_exit_settings(self, button):
-        self.save_settings()
+        self.settings.save()
+        SoundManager.set_volume(self.settings.get("volume"))
         self.gui.switch_menu("main_menu")
+        return True
     
     def cb_test(self, checkbox, *args, **kwargs):
         return True
@@ -308,12 +352,24 @@ class Game:
     def cb_exit_entity_settings(self, button):
         self.save_entity_settings()
         self.gui.close_menu()
+        return True
     
     def open_entity_settings(self, single_entity=False):
         self.single_entity = single_entity
-        self.gui.switch_menu("entity_menu")
+        entity = self.editor.selected_entity
         
-    def save_entity_settings(self):   
+        if self.single_entity and isinstance(entity, Trigger):
+            self.trigger_menu.get_by_name("text_id").set_value(entity.text_id)
+            self.gui.switch_menu("trigger_menu")
+
+        else:
+            if self.single_entity:
+                self.entity_menu.get_by_name("x_velocity").set_value(entity.vel.x)
+                self.entity_menu.get_by_name("y_velocity").set_value(entity.vel.y)
+                self.entity_menu.get_by_name("type").set_value(entity.type)
+            self.gui.switch_menu("entity_menu")
+        
+    def save_entity_settings(self):
         if self.single_entity:
             entities = [self.editor.selected_entity]
         else:
@@ -330,7 +386,6 @@ class Game:
             if value in entity._ENTITIES:
                 entity.type = value
                 entity.update_texture()
-        return True
 
     def cb_entity_menu(self, slider, value, label_name, *args, **kwargs):
         label = self.entity_menu.get_by_name(label_name)
@@ -344,3 +399,80 @@ class Game:
         self.world.save(level_name)
         self.gui.close_menu()
         return True
+    
+    def cb_exit_trigger_settings(self, button):
+        text_id = self.trigger_menu.get_by_name("text_id").get_value()
+        self.editor.selected_entity.text_id = text_id
+        self.gui.close_menu()
+        return True
+    
+    def get_user_path(self):
+        home = os.path.expanduser("~")
+        dir_ = os.path.join(home, ".packetman")
+        
+        if not os.path.exists(dir_):
+            os.mkdir(dir_)
+        
+        return dir_
+    
+    def get_levels(self):
+        """Returns the list of levels
+
+        Returns:
+            list[dict] -- list of levels with name and filename
+        """
+
+        levels = []
+
+        with open(Path("levels.json"), "r") as f:
+            levels = json.loads(f.read())
+        
+        return levels
+    
+    def load_progress(self):
+        """Loads current progress from progress file"""
+
+        path = self.get_user_path()
+        path = os.path.join(path, "progress.dat")
+        
+        if not os.path.exists(path):
+            self.save_progress()
+            return
+        
+        with open(path, "rb") as f:
+            ver = struct.unpack(">H", f.read(2))[0]
+
+            if ver != self.PROGRESS_VER:
+                Logger.error(f"Progress file of version {ver} cannot be loaded with current version set to {self.PROGRESS_VER}")
+            self.cur_lvl = struct.unpack(">H", f.read(2))[0]
+    
+    def save_progress(self):
+        """Saves current progress to progress file"""
+
+        path = self.get_user_path()
+        path = os.path.join(path, "progress.dat")
+        
+        with open(path, "wb") as f:
+            f.write(struct.pack(">H", self.PROGRESS_VER))
+            f.write(struct.pack(">H", self.cur_lvl))
+    
+    def finish_level(self):
+        """Completes the current level
+
+        Updates current progress and triggers cutscene
+        """
+
+        levels = self.get_levels()
+        for i, l in enumerate(levels):
+            if l["level"] == self.world.level_file:
+                self.cur_lvl = max(i+1, self.cur_lvl)
+                break
+        
+        if i+1 >= len(levels):
+            Logger.info("Congratulations, you finished the game !")
+            self.save_progress()
+            self.cutscene = Cutscene(self, self.world.level_file, None)
+            return
+        
+        self.save_progress()
+        self.cutscene = Cutscene(self, self.world.level_file, levels[i+1]["level"])

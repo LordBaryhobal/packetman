@@ -46,39 +46,77 @@ class Cutscene:
             self.start_load()
     
     def start(self):
+        """Starts the cutscene (i.e. bars slide in)"""
+
         self.state = self.START
 
-        Animation(self, "bars_height", 0, self.BARS_HEIGHT, self.BARS_DURATION)
+        a = Animation(self, "bars_height", 0, self.BARS_HEIGHT, self.BARS_DURATION)
+        a.origin = "Cutscene"
+        a.id = "slide_in"
 
     def stop(self):
+        """Starts the end of cutscene (i.e. bars slide out)"""
+
         self.state = self.END
 
-        Animation(self, "bars_height", self.BARS_HEIGHT, 0, self.BARS_DURATION)
+        a = Animation(self, "bars_height", self.BARS_HEIGHT, 0, self.BARS_DURATION)
+        a.origin = "Cutscene"
+        a.id = "slide_out"
     
     def start_fade(self):
+        """Starts fade out"""
+
         self.state = self.FADING_OUT
 
-        Animation(self, "black_opacity", 0, 255, self.FADE_DURATION)
+        a = Animation(self, "black_opacity", 0, 255, self.FADE_DURATION)
+        a.origin = "Cutscene"
+        a.id = "fade_out"
 
     def start_load(self):
+        """Starts level loading"""
+
         self.state = self.LOADING
 
-        self.load_thread = threading.Thread(target=self.load_thread_func)
-        self.load_thread.start()
+        if self.to_lvl:
+            self.load_thread = threading.Thread(target=self.load_thread_func)
+            self.load_thread.start()
+        
+        else:
+            self.game.set_paused(True)
+            self.game.gui.switch_menu("main_menu")
+            self.end_cutscene()
+            
     
     def load_thread_func(self):
+        """Loads level (executed in other thread)"""
+
         self.game.world.load(self.to_lvl)
         self.game.world.player.pos.x -= self.PLAYER_SPEED * (self.FADE_DURATION + self.BARS_DURATION)
 
     def end_load(self):
+        """Starts fade in"""
+
         self.state = self.LOADED
 
         self.game.world.player.force_render = True
         self.game.camera.update_visible_tiles()
         self.game.camera.update_visible_entities()
-        Animation(self, "black_opacity", 255, 0, self.FADE_DURATION)
+        a = Animation(self, "black_opacity", 255, 0, self.FADE_DURATION)
+        a.origin = "Cutscene"
+        a.id = "fade_in"
+    
+    def end_cutscene(self):
+        """Ends the cutscene and returns to normal mode"""
+
+        self.game.world.player.force_render = False
+        self.game.world.player.vel.x = 0
+        self.game.world.player.vel.y = 0
+        self.game.cutscene = None
+        Cutscene._instances.remove(self)
 
     def mainloop(self):
+        """Main game loop (overrides Game.mainloop)"""
+        
         self.handle_events()
 
         if not self.game.cutscene:
@@ -166,18 +204,16 @@ class Cutscene:
     
     @on(Event.ANIMATION_FINISH)
     def on_animation_finish(self, event):
-        if self.state == self.START:
-            self.start_fade()
-        
-        elif self.state == self.FADING_OUT:
-            self.start_load()
-        
-        elif self.state == self.LOADED:
-            self.stop()
-        
-        elif self.state == self.END:
-            self.game.world.player.force_render = False
-            self.game.world.player.vel.x = 0
-            self.game.world.player.vel.y = 0
-            self.game.cutscene = None
-            Cutscene._instances.remove(self)
+        anim = event.animation
+        if hasattr(anim, "origin") and anim.origin == "Cutscene":
+            if self.state == self.START and anim.id == "slide_in":
+                self.start_fade()
+            
+            elif self.state == self.FADING_OUT and anim.id == "fade_out":
+                self.start_load()
+            
+            elif self.state == self.LOADED and anim.id == "fade_in":
+                self.stop()
+            
+            elif self.state == self.END and anim.id == "slide_out":
+                self.end_cutscene()

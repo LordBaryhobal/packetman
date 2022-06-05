@@ -4,6 +4,7 @@
 from classes.Event import Event, listener, on
 from classes.Tile import Tile
 from classes.Vec import Vec
+from classes.SoundManager import SoundManager
 
 class Electrical(Tile):
     """Electrical component"""
@@ -69,6 +70,7 @@ class Plate(Input):
         Arguments:
             pressed {bool} -- new pressed state
         """
+        SoundManager.play("tile.plate.toggle")
         self.create_event(pressed=pressed)
         self.pressed = pressed
         self.texture.id = int(self.pressed)
@@ -102,9 +104,10 @@ class Button(Input):
             pressed {bool} -- new pressed state (default: {True})
         """
         if self.pressed != pressed:
+            SoundManager.play("tile.button.toggle")
             self.create_event(pressed=pressed)
-        self.pressed = pressed
-        self.update_texture()
+            self.pressed = pressed
+            self.update_texture()
     
     def rotate(self):
         self.rotation = (self.rotation + 1) % 4
@@ -132,22 +135,26 @@ class Wire(Electrical):
     _no_save = ["type", "pos", "texture", "world", "powered", "powered_by"]
     
     def __init__(self, x=0, y=0, type_=0, world=None):
-        super().__init__(x, y, type_, world)
         self.powered = False
         self.powered_by = 0
+        super().__init__(x, y, type_, world)
     
     def update_power(self):
         """Updates power state"""
         self.powered_by = max(self.powered_by, 0)  # can be a problem
         if self.powered_by > 0:
             self.powered = True
-            self.update_texture()
         else:
             self.powered = False
-            self.update_texture()
+        self.update_texture()
     
     def update_texture(self):
         self.texture.id = self.neighbors + 16 * int(self.powered)
+    
+    def reset_power(self):
+        self.powered_by = 0
+        self.powered = False
+        self.update_texture()
         
 
 class InsulatedWire(Wire):
@@ -233,6 +240,11 @@ class BufferGate(Gate):
             self.create_event(pressed=self.powered)
 
             self.update_texture()
+    
+    def reset_power(self):
+        self.powered_by = [0]
+        self.powered = False
+        self.update_texture()
 
 @listener
 class NotGate(Gate):
@@ -269,6 +281,11 @@ class NotGate(Gate):
     def on_world_loaded(self, event):
         self.update_texture()
         self.update_activation()
+    
+    def reset_power(self):
+        self.powered_by = [0]
+        self.powered = False
+        self.update_texture()
 
 class AndGate(Gate):
     """AndGate let the power flow only in one direction"""
@@ -299,6 +316,11 @@ class AndGate(Gate):
             self.create_event(pressed=self.powered)
 
             self.update_texture()
+    
+    def reset_power(self):
+        self.powered_by = [0,0]
+        self.powered = False
+        self.update_texture()
 
 class OrGate(Gate):
     """OrGate let the power flow only in one direction"""
@@ -329,6 +351,11 @@ class OrGate(Gate):
             self.create_event(pressed=self.powered)
 
             self.update_texture()
+    
+    def reset_power(self):
+        self.powered_by = [0,0]
+        self.powered = False
+        self.update_texture()
 
 @listener
 class PuzzleDoor(Wire):

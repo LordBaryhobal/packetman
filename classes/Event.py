@@ -34,9 +34,12 @@ class Event:
     INTERACTION = 5
     ENTER_TILE = 6
     EXIT_TILE = 7
-    WORLD_LOADED = 8
-    CIRCUIT_CHANGE = 9
-    GATE_INPUT = 10
+    WORLD_SAVED = 8
+    WORLD_LOADED = 9
+    CIRCUIT_CHANGE = 10
+    GATE_INPUT = 11
+    HIT_GROUND = 12
+    TILE_TRIGGER_UPDATE = 13
     
 
     def __init__(self, type_):
@@ -56,6 +59,9 @@ class Event:
                 for f in cls._listeners[self.type]:  # for all listeners for this type
                     for i in cls._instances:         # for all instances of this class
                         f(i, self)
+    
+    def __repr__(self):
+        return f"Event({self.type})"
 
 
 def listener(cls):
