@@ -17,6 +17,7 @@ from classes.Path import Path
 from classes.Settings import Settings
 from classes.SoundManager import SoundManager
 from classes.TextManager import TextManager
+from classes.Texture import Texture
 from classes.World import World
 from classes.entities.Triggers import Trigger
 from classes.ui.Constraints import *
@@ -52,6 +53,17 @@ class Game:
 
         self.settings = Settings(self)
 
+        pygame.init()
+        pygame.display.set_icon(pygame.image.load(Path("logo.png")))
+        self.window = pygame.display.set_mode([self.WIDTH, self.HEIGHT])
+
+        Texture.load_all(self)
+        SoundManager()
+        SoundManager.set_volume(self.settings.get("volume"))
+        SoundManager.load_all(self)
+        TextManager(self)
+        TextManager.load_all(self)
+
         self.world = World(self)
         self.camera = Camera(self)
         
@@ -63,14 +75,7 @@ class Game:
         
         self.running = True
         self.paused = True
-
-        pygame.init()
-        SoundManager()
-        SoundManager.set_volume(self.settings.get("volume"))
-        TextManager(self)
-
-        pygame.display.set_icon(pygame.image.load(Path("logo.png")))
-        self.window = pygame.display.set_mode([Game.WIDTH, Game.HEIGHT])
+        
         self.menu_surf, self.editor_surf, self.hud_surf, self.world_surf = [
             pygame.Surface([Game.WIDTH, Game.HEIGHT], pygame.SRCALPHA) for _ in range(4)
         ]

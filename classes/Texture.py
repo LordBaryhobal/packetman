@@ -1,9 +1,13 @@
 #Packetman is a small game created in the scope of a school project
 #Copyright (C) 2022  Louis HEREDERO & Mathéo BENEY
 
+import glob
+import os
+
 import pygame
 
 from classes.Copyable import Copyable
+from classes.Logger import Logger
 from classes.Path import Path
 from classes.Vec import Vec
 
@@ -12,7 +16,13 @@ class Texture(Copyable):
     
     _cache = {}
 
-    def __init__(self, name=None, id_=None, width=32, height=32):
+    WIDTH = 32
+    HEIGHT = 32
+    
+    TOTAL = 0
+    LOADED = 0
+
+    def __init__(self, name=None, id_=None, width=WIDTH, height=HEIGHT):
         """Initializes a Texture instance
 
         Keyword Arguments:
@@ -22,10 +32,46 @@ class Texture(Copyable):
 
         self.name = name
         self.id = id_
-        self.img = Texture.get(self.name, self.id) if name else None
+        self.img, self.h_tiles, self.v_tiles = Texture.get(self.name, self.id) if name else (None, 0, 0)
         self.WIDTH = width
         self.HEIGHT = height
+
+    def load_all(game):
+        Texture.TOTAL = len(glob.glob(Path("assets", "textures", "**", "*.png"), recursive=True))
+        Texture.LOADED = 0
+        Texture.load_walk(game, Path("assets", "textures"))
     
+    def load_walk(game, path, name=""):
+        content = os.listdir(path)
+        tilesize = game.HEIGHT//game.config["number_of_tiles"]
+
+        for f in content:
+            p = Path(path, f)
+
+            if os.path.isdir(p):
+                n = name
+                if n: n += "."
+                n += f
+
+                Texture.load_walk(game, p, n)
+            
+            elif os.path.splitext(f)[1] == ".png":
+                n = name
+                if n: n += "."
+                n += os.path.splitext(f)[0]
+
+                img = pygame.image.load(p).convert_alpha()
+
+                w = img.get_width()/Texture.WIDTH
+                h = img.get_height()/Texture.HEIGHT
+
+                img = pygame.transform.scale(img, [
+                    int(w*tilesize),
+                    int(h*tilesize)
+                ])
+                Texture._cache[n] = (img, w, h)
+                Texture.LOADED += 1
+
     def get(name, id_):
         """Returns a texture from name and id
 
@@ -40,8 +86,18 @@ class Texture(Copyable):
         """
 
         if not name in Texture._cache:
-            path = Path("assets", "textures", name+".png")
-            Texture._cache[name] = pygame.image.load(path)
+            """
+            path_jpg = Path("assets", "textures", name+".jpg")
+            path_png = Path("assets", "textures", name+".png")
+
+            if os.path.exists(path_jpg):
+                path = path_jpg
+            else:
+                path = path_png
+            
+            Texture._cache[name] = pygame.image.load(path).convert_alpha()
+            """
+            Logger.error(f"Texture {name} not loaded")
         
         return Texture._cache[name]
 
@@ -55,16 +111,18 @@ class Texture(Copyable):
             dimensions {Vec} -- dimensions of the texture (default: {Vec(1,1)})
         """
         
-        width = self.img.get_width()/self.WIDTH
-        height = self.img.get_height()/self.HEIGHT
+        self.img, self.h_tiles, self.v_tiles = Texture.get(self.name, self.id) if self.name else (None, 0, 0)
         tw, th = tilesize*dimensions.x, tilesize*dimensions.y
+        w, h = int(self.h_tiles*tw), int(self.v_tiles*th)
+        img = self.img
 
         # dimensions is the size of the object in tiles
-        img = pygame.transform.scale(self.img, (int(width*tw), int(height*th)))
+        if (w, h) != img.get_size():
+            img = pygame.transform.scale(img, (w, h))
         
         x, y = 0, 0
         if not self.id is None:
-            x = (self.id % width) * tw
-            y = (self.id // width) * th
+            x = (self.id % self.h_tiles) * tw
+            y = (self.id // self.h_tiles) * th
 
         surface.blit(img, [pos.x, pos.y-th], [x, y, tw, th])

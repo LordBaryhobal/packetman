@@ -1,15 +1,23 @@
 #Packetman is a small game created in the scope of a school project
 #Copyright (C) 2022  Louis HEREDERO & Mathéo BENEY
 
+import glob
+import os
 import pygame
 
 from classes.Animation import Animation
 from classes.Event import Event, listener, on
+from classes.Logger import Logger
 from classes.Path import Path
 
 @listener
 class TextManager:
     """Singleton class managing story texts used like a static class"""
+
+    _cache = {}
+
+    TOTAL = 0
+    LOADED = 0
 
     DELAY_PER_CHAR = 0.2
     FADE_DURATION = 0.5
@@ -31,12 +39,42 @@ class TextManager:
         self.delay = 0
         self.opacity = 0
         self.displaying = False
+    
+    def load_all(game):
+        TextManager.TOTAL = len(glob.glob(Path("assets", "texts", "**", "*.txt"), recursive=True))
+        TextManager.LOADED = 0
+        TextManager.load_walk(game, Path("assets", "texts"))
+    
+    def load_walk(game, path, name=""):
+        content = os.listdir(path)
+
+        for f in content:
+            p = Path(path, f)
+
+            if os.path.isdir(p):
+                n = name
+                if n: n += "."
+                n += f
+
+                TextManager.load_walk(game, p, n)
+            
+            elif os.path.splitext(f)[1] == ".txt":
+                n = name
+                if n: n += "."
+                n += os.path.splitext(f)[0]
+
+                with open(p, "r") as file_:
+                    TextManager._cache[n] = file_.read().strip().split("\n\n")
+                
+                TextManager.LOADED += 1
 
     def show(id_):
         TM = TextManager._instance
         
-        with open(Path("assets", "texts", id_+".txt"), "r") as f:
-            TM.lines += f.read().strip().split("\n\n")
+        if not id_ in TextManager._cache:
+            Logger.error(f"Text {id_} not loaded")
+        
+        TM.lines += TextManager._cache[id_]
         
         if not TM.displaying:
             TextManager.next_line()

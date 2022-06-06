@@ -42,7 +42,7 @@ class Tile(Copyable):
     CONNECTED = False
     CONNECT_TO = None
     HINT_SIZE = Vec(0.3, 0.3)
-    HINT_TEXTURE = Texture("interaction_hint", 0, width=64, height=64)
+    HINT_TEXTURE = None
 
     interactive = False
     solid = False
@@ -65,6 +65,9 @@ class Tile(Copyable):
         self.neighbors = 0
         self.world = world
         self.interact_hint = False
+
+        if Tile.HINT_TEXTURE is None:
+            Tile.HINT_TEXTURE = Texture("interaction_hint", 0, width=64, height=64)
     
     def __setattr__(self, name, value):
         super().__setattr__(name, value)
