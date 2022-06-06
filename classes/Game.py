@@ -4,6 +4,8 @@
 import json
 import os
 import struct
+import threading
+from time import sleep
 
 import pygame
 
@@ -11,7 +13,7 @@ from classes.Animation import Animation
 from classes.Camera import Camera
 from classes.Cutscene import Cutscene
 from classes.Editor import Editor
-from classes.Event import Event
+from classes.Event import Event, listener, on
 from classes.Logger import Logger
 from classes.Path import Path
 from classes.Settings import Settings
@@ -30,7 +32,7 @@ class classproperty(property):
     def __get__(self, cls, owner):
         return classmethod(self.fget).__get__(None, owner)()
 
-
+@listener
 class Game:
     """Singleton class managing the interface, world rendering and simulation"""
 
@@ -46,6 +48,8 @@ class Game:
     def __init__(self):
         """Initializes a Game instance. Should not be called manually"""
 
+        self.initialized = False
+
         with open(Path("config.json"), "r") as f:
             self.config = json.loads(f.read())
             
@@ -57,25 +61,13 @@ class Game:
         pygame.display.set_icon(pygame.image.load(Path("logo.png")))
         self.window = pygame.display.set_mode([self.WIDTH, self.HEIGHT])
 
-        Texture.load_all(self)
         SoundManager()
         SoundManager.set_volume(self.settings.get("volume"))
-        SoundManager.load_all(self)
         TextManager(self)
-        TextManager.load_all(self)
-
-        self.world = World(self)
-        self.camera = Camera(self)
-        
-        if self.config["edition"]:
-            self.camera.follow_player = False
-
-        if self.config["edition"]:
-            self.editor = Editor(self)
         
         self.running = True
         self.paused = True
-        
+
         self.menu_surf, self.editor_surf, self.hud_surf, self.world_surf = [
             pygame.Surface([Game.WIDTH, Game.HEIGHT], pygame.SRCALPHA) for _ in range(4)
         ]
@@ -83,13 +75,12 @@ class Game:
 
         self.events = []
 
-        self.gui = GUI(self)
-        self.init_gui()
-
         self.cutscene = False
 
-        self.cur_lvl = 0
-        self.load_progress()
+        self.loading_state = 0
+        self.load_thread = None
+        self.load_font = pygame.font.SysFont("Arial", 30)
+        self.load_assets()
     
     @classproperty
     def instance(cls):
@@ -99,6 +90,27 @@ class Game:
             cls._instance = Game()
 
         return cls._instance
+    
+    def init(self):
+        if not self.running:
+            return
+        
+        self.world = World(self)
+        self.camera = Camera(self)
+        
+        if self.config["edition"]:
+            self.camera.follow_player = False
+
+        if self.config["edition"]:
+            self.editor = Editor(self)
+        
+        self.gui = GUI(self)
+        self.init_gui()
+
+        self.cur_lvl = 0
+        self.load_progress()
+        
+        self.initialized = True
 
     def mainloop(self):
         """Main game loop, calls the simulation and rendering functions"""
@@ -149,8 +161,10 @@ class Game:
                 entity.handle_events(events)
             self.world.handle_events(events)
 
-        # GUI
-        self.gui.handle_events(events)
+        if not self.loading_assets:
+            # GUI
+            self.gui.handle_events(events)
+        
         events = list(filter(lambda e: not (hasattr(e, "handled") and e.handled), events))
 
         if not self.paused:
@@ -178,8 +192,10 @@ class Game:
 
         self.events = []
         #self.world.circuit.current_circuit = set() # used when circuit are limited to one update per tile
-        self.world.circuit.counter = 0
-        if not self.config["edition"]:
+        if not self.loading_assets:
+            self.world.circuit.counter = 0
+        
+        if not self.config["edition"] and not self.paused:
             self.camera.update()
 
     def physics(self):
@@ -193,18 +209,60 @@ class Game:
         
         pygame.display.set_caption(f"Packetman - {self.clock.get_fps():.2f}fps")
 
-        self.camera.render(self.world_surf, self.hud_surf, self.editor_surf)
-        TextManager.render(self.hud_surf)
+        if self.loading_assets:
+            txts = ["Loading textures", "Loading sounds", "Loading texts", "Loaded assets"]
+            txt = txts[self.loading_state]
+            txt = self.load_font.render(txt, True, (255,255,255))
+            
+            ratio = 1
+            loaded, total = 0, 0
 
-        if self.gui.changed:
-            self.menu_surf.fill((0,0,0,0))
-            self.gui.render(self.menu_surf)
+            if self.loading_state == 0 and Texture.TOTAL > 0:
+                ratio = Texture.LOADED/Texture.TOTAL
+                loaded, total = Texture.LOADED, Texture.TOTAL
+            elif self.loading_state == 1 and SoundManager.TOTAL > 0:
+                ratio = SoundManager.LOADED/SoundManager.TOTAL
+                loaded, total = SoundManager.LOADED, SoundManager.TOTAL
+            elif self.loading_state == 2 and TextManager.TOTAL > 0:
+                ratio = TextManager.LOADED/TextManager.TOTAL
+                loaded, total = TextManager.LOADED, TextManager.TOTAL
+            
+            self.window.fill((0,0,0))
+            x = self.WIDTH/2-txt.get_width()/2
+            y = self.HEIGHT/2-txt.get_height()/2
+            self.window.blit(txt, [x, y])
+            y += txt.get_height() + 10
 
-        #self.editor_surf.set_alpha(200)
-        self.window.blit(self.world_surf, [0, 0])
-        self.window.blit(self.editor_surf, [0, 0])
-        self.window.blit(self.hud_surf, [0, 0])
-        self.window.blit(self.menu_surf, [0, 0])
+            pygame.draw.rect(self.window, (100,100,100), [
+                self.WIDTH/4, y,
+                self.WIDTH/2, 40
+            ])
+            
+            pygame.draw.rect(self.window, (100,200,100), [
+                self.WIDTH/4, y,
+                self.WIDTH/2*ratio, 40
+            ])
+
+            if total > 0:
+                txt = self.load_font.render(f"{loaded}/{total}", True, (255,255,255))
+                self.window.blit(txt, [
+                    self.WIDTH/2-txt.get_width()/2,
+                    y+20-txt.get_height()/2
+                ])
+        
+        else:
+            self.camera.render(self.world_surf, self.hud_surf, self.editor_surf)
+            TextManager.render(self.hud_surf)
+
+            if self.gui.changed:
+                self.menu_surf.fill((0,0,0,0))
+                self.gui.render(self.menu_surf)
+
+            #self.editor_surf.set_alpha(200)
+            self.window.blit(self.world_surf, [0, 0])
+            self.window.blit(self.editor_surf, [0, 0])
+            self.window.blit(self.hud_surf, [0, 0])
+            self.window.blit(self.menu_surf, [0, 0])
 
         pygame.display.flip()
         self.clock.tick(self.MAX_FPS)
@@ -229,7 +287,36 @@ class Game:
         """Stops the game"""
 
         self.running = False
-        self.save_progress()
+        
+        if self.initialized:
+            self.save_progress()
+        
+        if self.load_thread:
+            self.load_thread.join()
+    
+    def load_assets(self):
+        def load_assets_func():
+            self.loading_state = 0
+            Texture.load_all(self)
+            self.loading_state = 1
+            SoundManager.load_all(self)
+            self.loading_state = 2
+            TextManager.load_all(self)
+            self.loading_state = 3
+            sleep(1)
+            self.events.append(Event(Event.ASSETS_LOADED))
+        
+        self.loading_assets = True
+        self.load_thread = threading.Thread(target=load_assets_func)
+        self.load_thread.start()
+    
+    @on(Event.ASSETS_LOADED)
+    def on_assets_loaded(self, event):
+        Logger.debug("Loaded assets")
+        
+        if not self.initialized:
+            self.init()
+        self.loading_assets = False
     
     def animate(self, obj, attr_, val_a, val_b, duration, start=True, loop=None, type_=Animation.FLOAT):
         """Initializes an Animation instance and adds it to the list of ANIMATIONS
