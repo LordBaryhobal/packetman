@@ -114,6 +114,7 @@ class Button(Input):
         self.update_texture()
     
     def update_texture(self):
+        super().update_texture()
         self.texture.id = (int(self.pressed) << 2) + self.rotation
     
     @on(Event.WORLD_LOADED)
@@ -149,6 +150,7 @@ class Wire(Electrical):
         self.update_texture()
     
     def update_texture(self):
+        super().update_texture()
         self.texture.id = self.neighbors + 16 * int(self.powered)
     
     def reset_power(self):
@@ -194,6 +196,7 @@ class Gate(Output, Input):
         self.update_texture()
     
     def update_texture(self):
+        super().update_texture()
         self.texture.id = self.rotation + 4*int(self.powered)
     
     @on(Event.GATE_INPUT)

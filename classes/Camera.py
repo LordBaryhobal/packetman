@@ -3,6 +3,8 @@
 
 from math import floor
 
+import pygame
+
 from classes.Vec import Vec
 
 class Camera:
@@ -24,8 +26,6 @@ class Camera:
         self.game = game
         self.follow_player = True
         self.tilesize = self.game.HEIGHT//self.game.config["number_of_tiles"]
-        self.update_visible_tiles()
-        self.update_visible_entities()
     
     def update(self):
         """Updates the position of the camera
@@ -81,7 +81,7 @@ class Camera:
 
         self.visible_entities = self.game.world.get_entities_in_rect(topleft, bottomright, True)
 
-    def render(self, world_surf, hud_surf, editor_surf):
+    def render(self, world_surf, entity_surf, hud_surf, editor_surf):
         """Renders the visible tiles and entities
 
         Arguments:
@@ -90,17 +90,21 @@ class Camera:
             editor_surf {pygame.Surface} -- surface to render selections on
         """
         
-        world_surf.fill((40,40,40))
         hud_surf.fill((0,0,0,0))
-        editor_surf.fill((0,0,0,0))
 
         for tile in self.visible_tiles:
-            tile.render(world_surf, hud_surf, self.world_to_screen(tile.pos), self.tilesize)
+            if tile.changed:
+                pygame.draw.rect(world_surf, (40,40,40), [tile.pos.x*self.tilesize, world_surf.get_height()-(tile.pos.y+1)*self.tilesize, self.tilesize, self.tilesize])
+                #tile.render(world_surf, hud_surf, self.world_to_screen(tile.pos), self.tilesize)
+                tile.render(world_surf, hud_surf, Vec(tile.pos.x*self.tilesize, world_surf.get_height()-tile.pos.y*self.tilesize), self.tilesize)
+                tile.changed = False
         
+        entity_surf.fill((0,0,0,0))
         for entity in self.visible_entities:
-            entity.render(world_surf, hud_surf, self.world_to_screen(entity.pos), self.tilesize)
+            entity.render(entity_surf, hud_surf, self.world_to_screen(entity.pos), self.tilesize)
 
         if self.game.config["edition"]:
+            editor_surf.fill((0,0,0,0))
             self.game.editor.render(hud_surf, editor_surf)
 
     def screen_to_world(self, pos, round_=True):

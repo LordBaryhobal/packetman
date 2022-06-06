@@ -65,6 +65,7 @@ class Tile(Copyable):
         self.neighbors = 0
         self.world = world
         self.interact_hint = False
+        self.changed = True
 
         if Tile.HINT_TEXTURE is None:
             Tile.HINT_TEXTURE = Texture("interaction_hint", 0, width=64, height=64)
@@ -123,7 +124,8 @@ class Tile(Copyable):
         return f"<{self.__class__.__name__} Tile of type {self.type} at ({self.pos.x}, {self.pos.y})>"
     
     def on_update(self):
-        pass
+        self.changed = True
     
     def update_texture(self):
         self.texture.id = self.neighbors
+        self.on_update()

@@ -2,6 +2,7 @@
 #Copyright (C) 2022  Louis HEREDERO & Mathéo BENEY
 
 import json
+from math import ceil
 import os
 import struct
 from time import time
@@ -66,8 +67,10 @@ class Game:
         TextManager(self)
         TextManager.load_all(self)
 
-        self.world = World(self)
         self.camera = Camera(self)
+        self.world = World(self)
+        self.camera.update_visible_tiles()
+        self.camera.update_visible_entities()
         
         if self.config["edition"]:
             self.camera.follow_player = False
@@ -78,9 +81,11 @@ class Game:
         self.running = True
         self.paused = True
 
-        self.menu_surf, self.editor_surf, self.hud_surf, self.world_surf = [
+        self.menu_surf, self.editor_surf, self.hud_surf, self.entity_surf = [
             pygame.Surface([self.WIDTH, self.HEIGHT], pygame.SRCALPHA) for _ in range(4)
         ]
+        self.world_surf = pygame.Surface([self.world.WIDTH*self.camera.tilesize, self.world.HEIGHT*self.camera.tilesize], pygame.SRCALPHA)
+        self.world_surf.fill((40,40,40))
         self.clock = pygame.time.Clock()
 
         self.events = []
@@ -214,7 +219,7 @@ class Game:
                 self.clock.tick(self.MAX_FPS)
                 return
         
-        self.camera.render(self.world_surf, self.hud_surf, self.editor_surf)
+        self.camera.render(self.world_surf, self.entity_surf, self.hud_surf, self.editor_surf)
         TextManager.render(self.hud_surf)
 
         if self.gui.changed:
@@ -222,10 +227,21 @@ class Game:
             self.gui.render(self.menu_surf)
 
         #self.editor_surf.set_alpha(200)
-        self.window.blit(self.world_surf, [0, 0])
-        self.window.blit(self.editor_surf, [0, 0])
+        #self.window.blit(self.world_surf, [-self.camera.pos.x, self.camera.pos.y])
+        self.window.blit(self.world_surf, [0, 0], [
+            self.camera.pos.x,
+            self.world_surf.get_height()-self.camera.pos.y-self.HEIGHT,
+            self.WIDTH, self.HEIGHT
+        ])
+        self.window.blit(self.entity_surf, [0, 0])
+
+        if self.config["edition"]:
+            self.window.blit(self.editor_surf, [0, 0])
+        
         self.window.blit(self.hud_surf, [0, 0])
-        self.window.blit(self.menu_surf, [0, 0])
+
+        if any(map(lambda c: c.visible, self.gui.children)):
+            self.window.blit(self.menu_surf, [0, 0])
 
         pygame.display.flip()
         self.clock.tick(self.MAX_FPS)
@@ -249,16 +265,30 @@ class Game:
     def update_resize(self):
         """Updates window dependent objects after a window resize"""
 
-        self.menu_surf, self.editor_surf, self.hud_surf, self.world_surf = [
+        self.camera.tilesize = self.HEIGHT//self.config["number_of_tiles"]
+        self.menu_surf, self.editor_surf, self.hud_surf, self.entity_surf = [
             pygame.Surface([self.WIDTH, self.HEIGHT], pygame.SRCALPHA) for _ in range(4)
         ]
+        #self.world_surf = pygame.Surface([self.world.WIDTH*self.camera.tilesize, self.world.HEIGHT*self.camera.tilesize], pygame.SRCALPHA)
+        #self.world_surf.fill((40,40,40))
+        self.update_world_surf()
         self.gui.cm.w.val = self.WIDTH
         self.gui.cm.h.val = self.HEIGHT
-        self.camera.tilesize = self.HEIGHT//self.config["number_of_tiles"]
         self.camera.update_visible_tiles()
         self.camera.update_visible_entities()
         self.gui.set_changed(2)
         Texture.load_all(self)
+        list(map(lambda t: t.on_update(), self.world.tiles.flatten()))
+
+    def update_world_surf(self):
+        world_surf = self.world_surf if hasattr(self, "world_surf") else pygame.Surface([0,0],pygame.SRCALPHA)
+        w = ceil(self.world.WIDTH/32)*32*self.camera.tilesize
+        h = ceil(self.world.HEIGHT/32)*32*self.camera.tilesize
+
+        if (w, h) != world_surf.get_size():
+            self.world_surf = pygame.Surface([w, h], pygame.SRCALPHA)
+            self.world_surf.fill((40,40,40))
+            self.world_surf.blit(world_surf, [0, self.world_surf.get_height()-world_surf.get_height()])
 
     def quit(self):
         """Stops the game"""

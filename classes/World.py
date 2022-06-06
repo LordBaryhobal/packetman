@@ -304,6 +304,8 @@ class World:
                 for x in range(self.WIDTH):
                     if self.tiles[y, x] == 0:
                         self.tiles[y, x] = Tile(x, y, 0)
+        
+        self.game.update_world_surf()
     
     def save(self, filename):
         """Saves the current level
