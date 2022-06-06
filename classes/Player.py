@@ -23,10 +23,10 @@ class Player(Entity):
     _ENTITIES = {
         0: "player"
     }
-    JUMP_SPEED = 15
+    JUMP_SPEED = 7
     SIZE = Vec(0.8,0.8)
     
-    speed = 5
+    speed = 4
     
     HB_LOGO = Texture("health_bar_logo")
     HB_LOGO_SIZE = Vec(1,1)
@@ -73,12 +73,6 @@ class Player(Entity):
         
         if keys[pygame.K_a]:
             self.move(-1)
-        
-        if keys[pygame.K_UP]:
-            self.health = min(self.health + 1, self.MAX_HEALTH)
-        
-        if keys[pygame.K_DOWN]:
-            self.health = max(self.health - 1, 0)
     
     @on(Event.ENTER_TILE)
     def on_enter_tile(self, event):
@@ -124,3 +118,19 @@ class Player(Entity):
         
         pygame.draw.rect(surf, color, (self.HB_LOGO_SIZE.x*size, self.HB_LOGO_SIZE.y*size*(1-self.HB_SIZE.y)/2, \
             (self.MAX_HEALTH-self.health)/self.MAX_HEALTH*size*self.HB_SIZE.x, self.HB_LOGO_SIZE.y*size*self.HB_SIZE.y), 0)
+    
+    def get_hit(self, damage):
+        """Reduces the player's health by a given amount
+
+        Arguments:
+            damage {int} -- amount of damage to deal to the player
+        """
+
+        self.health = max(self.health - damage, 0)
+        if self.health <= 0:
+            self.die()
+    
+    def die(self):
+        """Kills the player"""
+
+        self.world.load(self.world.level_file)
