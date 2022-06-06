@@ -8,6 +8,7 @@ import pygame
 from classes.Entity import Entity
 from classes.Event import Event, listener, on
 from classes.SoundManager import SoundManager
+from classes.Texture import Texture
 from classes.Vec import Vec
 from classes.Event import Event, listener, on
 from classes.tiles.DetectionTile import DetectionTile
@@ -22,14 +23,20 @@ class Player(Entity):
     _ENTITIES = {
         0: "player"
     }
-    JUMP_SPEED = 7
+    JUMP_SPEED = 15
     SIZE = Vec(0.8,0.8)
     
-    speed = 3
+    speed = 5
+    
+    HB_LOGO = Texture("health_bar_logo")
+    HB_LOGO_SIZE = Vec(1,1)
+    MAX_HEALTH = 10
+    HB_SIZE = Vec(3, 1/4)
     
     def __init__(self, pos=None, vel=None, acc=None, type_=None, highlight=False, world=None):
         super().__init__(pos, vel, acc, type_, highlight, world)
         self.finishing_level = False
+        self.health = self.MAX_HEALTH
     
     def jump(self):
         """Makes the player jump if on the ground"""
@@ -66,6 +73,12 @@ class Player(Entity):
         
         if keys[pygame.K_a]:
             self.move(-1)
+        
+        if keys[pygame.K_UP]:
+            self.health = min(self.health + 1, self.MAX_HEALTH)
+        
+        if keys[pygame.K_DOWN]:
+            self.health = max(self.health - 1, 0)
     
     @on(Event.ENTER_TILE)
     def on_enter_tile(self, event):
@@ -85,3 +98,29 @@ class Player(Entity):
             if self.finishing_level:
                 self.finishing_level = False
                 self.world.game.finish_level()
+
+    def render(self, surface, hud_surf, pos, size, dimensions=None):
+        """Renders the entity
+
+        Renders the entity on a given surface at a given position and scale
+
+        Arguments:
+            surface {pygame.Surface} -- surface to render the entity on
+            hud_surf {pygame.Surface} -- surface to render the hud elements on
+            pos {Vec} -- pixel coordinates where to render on the surface
+            size {int} -- size of a tile in pixels
+            dimension {Vec} -- dimensions of the object in tiles (default: {None})
+        """
+
+        super().render(surface, hud_surf, pos, size, dimensions)
+        
+        self.draw_healt_bar(hud_surf, size)
+        
+    def draw_healt_bar(self, surf, size):
+        self.HB_LOGO.render(surf, Vec(0,self.HB_LOGO_SIZE.y*size), size, self.HB_LOGO_SIZE)
+        color = (255, 0, 0) if self.health <= 3 else (0, 0, 255)
+        pygame.draw.rect(surf, (100, 100, 100), (self.HB_LOGO_SIZE.x*size, self.HB_LOGO_SIZE.y*size*(1-self.HB_SIZE.y)/2, \
+            size*self.HB_SIZE.x, self.HB_LOGO_SIZE.y*size*self.HB_SIZE.y), 0)
+        
+        pygame.draw.rect(surf, color, (self.HB_LOGO_SIZE.x*size, self.HB_LOGO_SIZE.y*size*(1-self.HB_SIZE.y)/2, \
+            (self.MAX_HEALTH-self.health)/self.MAX_HEALTH*size*self.HB_SIZE.x, self.HB_LOGO_SIZE.y*size*self.HB_SIZE.y), 0)
