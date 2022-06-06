@@ -31,7 +31,7 @@ class Entity(Copyable):
         0: None
     }
     HINT_SIZE = Vec(0.3,0.3)
-    HINT_TEXTURE = Texture("interaction_hint", 0, width=64, height=64)
+    HINT_TEXTURE = None
     SIZE = Vec(0.5,0.5)
     
     force_render = False
@@ -73,6 +73,9 @@ class Entity(Copyable):
         self.last_pos = None
 
         self.interact_hint = False
+        
+        if Entity.HINT_TEXTURE is None:
+            Entity.HINT_TEXTURE = Texture("interaction_hint", 0, width=64, height=64)
     
     def get_cls(cls):
         """Get class from class name

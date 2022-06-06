@@ -18,6 +18,7 @@ from classes.Path import Path
 from classes.Settings import Settings
 from classes.SoundManager import SoundManager
 from classes.TextManager import TextManager
+from classes.Texture import Texture
 from classes.World import World
 from classes.entities.Triggers import Trigger
 from classes.ui.Constraints import *
@@ -58,9 +59,13 @@ class Game:
         pygame.display.set_icon(pygame.image.load(Path("logo.png")))
         self.window = pygame.display.set_mode([self.WIDTH, self.HEIGHT], pygame.RESIZABLE)
 
+        Texture.load_all(self)
         SoundManager()
         SoundManager.set_volume(self.settings.get("volume"))
+        SoundManager.load_all(self)
         TextManager(self)
+        TextManager.load_all(self)
+
         self.world = World(self)
         self.camera = Camera(self)
         
@@ -253,6 +258,7 @@ class Game:
         self.camera.update_visible_tiles()
         self.camera.update_visible_entities()
         self.gui.set_changed(2)
+        Texture.load_all(self)
 
     def quit(self):
         """Stops the game"""
