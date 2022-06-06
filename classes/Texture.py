@@ -12,7 +12,9 @@ class Texture(Copyable):
     
     _cache = {}
 
-    def __init__(self, name=None, id_=None, width=32, height=32):
+    WIDTH = 32
+    HEIGHT = 32
+    def __init__(self, name=None, id_=None, width=WIDTH, height=HEIGHT):
         """Initializes a Texture instance
 
         Keyword Arguments:

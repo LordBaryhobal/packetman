@@ -4,6 +4,7 @@
 import json
 import os
 import struct
+from time import time
 
 import pygame
 
@@ -37,6 +38,7 @@ class Game:
     HEIGHT = 600
 
     MAX_FPS = 60
+    RESIZE_COOLDOWN = 1
 
     PROGRESS_VER = 0
 
@@ -52,6 +54,13 @@ class Game:
 
         self.settings = Settings(self)
 
+        pygame.init()
+        pygame.display.set_icon(pygame.image.load(Path("logo.png")))
+        self.window = pygame.display.set_mode([self.WIDTH, self.HEIGHT], pygame.RESIZABLE)
+
+        SoundManager()
+        SoundManager.set_volume(self.settings.get("volume"))
+        TextManager(self)
         self.world = World(self)
         self.camera = Camera(self)
         
@@ -64,15 +73,8 @@ class Game:
         self.running = True
         self.paused = True
 
-        pygame.init()
-        SoundManager()
-        SoundManager.set_volume(self.settings.get("volume"))
-        TextManager(self)
-
-        pygame.display.set_icon(pygame.image.load(Path("logo.png")))
-        self.window = pygame.display.set_mode([Game.WIDTH, Game.HEIGHT])
         self.menu_surf, self.editor_surf, self.hud_surf, self.world_surf = [
-            pygame.Surface([Game.WIDTH, Game.HEIGHT], pygame.SRCALPHA) for _ in range(4)
+            pygame.Surface([self.WIDTH, self.HEIGHT], pygame.SRCALPHA) for _ in range(4)
         ]
         self.clock = pygame.time.Clock()
 
@@ -85,6 +87,8 @@ class Game:
 
         self.cur_lvl = 0
         self.load_progress()
+        self.start_resizing = None
+        self.resize_font = pygame.font.SysFont("Arial", 40)
     
     @classproperty
     def instance(cls):
@@ -127,6 +131,10 @@ class Game:
                 if self.quit():
                     return
             
+            elif event.type == pygame.VIDEORESIZE:
+                self.WIDTH, self.HEIGHT = event.size
+                self.start_resizing = time()
+
             elif event.type == pygame.KEYDOWN:
                 if not self.config["edition"]:
                     if event.key == pygame.K_c:
@@ -188,6 +196,19 @@ class Game:
         
         pygame.display.set_caption(f"Packetman - {self.clock.get_fps():.2f}fps")
 
+        if self.start_resizing:
+            if time() - self.start_resizing > self.RESIZE_COOLDOWN:
+                self.start_resizing = None
+                self.update_resize()
+            
+            else:
+                self.window.fill((0, 0, 0))
+                txt = self.resize_font.render(f"{self.WIDTH}x{self.HEIGHT}", True, (255, 255, 255))
+                self.window.blit(txt, [self.WIDTH/2 - txt.get_width()/2, self.HEIGHT/2 - txt.get_height()/2])
+                pygame.display.flip()
+                self.clock.tick(self.MAX_FPS)
+                return
+        
         self.camera.render(self.world_surf, self.hud_surf, self.editor_surf)
         TextManager.render(self.hud_surf)
 
@@ -219,6 +240,19 @@ class Game:
                 Animation.resume_all()
             
             self.paused = paused
+    
+    def update_resize(self):
+        """Updates window dependent objects after a window resize"""
+
+        self.menu_surf, self.editor_surf, self.hud_surf, self.world_surf = [
+            pygame.Surface([self.WIDTH, self.HEIGHT], pygame.SRCALPHA) for _ in range(4)
+        ]
+        self.gui.cm.w.val = self.WIDTH
+        self.gui.cm.h.val = self.HEIGHT
+        self.camera.tilesize = self.HEIGHT//self.config["number_of_tiles"]
+        self.camera.update_visible_tiles()
+        self.camera.update_visible_entities()
+        self.gui.set_changed(2)
 
     def quit(self):
         """Stops the game"""

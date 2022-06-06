@@ -25,8 +25,8 @@ class Menu(Component):
         super().__init__(name)
         self.cm.set_x(Absolute(0))
         self.cm.set_y(Absolute(0))
-        self.cm.set_w(Absolute(self.game.WIDTH))
-        self.cm.set_h(Absolute(self.game.HEIGHT))
+        self.cm.set_w(Relative(1))
+        self.cm.set_h(Relative(1))
         
         self.visible = False
         self.bg_color = (0,0,0)

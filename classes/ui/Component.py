@@ -65,6 +65,10 @@ class Component(Copyable):
             self.changed = changed
             if self.parent:
                 self.parent.set_changed(changed)
+            
+            if changed == 2:
+                for child in self.children:
+                    child.set_changed(2)
         
 
     def render(self, surface):
