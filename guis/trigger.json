@@ -19,7 +19,7 @@
                 {
                     "class": "Label",
                     "params": [
-                        "Trigger Settings",
+                        "ui.trigger.title",
                         { "name": "font_size", "val": 40 }
                     ],
                     "x": {"type": "Center"},
@@ -39,7 +39,7 @@
                         {
                             "class": "Label",
                             "params": [
-                                "Text id",
+                                "ui.trigger.text_id",
                                 { "name": "font_size", "val": 30 }
                             ],
                             "y": {"type": "Center"},
@@ -60,7 +60,7 @@
                 {
                     "class": "Button",
                     "params": [
-                        "Save",
+                        "ui.trigger.save",
                         "${game.cb_exit_trigger_settings}"
                     ],
                     "x": {"type": "Center"},

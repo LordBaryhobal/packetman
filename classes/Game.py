@@ -147,14 +147,15 @@ class Game:
             
             elif event.type == pygame.KEYDOWN:
                 if not self.config["edition"]:
-                    if event.key == pygame.K_c:
+                    pass
+                    """if event.key == pygame.K_c:
                         self.cutscene = Cutscene(self, "level", "test_tiles")
                     
                     elif event.key == pygame.K_DOLLAR:
                         self.cur_lvl = int(input("new cur_lvl: "))
                     
                     elif event.key == pygame.K_f:
-                        self.finish_level()
+                        self.finish_level()"""
         
         # Entities and World
         if not self.config["edition"] and not self.paused and not self.cutscene:
@@ -211,8 +212,8 @@ class Game:
         pygame.display.set_caption(f"Packetman - {self.clock.get_fps():.2f}fps")
 
         if self.loading_assets:
-            txts = ["Loading translations", "Loading textures", "Loading sounds", "Loading texts", "Loaded assets"]
-            txt = txts[self.loading_state]
+            txts = ["{Loading translations}", "ui.load_assets.textures", "ui.load_assets.sounds", "ui.load_assets.texts", "ui.load_assets.loaded"]
+            txt = i18n(txts[self.loading_state])
             txt = self.load_font.render(txt, True, (255,255,255))
             
             ratio = 1
@@ -396,7 +397,7 @@ class Game:
         if self.config["edition"]:
             level = self.level_comp.copy()
             level.args = ("new", )
-            level.text = "New Level"
+            level.text = "ui.levels.new"
             container.add(level)
 
         if not (self.config["edition"] or self.config["bypass_progress"]):
@@ -405,7 +406,7 @@ class Game:
         for l in levels:
             level = self.level_comp.copy()
             level.args = (l["level"], )
-            level.text = l["name"]
+            level.text = "{"+l["name"]+"}"
             container.add(level)
 
         self.gui.switch_menu("levels_menu")

@@ -19,7 +19,7 @@
                 {
                     "class": "Label",
                     "params": [
-                        "Choose a level",
+                        "ui.main.choose_level",
                         { "name": "font_size", "val": 40 }
                     ],
                     "x": {"type": "Absolute", "val": 0},
@@ -40,7 +40,7 @@
                 {
                     "class": "Button",
                     "params": [
-                        "Back to main menu",
+                        "ui.levels.back",
                         "${>main_menu}"
                     ],
                     "x": {"type": "Center"},

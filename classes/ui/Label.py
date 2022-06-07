@@ -3,6 +3,7 @@
 
 import pygame
 
+from classes.I18n import i18n
 from classes.ui.Component import Component
 
 class Label(Component):
@@ -37,7 +38,7 @@ class Label(Component):
     def render(self, surface):
         super().render(surface)
 
-        text = self.font.render(self.text, True, self.color)
+        text = self.font.render(i18n(self.text), True, self.color)
         x, y, w, h = self.get_shape()
         X, Y = x, y
 

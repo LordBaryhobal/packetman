@@ -19,7 +19,7 @@
                 {
                     "class": "Label",
                     "params": [
-                        "Settings",
+                        "ui.main.settings",
                         { "name": "font_size", "val": 40 }
                     ],
                     "x": {"type": "Center"},
@@ -39,7 +39,7 @@
                         {
                             "class": "Label",
                             "params": [
-                                "Volume",
+                                "ui.settings.volume",
                                 { "name": "font_size", "val": 30 }
                             ],
                             "y": {"type": "Center"},
@@ -63,7 +63,7 @@
                 {
                     "class": "Checkbox",
                     "params": [
-                        "RTX Mode",
+                        "ui.settings.rtx_mode",
                         { "name": "name", "val": "rtx_mode" }
                     ],
                     "x": {"type": "Center"},
@@ -73,7 +73,7 @@
                 {
                     "class": "Checkbox",
                     "params": [
-                        "Fullscreen",
+                        "ui.settings.fullscreen",
                         { "name": "name", "val": "fullscreen" }
                     ],
                     "x": {"type": "Center"},
@@ -93,7 +93,7 @@
                 {
                     "class": "Checkbox",
                     "params": [
-                        "Interaction hint",
+                        "ui.settings.interaction_hint",
                         { "name": "name", "val": "interaction_hint" }
                     ],
                     "x": {"type": "Center"},
@@ -103,7 +103,7 @@
                 {
                     "class": "Button",
                     "params": [
-                        "Return to main menu",
+                        "ui.settings.save",
                         "${game.cb_exit_settings}"
                     ],
                     "x": {"type": "Center"},

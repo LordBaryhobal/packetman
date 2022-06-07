@@ -19,7 +19,7 @@
                 {
                     "class": "Label",
                     "params": [
-                        "Pause"
+                        "ui.pause.title"
                     ],
                     "x": { "type": "Absolute", "val": 0},
                     "w": { "type": "Relative", "val": 1.0},
@@ -28,7 +28,7 @@
                 {
                     "class": "Button",
                     "params": [
-                        "Resume",
+                        "ui.pause.resume",
                         "${game.resume}"
                     ],
                     "x": {"type": "Center"},
@@ -38,7 +38,7 @@
                 {
                     "class": "Button",
                     "params": [
-                        "Return to main menu",
+                        "ui.pause.quit",
                         "${>main_menu}"
                     ],
                     "x": {"type": "Center"},

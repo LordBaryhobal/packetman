@@ -3,6 +3,7 @@
 
 import pygame
 
+from classes.I18n import i18n
 from classes.ui.Component import Component
 
 class Input(Component):
@@ -43,7 +44,7 @@ class Input(Component):
         if self.value:
             text = self.font.render(self.value, True, self.color)
         else:
-            text = self.font.render(self.placeholder, True, self.placeholder_color)
+            text = self.font.render(i18n(self.placeholder), True, self.placeholder_color)
         
         x, y, w, h = self.get_shape()
         X, Y = x+10, y+h/2 - text.get_height()/2
