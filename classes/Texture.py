@@ -101,7 +101,7 @@ class Texture(Copyable):
         
         return Texture._cache[name]
 
-    def render(self, surface, pos, tilesize, dimensions=Vec(1,1)):
+    def render(self, surface, pos, tilesize, dimensions=Vec(1,1), flip=False):
         """Renders the texture
 
         Arguments:
@@ -124,5 +124,8 @@ class Texture(Copyable):
         if not self.id is None:
             x = (self.id % self.h_tiles) * tw
             y = (self.id // self.h_tiles) * th
+        
+        if flip:
+            img = pygame.transform.flip(img, True, False)
 
         surface.blit(img, [pos.x, pos.y-th], [x, y, tw, th])

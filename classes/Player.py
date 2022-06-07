@@ -28,7 +28,7 @@ class Player(Entity):
     
     speed = 4
     
-    HB_LOGO = Texture("health_bar_logo")
+    HB_LOGO = None
     HB_LOGO_SIZE = Vec(1,1)
     MAX_HEALTH = 10
     HB_SIZE = Vec(3, 1/4)
@@ -37,6 +37,9 @@ class Player(Entity):
         super().__init__(pos, vel, acc, type_, highlight, world)
         self.finishing_level = False
         self.health = self.MAX_HEALTH
+        if Player.HB_LOGO is None:
+            Player.HB_LOGO = Texture("health_bar_logo")
+        self.direction = 1 # 1 if facing right, -1 if facing left
     
     def jump(self):
         """Makes the player jump if on the ground"""
@@ -70,9 +73,11 @@ class Player(Entity):
         
         if keys[pygame.K_d]:
             self.move(1)
+            self.direction = 1
         
         if keys[pygame.K_a]:
             self.move(-1)
+            self.direction = -1
     
     @on(Event.ENTER_TILE)
     def on_enter_tile(self, event):
@@ -107,8 +112,8 @@ class Player(Entity):
         """
 
         super().render(surface, hud_surf, pos, size, dimensions)
-        
-        self.draw_healt_bar(hud_surf, size)
+        if not self.world.game.config["edition"]:
+            self.draw_healt_bar(hud_surf, size)
         
     def draw_healt_bar(self, surf, size):
         self.HB_LOGO.render(surf, Vec(0,self.HB_LOGO_SIZE.y*size), size, self.HB_LOGO_SIZE)
