@@ -14,6 +14,7 @@ from classes.Camera import Camera
 from classes.Cutscene import Cutscene
 from classes.Editor import Editor
 from classes.Event import Event, listener, on
+from classes.I18n import load_locale, i18n
 from classes.Logger import Logger
 from classes.Path import Path
 from classes.Settings import Settings
@@ -210,7 +211,7 @@ class Game:
         pygame.display.set_caption(f"Packetman - {self.clock.get_fps():.2f}fps")
 
         if self.loading_assets:
-            txts = ["Loading textures", "Loading sounds", "Loading texts", "Loaded assets"]
+            txts = ["Loading translations", "Loading textures", "Loading sounds", "Loading texts", "Loaded assets"]
             txt = txts[self.loading_state]
             txt = self.load_font.render(txt, True, (255,255,255))
             
@@ -297,12 +298,14 @@ class Game:
     def load_assets(self):
         def load_assets_func():
             self.loading_state = 0
-            Texture.load_all(self)
+            load_locale(self.settings.get("lang"))
             self.loading_state = 1
-            SoundManager.load_all(self)
+            Texture.load_all(self)
             self.loading_state = 2
-            TextManager.load_all(self)
+            SoundManager.load_all(self)
             self.loading_state = 3
+            TextManager.load_all(self)
+            self.loading_state = 4
             sleep(1)
             self.events.append(Event(Event.ASSETS_LOADED))
         
