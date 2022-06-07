@@ -42,6 +42,7 @@ class PlayerTrigger(Trigger):
     _ENTITIES = {
         0: "player_trigger"
     }
+    I18N_KEY = "player_trigger"
 
     @on(Event.COLLISION_ENTITY)
     def trigger(self, event):
@@ -54,6 +55,7 @@ class TileTrigger(Trigger):
     _ENTITIES = {
         0: "tile_trigger"
     }
+    I18N_KEY = "tile_trigger"
 
     @on(Event.TILE_TRIGGER_UPDATE)
     def trigger(self, event):

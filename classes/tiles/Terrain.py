@@ -18,13 +18,16 @@ class Insulator(Terrain):
     _TILES = {
         0: "insulator"
     }
+    I18N_KEY = "insulator"
 
 class Plastic(Terrain):
     _TILES = {
         0: "plastic"
     }
+    I18N_KEY = "plastic"
 
 class ThermalConductor(Terrain):
     _TILES = {
         0: "thermal_conductor"
     }
+    I18N_KEY = "thermal_conductor"

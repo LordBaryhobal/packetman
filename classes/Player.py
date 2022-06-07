@@ -22,6 +22,8 @@ class Player(Entity):
     _ENTITIES = {
         0: "player"
     }
+    I18N_KEY = "player"
+    
     JUMP_SPEED = 7
     SIZE = Vec(0.8,0.8)
     

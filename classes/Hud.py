@@ -6,6 +6,7 @@ import pygame
 from classes.Animation import Animation
 from classes.Entity import Entity
 from classes.Event import Event, listener, on
+from classes.I18n import i18n
 from classes.Logger import Logger
 from classes.Tile import Tile
 from classes.Vec import Vec
@@ -141,7 +142,7 @@ class Hud:
             pygame.draw.rect(surface, (255,255,255, self.sb_opacity), [0, y, 5, y_thumb_h])
         
         cls, type_, sel = self.get_type()
-        txt = self.name_font.render(cls.__name__, True, (255,255,255))
+        txt = self.name_font.render(i18n(sel.get_i18n_key()), True, (255,255,255))
         txt.set_alpha(self.name_opacity)
         surface.blit(txt, [WIDTH/2 - txt.get_width()/2, HEIGHT-slot_size-self.MARGIN-txt.get_height()])
     

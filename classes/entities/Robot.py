@@ -18,6 +18,8 @@ class Robot(Entity):
     _ENTITIES = {
         0: "robot"
     }
+    I18N_KEY = "robot"
+    
     JUMP_SPEED = 7
     SIZE = Vec(0.5,0.5)
     VIEW_DISTANCE = 3  # in tiles

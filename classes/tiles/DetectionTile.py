@@ -9,6 +9,7 @@ class DetectionTile(Tile):
     _TILES = {
         0: "detection_tile"
     }
+    I18N_KEY = "detection_tile"
     
     def render(self, surface, hud_surf, pos, size, dimensions=None):
         if self.world.game.config["edition"]:

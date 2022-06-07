@@ -20,6 +20,8 @@ class Hacker(Entity):
     _ENTITIES = {
         0:"hacker"
     }
+    I18N_KEY = "hacker"
+    
     BULLET_SPEED = 10
     RELOAD_TIME = 1  # in seconds
     SIZE = Vec(1,1)

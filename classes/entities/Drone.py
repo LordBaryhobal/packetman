@@ -17,6 +17,8 @@ class Drone(Entity):
         0: "drone",
         1: "drone_pig"
     }
+    I18N_KEY = "drone"
+    
     SIZE = Vec(0.7,0.7)
 
     gravity = True

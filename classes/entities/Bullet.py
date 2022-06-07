@@ -15,6 +15,8 @@ class Bullet(Entity):
         0: "bullet",
         1: "bit"
     }
+    I18N_KEY = "bullet"
+    
     SIZE = Vec(0.2,0.2)
 
     gravity = False

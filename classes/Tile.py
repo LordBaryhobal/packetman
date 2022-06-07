@@ -39,6 +39,8 @@ class Tile(Copyable):
         -1: None,
         0: None
     }
+    I18N_KEY = ""
+
     CONNECTED = False
     CONNECT_TO = None
     HINT_SIZE = Vec(0.3, 0.3)
@@ -127,3 +129,9 @@ class Tile(Copyable):
     
     def update_texture(self):
         self.texture.id = self.neighbors
+    
+    def get_i18n_key(self):
+        if self.name:
+            return "tile."+self.__class__.I18N_KEY
+        
+        return ""

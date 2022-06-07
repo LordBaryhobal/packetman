@@ -30,6 +30,8 @@ class Entity(Copyable):
     _ENTITIES = {
         0: None
     }
+    I18N_KEY = ""
+    
     HINT_SIZE = Vec(0.3,0.3)
     HINT_TEXTURE = None
     SIZE = Vec(0.5,0.5)
@@ -158,3 +160,9 @@ class Entity(Copyable):
         
         self.name = self._ENTITIES[self.type]
         self.texture = Texture(self.name, 0) if self.name else None
+
+    def get_i18n_key(self):
+        if self.name:
+            return "entity."+self.__class__.I18N_KEY
+        
+        return ""
