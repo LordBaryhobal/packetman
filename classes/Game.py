@@ -438,10 +438,8 @@ class Game:
     def cb_exit_settings(self, button):
         self.settings.save()
         SoundManager.set_volume(self.settings.get("volume"))
+        self.load_assets()
         self.gui.switch_menu("main_menu")
-        return True
-    
-    def cb_test(self, checkbox, *args, **kwargs):
         return True
 
     def cb_exit_entity_settings(self, button):
