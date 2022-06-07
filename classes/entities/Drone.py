@@ -1,6 +1,8 @@
 #Packetman is a small game created in the scope of a school project
 #Copyright (C) 2022  Louis HEREDERO & Mathéo BENEY
 
+from math import copysign
+
 from classes.Entity import Entity
 from classes.Event import Event, listener, on
 from classes.Vec import Vec
@@ -28,6 +30,7 @@ class Drone(Entity):
     def __init__(self, pos=None, vel=None, acc=None, type_=None, highlight=False, world=None):
         super().__init__(pos, vel, acc, type_, highlight, world)
         self.following = False
+        self.direction = 1
     
     def handle_events(self, events):
         """Handles events
@@ -45,6 +48,7 @@ class Drone(Entity):
             current_pos = self.pos + self.SIZE/2
             
             direction = (player_pos-current_pos).normalize()
+            self.direction = copysign(1, direction.x)
             self.vel = direction * self.speed
     
     @on(Event.INTERACTION)
