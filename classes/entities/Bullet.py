@@ -20,6 +20,8 @@ class Bullet(Entity):
     SIZE = Vec(0.2,0.2)
 
     gravity = False
+    
+    DAMAGE = 1
 
     @on(Event.COLLISION_WORLD)
     def on_collision_world(self, event):
@@ -30,8 +32,8 @@ class Bullet(Entity):
     def on_collision_entity(self, event):
         if self in event.entities:
             if self.world.player in event.entities:
-                self.hit(self.world.player)
                 self.destroy()
+                self.hit(self.world.player)
     
     def destroy(self):
         """Destroys this bullet"""
@@ -44,7 +46,6 @@ class Bullet(Entity):
         Arguments:
             entity {Entity} -- entity hit by this bullet
         """
-
-        print(f"Hit {entity}")
         if isinstance(entity, Player):
             SoundManager.play("entity.player.get_hit")
+            entity.get_hit(self.DAMAGE)
