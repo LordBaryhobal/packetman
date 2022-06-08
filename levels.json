@@ -24,12 +24,16 @@
         "level": "hackerrrrrrrr"
     },
     {
-        "name": "test_step",
+        "name": "test step",
         "level": "test_not_metal_step"
     },
     {
-        "name": "test_spike",
+        "name": "test spike",
         "level": "kill"
+    },
+    {
+        "name": "test drone spawner",
+        "level": "drone_spawner"
     },
     {
         "name": "Test triggers",

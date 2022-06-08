@@ -70,3 +70,10 @@ class Drone(Entity):
         else:
             self.gravity = False
     
+    def die(self):
+        """Kills the drone"""
+        self.world.remove_entity(self)
+        event = Event(Event.DIE)
+        event.entity = self
+        self.world.game.events.append(event)
+        

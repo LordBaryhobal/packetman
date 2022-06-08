@@ -41,6 +41,7 @@ class Event:
     HIT_GROUND = 12
     TILE_TRIGGER_UPDATE = 13
     ASSETS_LOADED = 14
+    DIE = 15
 
     def __init__(self, type_):
         """Initializes an Event instance

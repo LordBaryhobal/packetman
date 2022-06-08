@@ -4,6 +4,7 @@
 from classes.Event import Event, listener, on
 from classes.Tile import Tile
 from classes.Player import Player
+from classes.entities.Drone import Drone
 
 class Terrain(Tile):
     """Static tile used for world building and decoration"""
@@ -44,5 +45,32 @@ class Spike(Terrain):
     
     @on(Event.ENTER_TILE)
     def on_enter(self, event):
-        if self in event.tiles and isinstance(event.entity, Player):
+        if self in event.tiles and hasattr(event.entity, "die"):
             event.entity.die()
+    
+@listener
+class DroneSpawner(Terrain):
+    _TILES = {
+        0: "drone_spawner"
+    }
+    I18N_KEY = "drone_spawner"
+    solid = False
+    
+    def __init__(self, x=0, y=0, type_=0, world=None):
+        super().__init__(x, y, type_, world)
+        self.drone = None
+    
+    @on(Event.WORLD_LOADED)
+    def on_world_loaded(self, event):
+        self.create_drone()
+        
+    
+    def create_drone(self):
+        self.drone = Drone(self.pos, type_=1, world=self.world)
+        self.world.add_entity(self.drone)
+    
+    @on(Event.DIE)
+    def on_die(self, event):
+        if self.drone and event.entity is self.drone:
+            self.create_drone()
+        

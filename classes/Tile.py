@@ -16,6 +16,7 @@ TILES = {
     "Button": "classes.tiles.Components",
     "Copper": "classes.tiles.Metals",
     "DetectionTile": "classes.tiles.DetectionTile",
+    "DroneSpawner": "classes.tiles.Terrain",
     "Gold": "classes.tiles.Metals",
     "Insulator": "classes.tiles.Terrain",
     "InsulatedWire": "classes.tiles.Components",
