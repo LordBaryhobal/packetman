@@ -148,5 +148,5 @@ class Player(Entity):
     
     def die(self):
         """Kills the player"""
-
+        SoundManager.play("entity.player.death")
         self.world.load(self.world.level_file)
