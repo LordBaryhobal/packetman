@@ -3,7 +3,7 @@
 
 from classes.Event import Event, listener, on
 from classes.Tile import Tile
-from classes.Player import Player
+from classes.Vec import Vec
 from classes.entities.Drone import Drone
 
 class Terrain(Tile):
@@ -62,11 +62,12 @@ class DroneSpawner(Terrain):
     
     @on(Event.WORLD_LOADED)
     def on_world_loaded(self, event):
-        self.create_drone()
-        
+        if self.world and not self.world.game.config["edition"]:
+            self.create_drone()
     
     def create_drone(self):
-        self.drone = Drone(self.pos, type_=1, world=self.world)
+        pos = Vec(self.pos.x+0.5-Drone.SIZE.x/2, self.pos.y+0.5-Drone.SIZE.y/2)
+        self.drone = Drone(pos, type_=1, world=self.world)
         self.world.add_entity(self.drone)
     
     @on(Event.DIE)
