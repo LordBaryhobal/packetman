@@ -44,6 +44,7 @@ class Plate(Input):
     _TILES = {
         0: "plate"
     }
+    I18N_KEY = "plate"
     
     def __init__(self, x=0, y=0, type_=0, world=None):
         super().__init__(x, y, type_, world)
@@ -82,6 +83,7 @@ class Button(Input):
     _TILES = {
         0: "button"
     }
+    I18N_KEY = "button"
 
     interactive = True
     pressed = False
@@ -129,6 +131,7 @@ class Wire(Electrical):
     _TILES = {
         0: "wire"
     }
+    I18N_KEY = "wire"
 
     CONNECTED = True
     
@@ -163,6 +166,7 @@ class InsulatedWire(Wire):
     _TILES = {
         0: "insulated_wire"
     }
+    I18N_KEY = "insulated_wire"
     
     solid = True
 
@@ -217,6 +221,7 @@ class BufferGate(Gate):
     _TILES = {
         0: "buffer_gate"
     }
+    I18N_KEY = "buffer_gate"
 
     rotatable = True
 
@@ -253,6 +258,7 @@ class NotGate(Gate):
     _TILES = {
         0: "not_gate"
     }
+    I18N_KEY = "not_gate"
 
     rotatable = True
 
@@ -293,6 +299,7 @@ class AndGate(Gate):
     _TILES = {
         0: "and_gate"
     }
+    I18N_KEY = "and_gate"
 
     rotatable = True
 
@@ -328,6 +335,7 @@ class OrGate(Gate):
     _TILES = {
         0: "or_gate"
     }
+    I18N_KEY = "or_gate"
 
     rotatable = True
 
@@ -361,11 +369,10 @@ class OrGate(Gate):
 class PuzzleDoor(Wire):
     """PuzzleDoor"""
 
-    
-
     _TILES = {
         0: "puzzle_door"
     }
+    I18N_KEY = "puzzle_door"
 
     solid = True
 

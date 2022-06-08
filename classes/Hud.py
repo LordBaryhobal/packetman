@@ -6,12 +6,13 @@ import pygame
 from classes.Animation import Animation
 from classes.Entity import Entity
 from classes.Event import Event, listener, on
+from classes.I18n import i18n
 from classes.Logger import Logger
 from classes.Tile import Tile
 from classes.Vec import Vec
 
 from classes.tiles.Components import *
-from classes.tiles.Detection_tile import Detection_tile
+from classes.tiles.DetectionTile import DetectionTile
 from classes.tiles.Metals import *
 from classes.tiles.Terrain import *
 
@@ -19,6 +20,7 @@ from classes.entities.Bullet import Bullet
 from classes.entities.Drone import Drone
 from classes.entities.Hacker import Hacker
 from classes.entities.Robot import Robot
+from classes.entities.Triggers import PlayerTrigger, TileTrigger
 
 @listener
 class Hud:
@@ -43,8 +45,8 @@ class Hud:
             [Aluminium(), Brass(), Copper(), Gold(), Iron(), Lead(), Zinc()],
             [Insulator(), Plastic(), ThermalConductor()],
             [Plate(world=w), Button(world=w), Wire(world=w), InsulatedWire(world=w), BufferGate(world=w), AndGate(world=w), OrGate(world=w), NotGate(world=w), PuzzleDoor(world=w)],
-            [Detection_tile(world=w)],
-            [Entity(), Bullet(), Hacker(), Robot(), Drone(type_=1)]
+            [DetectionTile(world=w)],
+            [Entity(), Bullet(), Hacker(), Robot(), Drone(type_=1), PlayerTrigger(world=w), TileTrigger(world=w)]
         ]
 
         self.sb_opacity_anim = None
@@ -53,7 +55,7 @@ class Hud:
         self.name_opacity_anim = None
         self.name_opacity = 0
         pygame.font.init()
-        self.name_font = pygame.font.SysFont("ubuntu", 20)
+        self.name_font = pygame.font.SysFont("Arial", 20)
     
     def get_type(self):
         """Returns the selected tile/entity class+type+instance
@@ -140,7 +142,7 @@ class Hud:
             pygame.draw.rect(surface, (255,255,255, self.sb_opacity), [0, y, 5, y_thumb_h])
         
         cls, type_, sel = self.get_type()
-        txt = self.name_font.render(cls.__name__, True, (255,255,255))
+        txt = self.name_font.render(i18n(sel.get_i18n_key()), True, (255,255,255))
         txt.set_alpha(self.name_opacity)
         surface.blit(txt, [WIDTH/2 - txt.get_width()/2, HEIGHT-slot_size-self.MARGIN-txt.get_height()])
     

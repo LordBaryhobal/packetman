@@ -60,6 +60,9 @@ class Circuit:
         else:
             tile.powered_by -= 1
         tile.update_power()
+        event = Event(Event.TILE_TRIGGER_UPDATE)
+        event.tile = tile
+        self.world.game.events.append(event)
 
         
         if tile.neighbors & 1:

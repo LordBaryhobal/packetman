@@ -17,7 +17,7 @@
                 {
                     "class": "Label",
                     "params": [
-                        "Save level as"
+                        "ui.save.title"
                     ],
                     "x": {"type": "Center"},
                     "y": {"type": "Absolute", "val": 0},
@@ -28,7 +28,7 @@
                     "class": "Input",
                     "params": [
                         "",
-                        "Level name",
+                        "ui.save.name_placeholder",
                         {"name": "name", "val": "level_name"}
                     ],
                     "x": {"type": "Center"},
@@ -49,7 +49,7 @@
                         {
                             "class": "Button",
                             "params": [
-                                "Cancel",
+                                "ui.save.cancel",
                                 "${#}"
                             ],
                             "w": {"type": "Relative", "val": 0.4},
@@ -58,7 +58,7 @@
                         {
                             "class": "Button",
                             "params": [
-                                "Save",
+                                "ui.save.save",
                                 "${game.cb_save_lvl}"
                             ],
                             "w": {"type": "Relative", "val": 0.4},

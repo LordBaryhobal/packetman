@@ -38,7 +38,6 @@ class Settings:
         
         if not os.path.exists(path):
             self.save()
-            return
 
         settings = self.DEFAULTS.copy()
         

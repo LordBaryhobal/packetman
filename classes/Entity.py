@@ -14,7 +14,10 @@ ENTITIES = {
     "Drone": "classes.entities.Drone",
     "Hacker": "classes.entities.Hacker",
     "Player": "classes.Player",
-    "Robot": "classes.entities.Robot"
+    "Robot": "classes.entities.Robot",
+    "Trigger": "classes.entities.Triggers",
+    "PlayerTrigger": "classes.entities.Triggers",
+    "TileTrigger": "classes.entities.Triggers"
 }
 
 class Entity(Copyable):
@@ -27,8 +30,10 @@ class Entity(Copyable):
     _ENTITIES = {
         0: None
     }
+    I18N_KEY = ""
+    
     HINT_SIZE = Vec(0.3,0.3)
-    HINT_TEXTURE = Texture("interaction_hint", 0, width=64, height=64)
+    HINT_TEXTURE = None
     SIZE = Vec(0.5,0.5)
     
     force_render = False
@@ -70,6 +75,9 @@ class Entity(Copyable):
         self.last_pos = None
 
         self.interact_hint = False
+        
+        if Entity.HINT_TEXTURE is None:
+            Entity.HINT_TEXTURE = Texture("interaction_hint", 0, width=64, height=64)
     
     def get_cls(cls):
         """Get class from class name
@@ -102,7 +110,7 @@ class Entity(Copyable):
         rect = (pos.x, pos.y-self.box.h*size, self.box.w*size, self.box.h*size)
 
         if self.texture:
-            self.texture.render(surface, pos, size, dimensions)
+            self.texture.render(surface, pos, size, dimensions, hasattr(self, "direction") and self.direction == -1)
         else:
             pygame.draw.rect(surface, (100,100,100), rect)
         
@@ -152,3 +160,9 @@ class Entity(Copyable):
         
         self.name = self._ENTITIES[self.type]
         self.texture = Texture(self.name, 0) if self.name else None
+
+    def get_i18n_key(self):
+        if self.name:
+            return "entity."+self.__class__.I18N_KEY
+        
+        return ""

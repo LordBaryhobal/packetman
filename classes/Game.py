@@ -4,6 +4,8 @@
 import json
 import os
 import struct
+import threading
+from time import sleep
 
 import pygame
 
@@ -11,12 +13,16 @@ from classes.Animation import Animation
 from classes.Camera import Camera
 from classes.Cutscene import Cutscene
 from classes.Editor import Editor
-from classes.Event import Event
+from classes.Event import Event, listener, on
+from classes.I18n import load_locale, i18n
 from classes.Logger import Logger
 from classes.Path import Path
 from classes.Settings import Settings
 from classes.SoundManager import SoundManager
+from classes.TextManager import TextManager
+from classes.Texture import Texture
 from classes.World import World
+from classes.entities.Triggers import Trigger
 from classes.ui.Constraints import *
 from classes.ui.GUI import GUI
 from classes.ui.Parser import Parser
@@ -27,7 +33,7 @@ class classproperty(property):
     def __get__(self, cls, owner):
         return classmethod(self.fget).__get__(None, owner)()
 
-
+@listener
 class Game:
     """Singleton class managing the interface, world rendering and simulation"""
 
@@ -43,6 +49,8 @@ class Game:
     def __init__(self):
         """Initializes a Game instance. Should not be called manually"""
 
+        self.initialized = False
+
         with open(Path("config.json"), "r") as f:
             self.config = json.loads(f.read())
             
@@ -50,24 +58,17 @@ class Game:
 
         self.settings = Settings(self)
 
-        self.world = World(self)
-        self.camera = Camera(self)
-        
-        if self.config["edition"]:
-            self.camera.follow_player = False
+        pygame.init()
+        pygame.display.set_icon(pygame.image.load(Path("logo.png")))
+        self.window = pygame.display.set_mode([self.WIDTH, self.HEIGHT])
 
-        if self.config["edition"]:
-            self.editor = Editor(self)
+        SoundManager()
+        SoundManager.set_volume(self.settings.get("volume"))
+        TextManager(self)
         
         self.running = True
         self.paused = True
 
-        pygame.init()
-        SoundManager()
-        SoundManager.set_volume(self.settings.get("volume"))
-
-        pygame.display.set_icon(pygame.image.load(Path("logo.png")))
-        self.window = pygame.display.set_mode([Game.WIDTH, Game.HEIGHT])
         self.menu_surf, self.editor_surf, self.hud_surf, self.world_surf = [
             pygame.Surface([Game.WIDTH, Game.HEIGHT], pygame.SRCALPHA) for _ in range(4)
         ]
@@ -75,13 +76,12 @@ class Game:
 
         self.events = []
 
-        self.gui = GUI(self)
-        self.init_gui()
-
         self.cutscene = False
 
-        self.cur_lvl = 0
-        self.load_progress()
+        self.loading_state = 0
+        self.load_thread = None
+        self.load_font = pygame.font.SysFont("Arial", 30)
+        self.load_assets()
     
     @classproperty
     def instance(cls):
@@ -91,6 +91,27 @@ class Game:
             cls._instance = Game()
 
         return cls._instance
+    
+    def init(self):
+        if not self.running:
+            return
+        
+        self.world = World(self)
+        self.camera = Camera(self)
+        
+        if self.config["edition"]:
+            self.camera.follow_player = False
+
+        if self.config["edition"]:
+            self.editor = Editor(self)
+        
+        self.gui = GUI(self)
+        self.init_gui()
+
+        self.cur_lvl = 0
+        self.load_progress()
+        
+        self.initialized = True
 
     def mainloop(self):
         """Main game loop, calls the simulation and rendering functions"""
@@ -126,14 +147,15 @@ class Game:
             
             elif event.type == pygame.KEYDOWN:
                 if not self.config["edition"]:
-                    if event.key == pygame.K_c:
+                    pass
+                    """if event.key == pygame.K_c:
                         self.cutscene = Cutscene(self, "level", "test_tiles")
                     
                     elif event.key == pygame.K_DOLLAR:
                         self.cur_lvl = int(input("new cur_lvl: "))
                     
                     elif event.key == pygame.K_f:
-                        self.finish_level()
+                        self.finish_level()"""
         
         # Entities and World
         if not self.config["edition"] and not self.paused and not self.cutscene:
@@ -141,8 +163,10 @@ class Game:
                 entity.handle_events(events)
             self.world.handle_events(events)
 
-        # GUI
-        self.gui.handle_events(events)
+        if not self.loading_assets:
+            # GUI
+            self.gui.handle_events(events)
+        
         events = list(filter(lambda e: not (hasattr(e, "handled") and e.handled), events))
 
         if not self.paused:
@@ -170,8 +194,10 @@ class Game:
 
         self.events = []
         #self.world.circuit.current_circuit = set() # used when circuit are limited to one update per tile
-        self.world.circuit.counter = 0
-        if not self.config["edition"]:
+        if not self.loading_assets:
+            self.world.circuit.counter = 0
+        
+        if not self.config["edition"] and not self.paused:
             self.camera.update()
 
     def physics(self):
@@ -185,26 +211,116 @@ class Game:
         
         pygame.display.set_caption(f"Packetman - {self.clock.get_fps():.2f}fps")
 
-        self.camera.render(self.world_surf, self.hud_surf, self.editor_surf)
+        if self.loading_assets:
+            txts = ["{Loading translations}", "ui.load_assets.textures", "ui.load_assets.sounds", "ui.load_assets.texts", "ui.load_assets.loaded"]
+            txt = i18n(txts[self.loading_state])
+            txt = self.load_font.render(txt, True, (255,255,255))
+            
+            ratio = 1
+            loaded, total = 0, 0
 
-        if self.gui.changed:
-            self.menu_surf.fill((0,0,0,0))
-            self.gui.render(self.menu_surf)
+            if self.loading_state == 0 and Texture.TOTAL > 0:
+                ratio = Texture.LOADED/Texture.TOTAL
+                loaded, total = Texture.LOADED, Texture.TOTAL
+            elif self.loading_state == 1 and SoundManager.TOTAL > 0:
+                ratio = SoundManager.LOADED/SoundManager.TOTAL
+                loaded, total = SoundManager.LOADED, SoundManager.TOTAL
+            elif self.loading_state == 2 and TextManager.TOTAL > 0:
+                ratio = TextManager.LOADED/TextManager.TOTAL
+                loaded, total = TextManager.LOADED, TextManager.TOTAL
+            
+            self.window.fill((0,0,0))
+            x = self.WIDTH/2-txt.get_width()/2
+            y = self.HEIGHT/2-txt.get_height()/2
+            self.window.blit(txt, [x, y])
+            y += txt.get_height() + 10
 
-        #self.editor_surf.set_alpha(200)
-        self.window.blit(self.world_surf, [0, 0])
-        self.window.blit(self.editor_surf, [0, 0])
-        self.window.blit(self.hud_surf, [0, 0])
-        self.window.blit(self.menu_surf, [0, 0])
+            pygame.draw.rect(self.window, (100,100,100), [
+                self.WIDTH/4, y,
+                self.WIDTH/2, 40
+            ])
+            
+            pygame.draw.rect(self.window, (100,200,100), [
+                self.WIDTH/4, y,
+                self.WIDTH/2*ratio, 40
+            ])
+
+            if total > 0:
+                txt = self.load_font.render(f"{loaded}/{total}", True, (255,255,255))
+                self.window.blit(txt, [
+                    self.WIDTH/2-txt.get_width()/2,
+                    y+20-txt.get_height()/2
+                ])
+        
+        else:
+            self.camera.render(self.world_surf, self.hud_surf, self.editor_surf)
+            TextManager.render(self.hud_surf)
+
+            if self.gui.changed:
+                self.menu_surf.fill((0,0,0,0))
+                self.gui.render(self.menu_surf)
+
+            #self.editor_surf.set_alpha(200)
+            self.window.blit(self.world_surf, [0, 0])
+            self.window.blit(self.editor_surf, [0, 0])
+            self.window.blit(self.hud_surf, [0, 0])
+            self.window.blit(self.menu_surf, [0, 0])
 
         pygame.display.flip()
         self.clock.tick(self.MAX_FPS)
     
+    def set_paused(self, paused=True):
+        """Sets paused state
+
+        Keyword Arguments:
+            paused {bool} -- new paused state (default: {True})
+        """
+
+        if self.paused != paused:
+            if paused:
+                Animation.pause_all()
+
+            else:
+                Animation.resume_all()
+            
+            self.paused = paused
+
     def quit(self):
         """Stops the game"""
 
         self.running = False
-        self.save_progress()
+        
+        if self.initialized:
+            self.save_progress()
+        
+        if self.load_thread:
+            self.load_thread.join()
+    
+    def load_assets(self):
+        def load_assets_func():
+            self.loading_state = 0
+            load_locale(self.settings.get("lang"))
+            self.loading_state = 1
+            Texture.load_all(self)
+            self.loading_state = 2
+            SoundManager.load_all(self)
+            self.loading_state = 3
+            TextManager.load_all(self)
+            self.loading_state = 4
+            sleep(1)
+            self.events.append(Event(Event.ASSETS_LOADED))
+        
+        self.loading_assets = True
+        self.load_thread = threading.Thread(target=load_assets_func)
+        self.load_thread.start()
+    
+    @on(Event.ASSETS_LOADED)
+    def on_assets_loaded(self, event):
+        Logger.debug("Loaded assets")
+        
+        if not self.initialized:
+            self.init()
+        self.loading_assets = False
     
     def animate(self, obj, attr_, val_a, val_b, duration, start=True, loop=None, type_=Animation.FLOAT):
         """Initializes an Animation instance and adds it to the list of ANIMATIONS
@@ -236,6 +352,7 @@ class Game:
         self.levels_menu = self.parser.parse("levels")
         self.level_comp = self.parser.parse("level")
         self.entity_menu = self.parser.parse("entity")
+        self.trigger_menu = self.parser.parse("trigger")
         self.save_menu = self.parser.parse("save")
 
         #self.main_menu.set_visible(True)
@@ -243,12 +360,14 @@ class Game:
 
         self.pause_menu.bg_color = (100,100,100,200)
         self.entity_menu.bg_color = (100,150,100)
+        self.trigger_menu.bg_color = (100,150,100)
 
         self.gui.add(self.main_menu)
         self.gui.add(self.pause_menu)
         self.gui.add(self.settings_menu)
         self.gui.add(self.levels_menu)
         self.gui.add(self.entity_menu)
+        self.gui.add(self.trigger_menu)
         self.gui.add(self.save_menu)
 
         self.gui.switch_menu("main_menu")
@@ -257,16 +376,17 @@ class Game:
         """Closes pause menu and resumes the game"""
 
         self.gui.close_menu()
-        self.paused = False
+        self.set_paused(False)
     
     def pause(self):
         """Pauses the game and opens pause menu"""
 
-        self.paused = True
+        self.set_paused(True)
         self.gui.switch_menu("pause_menu")
     
     def cb_quit(self, button):
         self.quit()
+        return True
 
     def cb_choose_lvl(self, button):
         levels = self.get_levels()
@@ -277,7 +397,7 @@ class Game:
         if self.config["edition"]:
             level = self.level_comp.copy()
             level.args = ("new", )
-            level.text = "New Level"
+            level.text = "ui.levels.new"
             container.add(level)
 
         if not (self.config["edition"] or self.config["bypass_progress"]):
@@ -286,10 +406,11 @@ class Game:
         for l in levels:
             level = self.level_comp.copy()
             level.args = (l["level"], )
-            level.text = l["name"]
+            level.text = "{"+l["name"]+"}"
             container.add(level)
 
         self.gui.switch_menu("levels_menu")
+        return True
     
     def cb_lvl(self, button, path):
         Logger.debug(f"Selected level {path}")
@@ -307,29 +428,42 @@ class Game:
         #self.camera.update_visible_entities()
         
         self.gui.close_menu()
-        self.paused = False
+        self.set_paused(False)
+        return True
 
     def cb_settings(self, button):
         self.settings.load()
         self.gui.switch_menu("settings_menu")
+        return True
     
     def cb_exit_settings(self, button):
         self.settings.save()
         SoundManager.set_volume(self.settings.get("volume"))
+        self.load_assets()
         self.gui.switch_menu("main_menu")
-    
-    def cb_test(self, checkbox, *args, **kwargs):
         return True
 
     def cb_exit_entity_settings(self, button):
         self.save_entity_settings()
         self.gui.close_menu()
+        return True
     
     def open_entity_settings(self, single_entity=False):
         self.single_entity = single_entity
-        self.gui.switch_menu("entity_menu")
+        entity = self.editor.selected_entity
         
-    def save_entity_settings(self):   
+        if self.single_entity and isinstance(entity, Trigger):
+            self.trigger_menu.get_by_name("text_id").set_value(entity.text_id)
+            self.gui.switch_menu("trigger_menu")
+
+        else:
+            if self.single_entity:
+                self.entity_menu.get_by_name("x_velocity").set_value(entity.vel.x)
+                self.entity_menu.get_by_name("y_velocity").set_value(entity.vel.y)
+                self.entity_menu.get_by_name("type").set_value(entity.type)
+            self.gui.switch_menu("entity_menu")
+        
+    def save_entity_settings(self):
         if self.single_entity:
             entities = [self.editor.selected_entity]
         else:
@@ -346,7 +480,6 @@ class Game:
             if value in entity._ENTITIES:
                 entity.type = value
                 entity.update_texture()
-        return True
 
     def cb_entity_menu(self, slider, value, label_name, *args, **kwargs):
         label = self.entity_menu.get_by_name(label_name)
@@ -358,6 +491,12 @@ class Game:
     def cb_save_lvl(self, button):
         level_name = self.save_menu.get_by_name("level_name").value
         self.world.save(level_name)
+        self.gui.close_menu()
+        return True
+    
+    def cb_exit_trigger_settings(self, button):
+        text_id = self.trigger_menu.get_by_name("text_id").get_value()
+        self.editor.selected_entity.text_id = text_id
         self.gui.close_menu()
         return True
     

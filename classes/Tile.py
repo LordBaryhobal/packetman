@@ -15,7 +15,7 @@ TILES = {
     "BufferGate": "classes.tiles.Components",
     "Button": "classes.tiles.Components",
     "Copper": "classes.tiles.Metals",
-    "Detection_tile": "classes.tiles.Detection_tile",
+    "DetectionTile": "classes.tiles.DetectionTile",
     "Gold": "classes.tiles.Metals",
     "Insulator": "classes.tiles.Terrain",
     "InsulatedWire": "classes.tiles.Components",
@@ -39,10 +39,12 @@ class Tile(Copyable):
         -1: None,
         0: None
     }
+    I18N_KEY = ""
+
     CONNECTED = False
     CONNECT_TO = None
     HINT_SIZE = Vec(0.3, 0.3)
-    HINT_TEXTURE = Texture("interaction_hint", 0, width=64, height=64)
+    HINT_TEXTURE = None
 
     interactive = False
     solid = False
@@ -65,6 +67,9 @@ class Tile(Copyable):
         self.neighbors = 0
         self.world = world
         self.interact_hint = False
+
+        if Tile.HINT_TEXTURE is None:
+            Tile.HINT_TEXTURE = Texture("interaction_hint", 0, width=64, height=64)
     
     def __setattr__(self, name, value):
         super().__setattr__(name, value)
@@ -124,3 +129,9 @@ class Tile(Copyable):
     
     def update_texture(self):
         self.texture.id = self.neighbors
+    
+    def get_i18n_key(self):
+        if self.name:
+            return "tile."+self.__class__.I18N_KEY
+        
+        return ""

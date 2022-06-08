@@ -404,10 +404,10 @@ class World:
         with open(Path("levels", filename+".dat"), "rb") as f:
             size_tiles = struct.unpack(">I", f.read(4))[0]
             size_entities = struct.unpack(">I", f.read(4))[0]
-            self.WIDTH = struct.unpack(">H", f.read(2))[0]
-            self.HEIGHT = struct.unpack(">H", f.read(2))[0]
+            WIDTH = struct.unpack(">H", f.read(2))[0]
+            HEIGHT = struct.unpack(">H", f.read(2))[0]
             
-            self.tiles = np.empty([self.HEIGHT, self.WIDTH], dtype='object')
+            tiles = np.empty([HEIGHT, WIDTH], dtype='object')
             self.entities = []
 
             Logger.info("Loading tiles")
@@ -431,12 +431,13 @@ class World:
                 for k, v in attrs.items():
                     setattr(tile, k, v)
                 
-                self.tiles[y, x] = tile
+                tiles[y, x] = tile
             
-            for y in range(self.HEIGHT):
-                for x in range(self.WIDTH):
-                    if self.tiles[y, x] is None:
-                        self.tiles[y, x] = Tile(x, y)
+            for y in range(HEIGHT):
+                for x in range(WIDTH):
+                    if tiles[y, x] is None:
+                        tiles[y, x] = Tile(x, y)
+            self.WIDTH, self.HEIGHT, self.tiles = WIDTH, HEIGHT, tiles
             
             Logger.info("Loading entities")
             while f.tell() < size_entities+size_tiles+12:
@@ -608,10 +609,15 @@ class World:
                         event.tiles = interactive_tiles
                         event.entities = interactive_entities
                         self.game.events.append(event)
+    
     def reset(self):
+        """Resets the world"""
+        
         self.tiles = np.array([[Tile(world=self)]], dtype='object')
         self.entities = []
         self.player = Player(Vec(1, 1), world=self)
         self.entities.append(self.player)
         self.WIDTH = 1
         self.HEIGHT = 1
+        self.game.camera.update_visible_tiles()
+        self.game.camera.update_visible_entities()

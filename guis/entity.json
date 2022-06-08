@@ -19,7 +19,7 @@
                 {
                     "class": "Label",
                     "params": [
-                        "Entity Settings",
+                        "ui.entity.title",
                         { "name": "font_size", "val": 40 }
                     ],
                     "x": {"type": "Center"},
@@ -50,7 +50,7 @@
                                 {
                                     "class": "Label",
                                     "params": [
-                                        "Velocity",
+                                        "ui.entity.velocity",
                                         { "name": "font_size", "val": 40 }
                                     ],
                                     "x": {"type": "Center"},
@@ -61,7 +61,7 @@
                                 {
                                     "class": "Label",
                                     "params": [
-                                        "X:",
+                                        "{X:}",
                                         { "name": "font_size", "val": 30 },
                                         { "name": "name", "val": "x_velocity_label" }
                                     ],
@@ -87,7 +87,7 @@
                                 {
                                     "class": "Label",
                                     "params": [
-                                        "Y:",
+                                        "{Y:}",
                                         { "name": "font_size", "val": 30 },
                                         { "name": "name", "val": "y_velocity_label" }
                                     ],
@@ -126,7 +126,7 @@
                                 {
                                     "class": "Label",
                                     "params": [
-                                        "Type:",
+                                        "ui.entity.type",
                                         { "name": "font_size", "val": 40 },
                                         {"name": "name", "val": "type_label"}
                                     ],

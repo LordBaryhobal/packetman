@@ -1,5 +1,0 @@
-Menu: $game
-+   Label: 0, 0, 1W, 0.1H, "Settings", font_size=40
-    Checkbox: 0.3W, 0.4H, 0.15W, 0.05H, "Test checkbox", $game.cb_checkbox, ["test_checkbox"], name="test_checkbox"
-    Slider: 0.375W, 0.30H, 0.25W, 0.05H, 0, 10, 1, $game.cb_checkbox, ["test_slider"], name="test_slider"
-    Button: 0.25W, 0.7H, 0.5W, 0.1H, "Return to main menu", $game.cb_exit_settings

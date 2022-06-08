@@ -1,7 +1,6 @@
 #Packetman is a small game created in the scope of a school project
 #Copyright (C) 2022  Louis HEREDERO & Mathéo BENEY
 
-from time import sleep
 import threading
 
 import pygame
@@ -50,21 +49,27 @@ class Cutscene:
 
         self.state = self.START
 
-        Animation(self, "bars_height", 0, self.BARS_HEIGHT, self.BARS_DURATION)
+        a = Animation(self, "bars_height", 0, self.BARS_HEIGHT, self.BARS_DURATION)
+        a.origin = "Cutscene"
+        a.id = "slide_in"
 
     def stop(self):
         """Starts the end of cutscene (i.e. bars slide out)"""
 
         self.state = self.END
 
-        Animation(self, "bars_height", self.BARS_HEIGHT, 0, self.BARS_DURATION)
+        a = Animation(self, "bars_height", self.BARS_HEIGHT, 0, self.BARS_DURATION)
+        a.origin = "Cutscene"
+        a.id = "slide_out"
     
     def start_fade(self):
         """Starts fade out"""
 
         self.state = self.FADING_OUT
 
-        Animation(self, "black_opacity", 0, 255, self.FADE_DURATION)
+        a = Animation(self, "black_opacity", 0, 255, self.FADE_DURATION)
+        a.origin = "Cutscene"
+        a.id = "fade_out"
 
     def start_load(self):
         """Starts level loading"""
@@ -76,7 +81,7 @@ class Cutscene:
             self.load_thread.start()
         
         else:
-            self.game.paused = True
+            self.game.set_paused(True)
             self.game.gui.switch_menu("main_menu")
             self.end_cutscene()
             
@@ -95,7 +100,9 @@ class Cutscene:
         self.game.world.player.force_render = True
         self.game.camera.update_visible_tiles()
         self.game.camera.update_visible_entities()
-        Animation(self, "black_opacity", 255, 0, self.FADE_DURATION)
+        a = Animation(self, "black_opacity", 255, 0, self.FADE_DURATION)
+        a.origin = "Cutscene"
+        a.id = "fade_in"
     
     def end_cutscene(self):
         """Ends the cutscene and returns to normal mode"""
@@ -196,14 +203,16 @@ class Cutscene:
     
     @on(Event.ANIMATION_FINISH)
     def on_animation_finish(self, event):
-        if self.state == self.START:
-            self.start_fade()
-        
-        elif self.state == self.FADING_OUT:
-            self.start_load()
-        
-        elif self.state == self.LOADED:
-            self.stop()
-        
-        elif self.state == self.END:
-            self.end_cutscene()
+        anim = event.animation
+        if hasattr(anim, "origin") and anim.origin == "Cutscene":
+            if self.state == self.START and anim.id == "slide_in":
+                self.start_fade()
+            
+            elif self.state == self.FADING_OUT and anim.id == "fade_out":
+                self.start_load()
+            
+            elif self.state == self.LOADED and anim.id == "fade_in":
+                self.stop()
+            
+            elif self.state == self.END and anim.id == "slide_out":
+                self.end_cutscene()

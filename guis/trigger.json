@@ -1,0 +1,73 @@
+{
+    "class": "Menu",
+    "params": [
+        "${game}",
+        "${#}",
+        {"name": "name", "val": "trigger_menu"}
+    ],
+    "children": [
+        {
+            "class": "Flex",
+            "params": [
+                {"name": "justify", "val": "space-evenly"}
+            ],
+            "x": {"type": "Absolute", "val": 0},
+            "y": {"type": "Absolute", "val": 0},
+            "w": {"type": "Relative", "val": 1.0},
+            "h": {"type": "Relative", "val": 1.0},
+            "children": [
+                {
+                    "class": "Label",
+                    "params": [
+                        "ui.trigger.title",
+                        { "name": "font_size", "val": 40 }
+                    ],
+                    "x": {"type": "Center"},
+                    "w": {"type": "Relative", "val": 1.0},
+                    "h": {"type": "Relative", "val": 0.1}
+                },
+                {
+                    "class": "Flex",
+                    "params": [
+                        {"name": "dir_", "val": "row"},
+                        {"name": "justify", "val": "space-evenly"}
+                    ],
+                    "x": {"type": "Absolute", "val": 0},
+                    "w": {"type": "Relative", "val": 1},
+                    "h": {"type": "Relative", "val": 0.1},
+                    "children": [
+                        {
+                            "class": "Label",
+                            "params": [
+                                "ui.trigger.text_id",
+                                { "name": "font_size", "val": 30 }
+                            ],
+                            "y": {"type": "Center"},
+                            "w": {"type": "Relative", "val": 0.4},
+                            "h": {"type": "Relative", "val": 1}
+                        },
+                        {
+                            "class": "Input",
+                            "params": [
+                                { "name": "name", "val": "text_id" }
+                            ],
+                            "y": {"type": "Center"},
+                            "w": {"type": "Relative", "val": 0.5},
+                            "h": {"type": "Relative", "val": 1}
+                        }
+                    ]
+                },
+                {
+                    "class": "Button",
+                    "params": [
+                        "ui.trigger.save",
+                        "${game.cb_exit_trigger_settings}"
+                    ],
+                    "x": {"type": "Center"},
+                    "w": {"type": "Relative", "val": 0.5},
+                    "h": {"type": "Relative", "val": 0.1}
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,55 @@
+Lieu,Id,fr,en,de
+UI,ui.entity.title,Paramètres d'entité,Entity settings,Entitätsparameter
+UI,ui.entity.type,Type,Type,Typ
+UI,ui.entity.velocity,Vitesse,Velocity,Geschwindigkeit
+UI,ui.main.choose_level,Choisir un niveau,Choose level,Level wählen
+UI,ui.main.settings,Paramètres,Settings,Einstellungen
+UI,ui.main.quit,Quitter,Quit,Verlassen
+UI,ui.levels.new,Nouveau niveau,New level,Neuer Level
+UI,ui.levels.back,Retour au menu principal,Back to main menu,Zurück zum Hauptmenü
+UI,ui.load_assets.loaded,Ressources chargées,Loaded assets,Ressourcen geladen
+UI,ui.load_assets.sounds,Chargement des sons,Loading sounds,Ladegeräusche
+UI,ui.load_assets.texts,Chargement des textes,Loading texts,Ladetexte
+UI,ui.load_assets.textures,Chargement des textures,Loading textures,Ladetexturen
+UI,ui.pause.resume,Reprendre,Resume,Fortsetzen
+UI,ui.pause.title,Pause,Pause,Pause
+UI,ui.pause.quit,Menu principal,Main menu,Hauptmenü
+UI,ui.save.cancel,Annuler,Cancel,Abbrechen
+UI,ui.save.name_placeholder,Nom du niveau,Level name,Levelname
+UI,ui.save.save,Sauvegarder,Save,Speichern
+UI,ui.save.title,Sauvegarder sous,Save as,Speichern unter
+UI,ui.settings.save,Enregistrer,Save,Speichern
+UI,ui.settings.volume,Volume,Volume,Lautstärke
+UI,ui.settings.rtx_mode,Mode RTX,RTX mode,RTX-Modus
+UI,ui.settings.fullscreen,Plein écran,Fullscreen,Vollbild
+UI,ui.settings.lang,Langue,Language,Sprache
+UI,ui.settings.interaction_hint,Indicateur d'intéraction,Interaction hint,Interaktionsanzeige
+UI,ui.trigger.text_id,Id du texte,Text id,Text-ID
+UI,ui.trigger.title,Paramètre de déclencheur,Trigger settings,Auslöserparameter
+UI,ui.trigger.save,Enregistrer,Save,Speichern
+Tile,tile.aluminium,Aluminium,Aluminium,Aluminium
+Tile,tile.and_gate,Porte ET,AND gate,Und-Gatter
+Tile,tile.brass,Laiton,Brass,Messing
+Tile,tile.buffer_gate,Porte tampon,Buffer gate,Puffergatter
+Tile,tile.button,Bouton,Button,Taste
+Tile,tile.copper,Cuivre,Copper,Kupfer
+Tile,tile.detection_tile,Détecteur,Detector,Detektor
+Tile,tile.gold,Or,Gold,Gold
+Tile,tile.insulated_wire,Cable isolé,Insulated wire,Isolierdraht
+Tile,tile.insulator,Isolateur,Insulator,Isolator
+Tile,tile.iron,Fer,Iron,Eisen
+Tile,tile.lead,Plomb,Lead,Blei
+Tile,tile.not_gate,Porte NON,NOT gate,Nicht-Gatter
+Tile,tile.or_gate,Porte OU,OR gate,Oder-Gatter
+Tile,tile.plastic,Plastique,Plastic,Plastik
+Tile,tile.plate,Plaque de pression,Pressure plate,Druckplatte
+Tile,tile.puzzle_door,Porte de puzzle,Puzzle door,Rätseltür
+Tile,tile.thermal_conductor,Conducteur thermique,Thermal conductor,Wärmeleiter
+Tile,tile.wire,Cable,Wire,Kabel
+Tile,tile.zinc,Zinc,Zinc,Zink
+Entity,entity.drone,Drone,Drone,Drohne
+Entity,entity.hacker,Pirate,Hacker,Hacker
+Entity,entity.player,Joueur,Player,Spieler
+Entity,entity.player_trigger,Déclencheur (joueur),Trigger (player),Auslöser (Spieler)
+Entity,entity.robot,Robot,Robot,Roboter
+Entity,entity.tile_trigger,Déclencheur (circuit),Trigger (circuit),Auslöser (Schaltkreis)
