@@ -182,6 +182,8 @@ class Gate(Output, Input):
 
     DIRECTION = (Vec(0, 1), Vec(1, 0), Vec(0, -1), Vec(-1, 0))
 
+    solid = True
+
     def create_event(self, pressed):
         neighbors = []
         tile = self.world.get_tile(self.pos+self.DIRECTION[self.rotation])
