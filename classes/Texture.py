@@ -112,20 +112,19 @@ class Texture(Copyable):
         """
         
         self.img, self.h_tiles, self.v_tiles = Texture.get(self.name, self.id) if self.name else (None, 0, 0)
-        tw, th = tilesize*dimensions.x, tilesize*dimensions.y
-        w, h = int(self.h_tiles*tw), int(self.v_tiles*th)
+        w, h = tilesize*dimensions.x, tilesize*dimensions.y
         img = self.img
 
         # dimensions is the size of the object in tiles
-        if (w, h) != img.get_size():
-            img = pygame.transform.scale(img, (w, h))
+        if dimensions.x != 1 or dimensions.y != 1:
+            img = pygame.transform.scale(img, (int(w), int(h)))
         
         x, y = 0, 0
         if not self.id is None:
-            x = (self.id % self.h_tiles) * tw
-            y = (self.id // self.h_tiles) * th
+            x = (self.id % self.h_tiles) * w
+            y = (self.id // self.h_tiles) * h
         
         if flip:
             img = pygame.transform.flip(img, True, False)
 
-        surface.blit(img, [pos.x, pos.y-th], [x, y, tw, th])
+        surface.blit(img, [pos.x, pos.y-h], [x, y, w, h])
