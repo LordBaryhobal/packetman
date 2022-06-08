@@ -462,11 +462,12 @@ class World:
         
         Logger.info("Level loaded successfully (maybe)")
         self.level_file = filename
-        self.game.events.append(Event(Event.WORLD_LOADED))
 
         self.game.camera.update()
         self.game.camera.update_visible_tiles()
         self.game.camera.update_visible_entities()
+
+        self.game.events.append(Event(Event.WORLD_LOADED))
 
         #Call twice to have correct physics
         self.game.clock.tick()

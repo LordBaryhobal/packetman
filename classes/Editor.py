@@ -167,7 +167,6 @@ class Editor:
                         new_entity.update()
                         
                         self.game.world.add_entity(new_entity)
-                        self.game.camera.update_visible_entities()
                         
                     # Start placing tiles
                     else:
@@ -305,7 +304,6 @@ class Editor:
                         for entity in entities:
                             if not isinstance(entity, Player):
                                 self.game.world.remove_entity(entity)
-                        self.game.camera.update_visible_entities()
                             
                 # Save the world
                 elif event.key == pygame.K_s and event.mod & pygame.KMOD_CTRL:

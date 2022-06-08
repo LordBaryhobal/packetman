@@ -153,7 +153,9 @@ class Cutscene:
             event.dispatch()
 
         self.game.events = []
-        self.game.camera.update()
+
+        if self.state != self.LOADING:
+            self.game.camera.update()
     
     def physics(self):
         """Processes physic simulation"""

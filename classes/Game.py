@@ -424,9 +424,6 @@ class Game:
             else:
                 self.cutscene = Cutscene(self, None, path)
         
-        #self.camera.update_visible_tiles()
-        #self.camera.update_visible_entities()
-        
         self.gui.close_menu()
         self.set_paused(False)
         return True
