@@ -28,6 +28,10 @@
         "level": "test_not_metal_step"
     },
     {
+        "name": "test_spike",
+        "level": "kill"
+    },
+    {
         "name": "Test triggers",
         "level": "test_triggers"
     }
