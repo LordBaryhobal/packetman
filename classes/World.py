@@ -12,6 +12,7 @@ from classes.Circuit import Circuit
 from classes.Entity import Entity
 from classes.Event import Event
 from classes.Logger import Logger
+from classes.tiles.Metals import Metal
 from classes.Path import Path
 from classes.Player import Player
 from classes.Rect import Rect
@@ -65,6 +66,12 @@ class World:
                 tiles_below = list(filter(lambda t: t is not None and ((t.name and t.solid) or t.type == -1), tiles_below))
                 
                 if len(tiles_below) > 0 or entity.pos.y < 0.001:
+                    if tiles_below and isinstance(entity, Player):
+                        if entity.vel.x != 0:
+                            if isinstance(tiles_below[0], Metal):
+                                entity.play_step(material="metal")
+                            else:
+                                entity.play_step(material="not_metal")
                     entity.on_ground = True
                     entity.vel.x = 0
             

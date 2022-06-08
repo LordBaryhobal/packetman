@@ -27,7 +27,7 @@ class SoundManager:
         SoundManager.LOADED = 0
         SoundManager.load_walk(game, Path("assets", "sounds"))
     
-    def load_walk(game, path, name=""):
+    def load_walk(game, path, name="", variants=False):
         content = os.listdir(path)
 
         for f in content:
@@ -38,14 +38,23 @@ class SoundManager:
                 if n: n += "."
                 n += f
 
-                SoundManager.load_walk(game, p, n)
+                if os.path.exists(Path(p, ".variants")):
+                    SoundManager._cache[n] = []
+                    SoundManager.load_walk(game, p, n, True)
+
+                else:
+                    SoundManager.load_walk(game, p, n)
             
             elif os.path.splitext(f)[1] == ".wav":
-                n = name
-                if n: n += "."
-                n += os.path.splitext(f)[0]
-
-                SoundManager._cache[n] = pygame.mixer.Sound(p)
+                if variants:
+                    SoundManager._cache[name].append(pygame.mixer.Sound(p))
+                
+                else:
+                    n = name
+                    if n: n += "."
+                    n += os.path.splitext(f)[0]
+                    SoundManager._cache[n] = pygame.mixer.Sound(p)
+                
                 SoundManager.LOADED += 1
 
     def load(sound):

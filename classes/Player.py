@@ -4,6 +4,7 @@
 from math import copysign
 
 import pygame
+from time import time
 
 from classes.Entity import Entity
 from classes.Event import Event, listener, on
@@ -29,6 +30,7 @@ class Player(Entity):
     SIZE = Vec(0.8,0.8)
     
     speed = 4
+    TIME_STEP = 0.3
     
     HB_LOGO = None
     HB_LOGO_SIZE = Vec(1,1)
@@ -38,6 +40,7 @@ class Player(Entity):
     def __init__(self, pos=None, vel=None, acc=None, type_=None, highlight=False, world=None):
         super().__init__(pos, vel, acc, type_, highlight, world)
         self.finishing_level = False
+        self.last_step = time()
         self.health = self.MAX_HEALTH
         if Player.HB_LOGO is None:
             Player.HB_LOGO = Texture("health_bar_logo")
@@ -99,6 +102,12 @@ class Player(Entity):
             if self.finishing_level:
                 self.finishing_level = False
                 self.world.game.finish_level()
+    
+    def play_step(self, material=""):
+        newtime = time()
+        if newtime - self.last_step > self.TIME_STEP:
+            SoundManager.play("entity.player.step_" + material)
+            self.last_step = newtime
 
     def render(self, surface, hud_surf, pos, size, dimensions=None):
         """Renders the entity
@@ -139,5 +148,5 @@ class Player(Entity):
     
     def die(self):
         """Kills the player"""
-
+        SoundManager.play("entity.player.death")
         self.world.load(self.world.level_file)
