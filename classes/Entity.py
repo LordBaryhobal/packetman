@@ -79,6 +79,9 @@ class Entity(Copyable):
         if Entity.HINT_TEXTURE is None:
             Entity.HINT_TEXTURE = Texture("interaction_hint", 0, width=64, height=64)
     
+    def __del__(self, *args, **kwargs):
+        pass
+
     def get_cls(cls):
         """Get class from class name
 

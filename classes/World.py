@@ -394,6 +394,12 @@ class World:
 
         Logger.info(f"Loading level '{filename}'")
 
+        for tile in self.tiles.flatten():
+            tile.__del__()
+        
+        for entity in self.entities:
+            entity.__del__()
+
         with open(Path("levels", filename+".dat"), "rb") as f:
             size_tiles = struct.unpack(">I", f.read(4))[0]
             size_entities = struct.unpack(">I", f.read(4))[0]
@@ -555,7 +561,7 @@ class World:
         """
         
         self.entities.remove(entity)
-        del entity
+        entity.__del__()
         self.game.camera.update_visible_entities()
     
     def add_entity(self, entity):
@@ -606,6 +612,12 @@ class World:
     
     def reset(self):
         """Resets the world"""
+        
+        for tile in self.tiles.flatten():
+            tile.__del__()
+        
+        for entity in self.entities:
+            entity.__del__()
         
         self.tiles = np.array([[Tile(world=self)]], dtype='object')
         self.entities = []

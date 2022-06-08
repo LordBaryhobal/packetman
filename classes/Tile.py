@@ -71,6 +71,9 @@ class Tile(Copyable):
         if Tile.HINT_TEXTURE is None:
             Tile.HINT_TEXTURE = Texture("interaction_hint", 0, width=64, height=64)
     
+    def __del__(self, *args, **kwargs):
+        pass
+    
     def __setattr__(self, name, value):
         super().__setattr__(name, value)
         if self.CONNECTED and name == "neighbors" and self.texture:
