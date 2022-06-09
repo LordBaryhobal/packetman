@@ -116,8 +116,11 @@ class Texture(Copyable):
         img = self.img
 
         # dimensions is the size of the object in tiles
-        if dimensions.x != 1 or dimensions.y != 1:
-            img = pygame.transform.scale(img, (int(w), int(h)))
+        if dimensions.x != 1 or dimensions.y != 1 or (w, h) != img.get_size():
+            if self.id is None:
+                img = pygame.transform.scale(img, (int(w), int(h)))
+            else:
+                img = pygame.transform.scale(img, (int(w*self.h_tiles), int(h*self.v_tiles)))
         
         x, y = 0, 0
         if not self.id is None:
