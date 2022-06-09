@@ -34,6 +34,7 @@ Tile,tile.buffer_gate,Porte tampon,Buffer gate,Puffergatter
 Tile,tile.button,Bouton,Button,Taste
 Tile,tile.copper,Cuivre,Copper,Kupfer
 Tile,tile.detection_tile,Détecteur,Detector,Detektor
+Tile,tile.drone_spawner,Générateur de drone,Drone spawner,Spawner
 Tile,tile.gold,Or,Gold,Gold
 Tile,tile.insulated_wire,Cable isolé,Insulated wire,Isolierdraht
 Tile,tile.insulator,Isolateur,Insulator,Isolator
@@ -44,6 +45,7 @@ Tile,tile.or_gate,Porte OU,OR gate,Oder-Gatter
 Tile,tile.plastic,Plastique,Plastic,Plastik
 Tile,tile.plate,Plaque de pression,Pressure plate,Druckplatte
 Tile,tile.puzzle_door,Porte de puzzle,Puzzle door,Rätseltür
+Tile,tile.spike,Pic,Spike,Spike
 Tile,tile.thermal_conductor,Conducteur thermique,Thermal conductor,Wärmeleiter
 Tile,tile.wire,Cable,Wire,Kabel
 Tile,tile.zinc,Zinc,Zinc,Zink
