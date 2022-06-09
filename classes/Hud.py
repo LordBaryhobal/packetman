@@ -43,9 +43,9 @@ class Hud:
         w = self.game.world
         self.hotbars = [
             [Aluminium(), Brass(), Copper(), Gold(), Iron(), Lead(), Zinc()],
-            [Insulator(), Plastic(), ThermalConductor(), Spike(), DetectionTile(world=w), DroneSpawner(world=w)],
-            [Plate(world=w), Button(world=w), Wire(world=w), InsulatedWire(world=w), BufferGate(world=w), AndGate(world=w), OrGate(world=w), NotGate(world=w), PuzzleDoor(world=w)],
-            [Hacker(), Robot(), Drone(type_=1), PlayerTrigger(world=w), TileTrigger(world=w)]
+            [Insulator(), Plastic(), ThermalConductor(), Spike(), DetectionTile(), DroneSpawner()],
+            [Plate(), Button(), Wire(), InsulatedWire(), BufferGate(), AndGate(), OrGate(), NotGate(), PuzzleDoor()],
+            [Hacker(), Robot(), Drone(type_=1), PlayerTrigger(), TileTrigger()]
         ]
 
         self.sb_opacity_anim = None

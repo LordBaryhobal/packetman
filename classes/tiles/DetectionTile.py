@@ -12,5 +12,5 @@ class DetectionTile(Tile):
     I18N_KEY = "detection_tile"
     
     def render(self, surface, hud_surf, pos, size, dimensions=None):
-        if self.world.game.config["edition"]:
+        if not self.world or self.world.game.config["edition"]:
             super().render(surface, hud_surf, pos, size, dimensions)

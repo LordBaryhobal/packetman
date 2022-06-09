@@ -31,7 +31,7 @@ class Trigger(Entity):
                 Logger.warn(f"{self.__class__.__name__} triggered but no text id was set")
     
     def render(self, surface, hud_surf, pos, size, dimensions=None):
-        if self.world.game.config["edition"]:
+        if not self.world or self.world.game.config["edition"]:
             super().render(surface, hud_surf, pos, size, dimensions)
         
         elif self.triggered:

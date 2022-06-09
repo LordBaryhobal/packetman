@@ -67,7 +67,7 @@ class DroneSpawner(Terrain):
     
     def create_drone(self):
         pos = Vec(self.pos.x+0.5-Drone.SIZE.x/2, self.pos.y+0.5-Drone.SIZE.y/2)
-        self.drone = Drone(pos, type_=1, world=self.world)
+        self.drone = Drone(pos, type_=1)
         self.world.add_entity(self.drone)
     
     @on(Event.DIE)

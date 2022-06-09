@@ -160,6 +160,7 @@ class World:
             reset_circuit = True
 
         tile.pos = pos.copy()
+        tile.world = self
         self.tiles[pos.y, pos.x] = tile
         self.update_tile(pos)
         if reset_circuit:
