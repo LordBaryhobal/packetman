@@ -466,7 +466,7 @@ class World:
                     if c == b"\0": break
                     cls += c
                 
-                attrs = pickle.loads(f.read(size - len(cls) - 19))
+                attrs = pickle.loads(f.read(size - len(cls) - 11))
 
                 cls = str(cls, "utf-8")
                 entity = Entity.get_cls(cls)(pos=Vec(x,y), type_=type_)
