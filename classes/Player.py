@@ -26,7 +26,7 @@ class Player(Entity):
     }
     I18N_KEY = "player"
     
-    JUMP_SPEED = 11
+    JUMP_SPEED = 14
     SIZE = Vec(0.8,1.8)
     
     speed = 5
@@ -36,6 +36,8 @@ class Player(Entity):
     HB_LOGO_SIZE = Vec(1,1)
     MAX_HEALTH = 10
     HB_SIZE = Vec(3, 1/4)
+
+    mass = 1.5
     
     def __init__(self, pos=None, vel=None, acc=None, type_=None, highlight=False, world=None):
         super().__init__(pos, vel, acc, type_, highlight, world)
