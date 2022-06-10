@@ -170,6 +170,8 @@ class World:
                 next_tile = self.get_tile(tile.pos+offset)
                 if next_tile and isinstance(next_tile, Electrical):
                     self.game.editor.reset_circuit(next_tile)
+            self.game.editor.update_notgates()
+            self.game.editor.notgates = set()
             self.game.editor.visited_tiles = set()
 
     def get_tiles_in_rect(self, topleft, bottomright):
