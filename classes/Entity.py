@@ -26,7 +26,8 @@ class Entity(Copyable):
     Subject to physics
     """
     
-    _no_save = ["type", "pos", "vel", "acc", "box", "highlight", "texture", "world", "interact_hint", "last_pos"]
+    _save = []
+
     _ENTITIES = {
         0: None
     }

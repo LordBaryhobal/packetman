@@ -13,6 +13,8 @@ from classes.Vec import Vec
 class Trigger(Entity):
     """Simple trigger entity"""
     
+    _save = Entity._save + ["text_id"]
+    
     SIZE = Vec(1, 1)
 
     gravity = False

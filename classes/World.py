@@ -23,6 +23,8 @@ from classes.tiles.Components import Electrical
 class World:
     """World class holding world tiles and entities. Also processes physics."""
 
+    SAVE_FORMAT = 1
+
     WIDTH = 1
     HEIGHT = 1
 
@@ -338,12 +340,12 @@ class World:
             buf_tile.extend(struct.pack(">H", tile.pos.y))
             buf_tile.extend(bytearray(tile.__class__.__name__, "utf-8"))
             buf_tile.append(0)
-            attrs = tile.__dict__.copy()
+            attrs = {}
 
-            if hasattr(tile, "_no_save"):
-                for a in tile._no_save:
-                    if a in attrs:
-                        del attrs[a]
+            if hasattr(tile, "_save"):
+                for a in tile._save:
+                    if hasattr(tile, a):
+                        attrs[a] = getattr(tile, a)
             
             attrs = pickle.dumps(attrs)
             buf_tile.extend(attrs)
@@ -362,16 +364,14 @@ class World:
             buf_entity.extend(struct.pack(">H", entity.type))
             buf_entity.extend(struct.pack(">f", entity.pos.x))
             buf_entity.extend(struct.pack(">f", entity.pos.y))
-            buf_entity.extend(struct.pack(">f", entity.vel.x))
-            buf_entity.extend(struct.pack(">f", entity.vel.y))
             buf_entity.extend(bytearray(entity.__class__.__name__, "utf-8"))
             buf_entity.append(0)
-            attrs = entity.__dict__.copy()
+            attrs = {}
 
-            if hasattr(entity, "_no_save"):
-                for a in entity._no_save:
-                    if a in attrs:
-                        del attrs[a]
+            if hasattr(entity, "_save"):
+                for a in entity._save:
+                    if hasattr(entity, a):
+                        attrs[a] = getattr(entity, a)
             
             attrs = pickle.dumps(attrs)
             buf_entity.extend(attrs)
@@ -382,6 +382,7 @@ class World:
         Logger.info("Writing to file")
 
         with open(Path("levels", filename+".dat"), "wb") as f:
+            f.write(struct.pack(">I", self.SAVE_FORMAT))
             f.write(struct.pack(">I", len(buf_tiles) ))
             f.write(struct.pack(">I", len(buf_entities) ))
             f.write(struct.pack(">H", max_x+1))
@@ -409,6 +410,11 @@ class World:
             entity.__del__()
 
         with open(Path("levels", filename+".dat"), "rb") as f:
+            save_format = struct.unpack(">I", f.read(4))[0]
+
+            if save_format != self.SAVE_FORMAT:
+                Logger.error("This level was not saved in the current format. It may not properly or crash the game.")
+            
             size_tiles = struct.unpack(">I", f.read(4))[0]
             size_entities = struct.unpack(">I", f.read(4))[0]
             WIDTH = struct.unpack(">H", f.read(2))[0]
@@ -452,8 +458,6 @@ class World:
                 type_ = struct.unpack(">H", f.read(2))[0]
                 x = struct.unpack(">f", f.read(4))[0]
                 y = struct.unpack(">f", f.read(4))[0]
-                vx = struct.unpack(">f", f.read(4))[0]
-                vy = struct.unpack(">f", f.read(4))[0]
 
                 cls = b""
 
@@ -465,7 +469,7 @@ class World:
                 attrs = pickle.loads(f.read(size - len(cls) - 19))
 
                 cls = str(cls, "utf-8")
-                entity = Entity.get_cls(cls)(pos=Vec(x,y), vel=Vec(vx, vy), type_=type_)
+                entity = Entity.get_cls(cls)(pos=Vec(x,y), type_=type_)
 
                 for k, v in attrs.items():
                     setattr(entity, k, v)

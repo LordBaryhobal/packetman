@@ -135,8 +135,6 @@ class Wire(Electrical):
 
     CONNECTED = True
     
-    _no_save = ["type", "pos", "texture", "world", "powered", "powered_by"]
-    
     def __init__(self, x=0, y=0, type_=0, world=None):
         self.powered = False
         self.powered_by = 0
@@ -177,8 +175,6 @@ class Gate(Output, Input):
     _TILES = {
         0: "gate"
     }
-
-    _no_save = ["type", "pos", "texture", "world", "powered", "powered_by"]
 
     DIRECTION = (Vec(0, 1), Vec(1, 0), Vec(0, -1), Vec(-1, 0))
 
