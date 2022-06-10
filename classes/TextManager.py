@@ -1,10 +1,10 @@
 #Packetman is a small game created in the scope of a school project
 #Copyright (C) 2022  Louis HEREDERO & Mathéo BENEY
 
+import codecs
 import glob
 import os
 import pygame
-import codecs
 
 from classes.Animation import Animation
 from classes.Event import Event, listener, on
