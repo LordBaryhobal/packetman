@@ -46,6 +46,7 @@ class Editor:
         self.hud = Hud(self.game)
         
         self.visited_tiles = set()
+        self.notgates = set()
     
     def handle_events(self, events):
         """Handles events
@@ -532,6 +533,9 @@ class Editor:
         
         self.visited_tiles.add(tile)
         
+        if isinstance(tile, NotGate):
+            self.notgates.add(tile)
+        
         if isinstance(tile, Input) and not isinstance(tile, Gate):
             if tile.pressed:
                 tile.create_event(True)
@@ -543,3 +547,7 @@ class Editor:
             next_tile = self.game.world.get_tile(tile.pos+offset)
             if next_tile and isinstance(next_tile, Electrical):
                 self.reset_circuit(next_tile)
+    
+    def update_notgates(self):
+        for notgate in self.notgates:
+            notgate.update_activation()
