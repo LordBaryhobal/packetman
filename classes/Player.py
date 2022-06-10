@@ -26,10 +26,10 @@ class Player(Entity):
     }
     I18N_KEY = "player"
     
-    JUMP_SPEED = 7
+    JUMP_SPEED = 11
     SIZE = Vec(0.8,1.8)
     
-    speed = 4
+    speed = 5
     TIME_STEP = 0.3
     
     HB_LOGO = None
