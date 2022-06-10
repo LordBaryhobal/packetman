@@ -1,42 +1,6 @@
 [
     {
-        "name": "Level 1: door",
-        "level": "circuit_door"
-    },
-    {
-        "name": "Level 2: not",
-        "level": "circuit_not"
-    },
-    {
-        "name": "Level 3: or",
-        "level": "circuit_or"
-    },
-    {
-        "name": "Level 4: and",
-        "level": "circuit_and"
-    },
-    {
-        "name": "Level 5: gate",
-        "level": "circuit_gate"
-    },
-    {
-        "name": "Hackers",
-        "level": "hackerrrrrrrr"
-    },
-    {
-        "name": "test step",
-        "level": "test_not_metal_step"
-    },
-    {
-        "name": "test spike",
-        "level": "kill"
-    },
-    {
-        "name": "test drone spawner",
-        "level": "drone_spawner"
-    },
-    {
-        "name": "Test triggers",
-        "level": "test_triggers"
+        "name": "World 1: level 1",
+        "level": "world1_lvl1"
     }
 ]
