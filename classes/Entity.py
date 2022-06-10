@@ -33,14 +33,15 @@ class Entity(Copyable):
     }
     I18N_KEY = ""
     
-    HINT_SIZE = Vec(0.3,0.3)
+    HINT_SIZE = Vec(0.5,0.5)
     HINT_TEXTURE = None
     SIZE = Vec(0.5,0.5)
     
     force_render = False
     gravity = True
     interactive = False
-    
+
+    mass = 1
 
     def __init__(self, pos=None, vel=None, acc=None, type_=None, highlight=False, world=None):
         """Initializes an Entity instance
@@ -78,7 +79,7 @@ class Entity(Copyable):
         self.interact_hint = False
         
         if Entity.HINT_TEXTURE is None:
-            Entity.HINT_TEXTURE = Texture("interaction_hint", 0, width=64, height=64)
+            Entity.HINT_TEXTURE = Texture("interaction_hint", width=64, height=64)
     
     def __del__(self, *args, **kwargs):
         pass
@@ -134,7 +135,7 @@ class Entity(Copyable):
         """
 
         if self.gravity:
-            self.acc = Vec(0, -20)
+            self.acc = Vec(0, -20) * self.mass
 
         self.pos += self.vel * delta
         self.vel += self.acc * delta

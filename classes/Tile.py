@@ -36,7 +36,7 @@ TILES = {
 class Tile(Copyable):
     """World tile, can be solid, interactive, etc."""
 
-    _save = ["neighbors"]
+    _save = ["neighbors", "rotation"]
     
     _TILES = {
         -1: None,
@@ -46,7 +46,7 @@ class Tile(Copyable):
 
     CONNECTED = False
     CONNECT_TO = None
-    HINT_SIZE = Vec(0.3, 0.3)
+    HINT_SIZE = Vec(0.5, 0.5)
     HINT_TEXTURE = None
 
     interactive = False
@@ -72,7 +72,7 @@ class Tile(Copyable):
         self.interact_hint = False
 
         if Tile.HINT_TEXTURE is None:
-            Tile.HINT_TEXTURE = Texture("interaction_hint", 0, width=64, height=64)
+            Tile.HINT_TEXTURE = Texture("interaction_hint", width=64, height=64)
     
     def __del__(self, *args, **kwargs):
         pass
