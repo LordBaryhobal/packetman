@@ -1,7 +1,6 @@
 #Packetman is a small game created in the scope of a school project
 #Copyright (C) 2022  Louis HEREDERO & Mathéo BENEY
 
-import codecs
 import glob
 import os
 import pygame
@@ -64,8 +63,8 @@ class TextManager:
                 if n: n += "."
                 n += os.path.splitext(f)[0]
 
-                with codecs.open(p, "r", "utf-8") as file_:
-                    TextManager._cache[n] = file_.read().strip().split(2*os.linesep)
+                with open(p, "r", encoding="utf-8") as file_:
+                    TextManager._cache[n] = file_.read().strip().split("\n\n")
                 
                 TextManager.LOADED += 1
 
@@ -98,7 +97,7 @@ class TextManager:
 
         if len(TM.lines) > 0:
             # Add empty line to leave space
-            lines = TM.lines[0].split(os.linesep)[::-1]
+            lines = TM.lines[0].split("\n")[::-1]
 
             s2 = pygame.Surface([W, H], pygame.SRCALPHA)
 

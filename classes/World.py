@@ -623,8 +623,8 @@ class World:
                 if event.key == pygame.K_e:
                     if interactive_entities or interactive_tiles:
                         event = Event(Event.INTERACTION)
-                        event.tiles = interactive_tiles
-                        event.entities = interactive_entities
+                        event.tiles = [interactive_tiles[0]] if interactive_tiles else []
+                        event.entities = [interactive_entities[0]] if interactive_entities else []
                         self.game.events.append(event)
     
     def reset(self):

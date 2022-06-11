@@ -89,6 +89,8 @@ class Button(Input):
     pressed = False
     rotatable = True
     
+    _save = ["neighbors", "rotation", "pressed"]
+    
     def __init__(self, x=0, y=0, type_=0, world=None):
         super().__init__(x, y, type_, world)
         self.rotation = 0
