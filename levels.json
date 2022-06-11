@@ -2,5 +2,9 @@
     {
         "name": "World 1: level 1",
         "level": "world1_lvl1"
+    },
+    {
+        "name": "World 1: level 3",
+        "level": "world1_lvl3"
     }
 ]
