@@ -55,24 +55,34 @@ class Circuit:
         if not isinstance(tile, Electrical):    
             return
             
-        if power:
-            tile.powered_by += 1
-        else:
-            tile.powered_by -= 1
-        tile.update_power()
         event = Event(Event.TILE_TRIGGER_UPDATE)
         event.tile = tile
         self.world.game.events.append(event)
+        
+        if isinstance(tile, Bridge):
+            if power:
+                tile.powered_by[connected_from in (1,3)] += 1
+            else:
+                tile.powered_by[connected_from in (1,3)] -= 1
+            if tile.neighbors & (1<<connected_from):
+                self.power_tiles(self.world.get_tile(tile.pos + tile.DIRECTION[connected_from]), connected_from, power)
 
+        else:
+            if power:
+                tile.powered_by += 1
+            else:
+                tile.powered_by -= 1
+            
+            if tile.neighbors & 1:
+                self.power_tiles(self.world.get_tile(tile.pos + Vec(0,1)), 0, power)
+            
+            if tile.neighbors & 2:
+                self.power_tiles(self.world.get_tile(tile.pos + Vec(1,0)), 1, power)
+            
+            if tile.neighbors & 4:
+                self.power_tiles(self.world.get_tile(tile.pos + Vec(0,-1)), 2, power)
+            
+            if tile.neighbors & 8:
+                self.power_tiles(self.world.get_tile(tile.pos + Vec(-1,0)), 3, power)
         
-        if tile.neighbors & 1:
-            self.power_tiles(self.world.get_tile(tile.pos + Vec(0,1)), 0, power)
-        
-        if tile.neighbors & 2:
-            self.power_tiles(self.world.get_tile(tile.pos + Vec(1,0)), 1, power)
-        
-        if tile.neighbors & 4:
-            self.power_tiles(self.world.get_tile(tile.pos + Vec(0,-1)), 2, power)
-        
-        if tile.neighbors & 8:
-            self.power_tiles(self.world.get_tile(tile.pos + Vec(-1,0)), 3, power)
+        tile.update_power()

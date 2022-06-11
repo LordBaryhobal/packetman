@@ -391,3 +391,40 @@ class PuzzleDoor(Wire):
             self.solid = True
             self.update_texture()
 PuzzleDoor.CONNECT_TO = (PuzzleDoor, )
+
+
+class Bridge(Electrical):
+    _TILES = {
+        0: "bridge"
+    }
+    DIRECTION = (Vec(0, 1), Vec(1, 0), Vec(0, -1), Vec(-1, 0))
+    
+    I18N_KEY = "bridge"
+
+    CONNECTED = True
+    
+    def __init__(self, x=0, y=0, type_=0, world=None):
+        self.powered = [False, False]
+        self.powered_by = [0,0]
+        super().__init__(x, y, type_, world)
+    
+    def update_power(self):
+        """Updates power state"""
+        if self.powered_by[0] > 0:
+            self.powered[0] = True
+        else:
+            self.powered[0] = False
+        
+        if self.powered_by[1] > 0:
+            self.powered[1] = True
+        else:
+            self.powered[1] = False
+        self.update_texture()
+    
+    def update_texture(self):
+        self.texture.id = self.neighbors + 16 * (int(self.powered[0]) + 2 * int(self.powered[1]))
+    
+    def reset_power(self):
+        self.powered_by = [0,0]
+        self.powered = [False, False]
+        self.update_texture()
