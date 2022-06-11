@@ -67,7 +67,10 @@ class Tile(Copyable):
         self.type = type_
         self.name = self._TILES[self.type]
         self.texture = Texture(self.name, self.type) if self.name else None
-        self.neighbors = 0
+        
+        if self.CONNECTED:
+            self.neighbors = 0
+        
         self.world = world
         self.interact_hint = False
 

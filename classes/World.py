@@ -347,7 +347,9 @@ class World:
             if hasattr(tile, "_save"):
                 for a in tile._save:
                     if hasattr(tile, a):
-                        attrs[a] = getattr(tile, a)
+                        # TODO: Remove later
+                        if a != "neighbors" or tile.CONNECTED:
+                            attrs[a] = getattr(tile, a)
             
             attrs = pickle.dumps(attrs)
             buf_tile.extend(attrs)
@@ -554,11 +556,12 @@ class World:
             
             if t:
                 tile.neighbors |= bit
-            elif tile:
+            elif tile and tile.CONNECTED:
                 tile.neighbors &= ~bit
+            
             if t2:
                 tile2.neighbors |= bit2
-            elif tile2:
+            elif tile2 and tile2.CONNECTED:
                 tile2.neighbors &= ~bit2
             
             if tile2:
