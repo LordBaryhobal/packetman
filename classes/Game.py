@@ -21,7 +21,7 @@ from classes.Settings import Settings
 from classes.SoundManager import SoundManager
 from classes.TextManager import TextManager
 from classes.Texture import Texture
-from classes.World import World
+from classes.World import World, AUTOSAVE_PATH
 from classes.entities.Triggers import Trigger
 from classes.ui.Constraints import *
 from classes.ui.GUI import GUI
@@ -40,6 +40,7 @@ class Game:
     WIDTH = 800
     HEIGHT = 600
 
+    AUTOSAVE_FREQ = 60
     MAX_FPS = 60
 
     PROGRESS_VER = 0
@@ -110,6 +111,8 @@ class Game:
 
         self.cur_lvl = 0
         self.load_progress()
+
+        pygame.time.set_timer(pygame.USEREVENT+1, self.AUTOSAVE_FREQ*1000)
         
         self.initialized = True
 
@@ -156,6 +159,10 @@ class Game:
                     
                     elif event.key == pygame.K_f:
                         self.finish_level()"""
+
+            elif event.type == pygame.USEREVENT+1:
+                if self.config["edition"]:
+                    self.autosave()
         
         # Entities and World
         if not self.config["edition"] and not self.paused and not self.cutscene:
@@ -395,10 +402,18 @@ class Game:
         container.children = []
 
         if self.config["edition"]:
+            # New
             level = self.level_comp.copy()
-            level.args = ("new", )
+            level.args = ("new", "new")
             level.text = "ui.levels.new"
             container.add(level)
+            
+            # Autosave
+            if os.path.isfile(AUTOSAVE_PATH):
+                level = self.level_comp.copy()
+                level.args = ("autosave", "autosave")
+                level.text = "ui.levels.autosave"
+                container.add(level)
 
         if not (self.config["edition"] or self.config["bypass_progress"]):
             levels = levels[:self.cur_lvl+1]
@@ -412,15 +427,15 @@ class Game:
         self.gui.switch_menu("levels_menu")
         return True
     
-    def cb_lvl(self, button, path):
+    def cb_lvl(self, button, path, special=None):
         Logger.debug(f"Selected level {path}")
         
-        if path == "new":
+        if special == "new":
             self.world.reset()
-        
+
         else:
             if self.config["edition"]:
-                self.world.load(path)
+                self.world.load(path, special=="autosave")
             else:
                 self.cutscene = Cutscene(self, None, path)
         
@@ -567,3 +582,6 @@ class Game:
         
         self.save_progress()
         self.cutscene = Cutscene(self, self.world.level_file, levels[i+1]["level"])
+    
+    def autosave(self):
+        self.world.save("autosave", autosave=True)

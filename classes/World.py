@@ -2,6 +2,8 @@
 #Copyright (C) 2022  Louis HEREDERO & Mathéo BENEY
 
 from math import floor, copysign
+import os
+import tempfile
 
 import numpy as np
 import pickle
@@ -19,6 +21,9 @@ from classes.Rect import Rect
 from classes.Tile import Tile
 from classes.Vec import Vec
 from classes.tiles.Components import Electrical
+
+
+AUTOSAVE_PATH = os.path.join(tempfile.gettempdir(), "packetman_autosave.dat")
 
 class World:
     """World class holding world tiles and entities. Also processes physics."""
@@ -317,14 +322,27 @@ class World:
                     if self.tiles[y, x] == 0:
                         self.tiles[y, x] = Tile(x, y, 0)
     
-    def save(self, filename):
+    def save(self, filename, autosave=False):
         """Saves the current level
 
         Arguments:
             filename {str} -- level name
+        
+        Keyword Arguments:
+            autosave {bool} -- if True, world is saved in temporary folder (default: {False})
         """
 
         Logger.info(f"Saving as '{filename}'")
+        
+        if autosave:
+            path = AUTOSAVE_PATH
+        
+        else:
+            path = Path("levels", filename+".dat")
+            
+            if os.path.isfile(AUTOSAVE_PATH):
+                os.remove(AUTOSAVE_PATH)
+
         buf_tiles = bytearray()
         buf_entities = bytearray()
 
@@ -385,7 +403,7 @@ class World:
         
         Logger.info("Writing to file")
 
-        with open(Path("levels", filename+".dat"), "wb") as f:
+        with open(path, "wb") as f:
             f.write(struct.pack(">I", self.SAVE_FORMAT))
             f.write(struct.pack(">I", len(buf_tiles) ))
             f.write(struct.pack(">I", len(buf_entities) ))
@@ -395,17 +413,29 @@ class World:
             f.write(buf_entities)
         
         Logger.info("Level saved successfully (maybe)")
-        self.level_file = filename
+        if not autosave:
+            self.level_file = filename
+            pygame.time.set_timer(pygame.USEREVENT+1, self.game.AUTOSAVE_FREQ*1000)
+
         self.game.events.append(Event(Event.WORLD_SAVED))
 
-    def load(self, filename):
+    def load(self, filename, autosave=False):
         """Loads a level
 
         Arguments:
             filename {str} -- level name
+        
+        Keyword Arguments:
+            autosave {bool} -- wether to load from temporary autosave file (default: {False})
         """
 
         Logger.info(f"Loading level '{filename}'")
+        
+        if autosave:
+            path = AUTOSAVE_PATH
+        
+        else:
+            path = Path("levels", filename+".dat")
 
         for tile in self.tiles.flatten():
             tile.__del__()
@@ -413,7 +443,7 @@ class World:
         for entity in self.entities:
             entity.__del__()
 
-        with open(Path("levels", filename+".dat"), "rb") as f:
+        with open(path, "rb") as f:
             save_format = struct.unpack(">I", f.read(4))[0]
 
             if save_format != self.SAVE_FORMAT:
