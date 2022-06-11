@@ -20,7 +20,7 @@ class TextManager:
     TOTAL = 0
     LOADED = 0
 
-    DELAY_PER_CHAR = 0.2
+    DELAY_PER_CHAR = 0.1
     FADE_DURATION = 0.5
     MARGIN = 10
     TIME_BAR = 2
