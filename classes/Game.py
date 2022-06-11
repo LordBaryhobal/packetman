@@ -16,6 +16,7 @@ from classes.Editor import Editor
 from classes.Event import Event, listener, on
 from classes.I18n import load_locale, i18n
 from classes.Logger import Logger
+from classes.MusicManager import MusicManager
 from classes.Path import Path
 from classes.Settings import Settings
 from classes.SoundManager import SoundManager
@@ -65,6 +66,8 @@ class Game:
         SoundManager()
         SoundManager.set_volume(self.settings.get("volume"))
         TextManager(self)
+
+        MusicManager()
         
         self.running = True
         self.paused = True
@@ -110,6 +113,9 @@ class Game:
 
         self.cur_lvl = 0
         self.load_progress()
+
+        # Starts the music
+        pygame.event.post(pygame.event.Event(pygame.USEREVENT+7, {}))
         
         self.initialized = True
 
@@ -156,6 +162,14 @@ class Game:
                     
                     elif event.key == pygame.K_f:
                         self.finish_level()"""
+            
+            # Play music
+            elif event.type == pygame.USEREVENT+7:
+                MusicManager.play()
+            
+            # Finished music
+            elif event.type == pygame.USEREVENT+8:
+                pygame.time.set_timer(pygame.USEREVENT+7, 5*1000, 1)
         
         # Entities and World
         if not self.config["edition"] and not self.paused and not self.cutscene:
