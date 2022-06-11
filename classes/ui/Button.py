@@ -29,7 +29,12 @@ class Button(Label):
         self.args = args
     
     def render(self, surface):
-        color = (255,150,50) if self.hover else (200, 100, 0)
+        #color = (255,150,50) if self.hover else (200, 100, 0)
+        #color = (150,255,50) if self.hover else (100, 200, 0)
+        #color = (50,150,255) if self.hover else (0, 100, 200)
+        #color = (150,50,255) if self.hover else (100, 0, 200)
+        #color = (50,255,150) if self.hover else (0, 200, 100)
+        color = (70,130,230) if self.hover else (50,100,200)
         pygame.draw.rect(surface, color, self.get_shape())
         super().render(surface)
     
