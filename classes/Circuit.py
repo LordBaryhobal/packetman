@@ -59,7 +59,7 @@ class Circuit:
         event.tile = tile
         self.world.game.events.append(event)
         
-        if isinstance(tile, Bridge):
+        if isinstance(tile, CrossWire):
             if power:
                 tile.powered_by[connected_from in (1,3)] += 1
             else:
