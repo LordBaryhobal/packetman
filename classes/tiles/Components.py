@@ -36,6 +36,18 @@ class Output(Electrical):
     _TILES = {
         0: "output"
     }
+    
+    def create_event(self, pressed):
+        neighbors = []
+        if self.world:
+            tile = self.world.get_tile(self.pos+self.DIRECTION[self.rotation])
+            if isinstance(tile, Electrical):
+                neighbors.append((self.rotation, tile))
+            if neighbors:
+                event = Event(Event.CIRCUIT_CHANGE)
+                event.power = pressed
+                event.tiles = neighbors
+                self.world.game.events.append(event)
 
 @listener
 class Plate(Input):
@@ -181,18 +193,6 @@ class Gate(Output, Input):
     DIRECTION = (Vec(0, 1), Vec(1, 0), Vec(0, -1), Vec(-1, 0))
 
     solid = True
-
-    def create_event(self, pressed):
-        neighbors = []
-        if self.world:
-            tile = self.world.get_tile(self.pos+self.DIRECTION[self.rotation])
-            if isinstance(tile, Electrical):
-                neighbors.append((self.rotation, tile))
-            if neighbors:
-                event = Event(Event.CIRCUIT_CHANGE)
-                event.power = pressed
-                event.tiles = neighbors
-                self.world.game.events.append(event)
     
     def rotate(self):
         self.rotation = (self.rotation + 1) % 4
