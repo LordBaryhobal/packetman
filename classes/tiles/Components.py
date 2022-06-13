@@ -393,13 +393,13 @@ class PuzzleDoor(Wire):
 PuzzleDoor.CONNECT_TO = (PuzzleDoor, )
 
 
-class Bridge(Electrical):
+class CrossWire(Electrical):
     _TILES = {
-        0: "bridge"
+        0: "crosswire"
     }
     DIRECTION = (Vec(0, 1), Vec(1, 0), Vec(0, -1), Vec(-1, 0))
     
-    I18N_KEY = "bridge"
+    I18N_KEY = "crosswire"
 
     CONNECTED = True
     
