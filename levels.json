@@ -10,5 +10,9 @@
     {
         "name": "World 1: level 3",
         "level": "world1_lvl3"
+    },
+    {
+        "name": "test_d_latch",
+        "level": "test_d_latch"
     }
 ]
