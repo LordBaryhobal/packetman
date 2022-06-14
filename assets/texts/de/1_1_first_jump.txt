@@ -1,0 +1,3 @@
+Die Türen öffnen sich, wenn sie elektrischen Strom erhalten.
+
+Drücke "e", um mit der Taste zu interagieren

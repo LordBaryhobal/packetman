@@ -1,0 +1,5 @@
+In this next circuit two new logic gates are used!
+
+The AND gate (green) lights up only if its 2 inputs are activated.
+
+and the OR gate (yellow) which lights up when at least one of its inputs is activated.

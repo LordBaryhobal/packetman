@@ -1,0 +1,5 @@
+Well done !
+
+Circuits can be modified when they pass through logic gates
+
+Here there is a buffer gate (blue) and a NOT gate (pink).

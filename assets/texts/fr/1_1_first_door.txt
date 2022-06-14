@@ -1,0 +1,5 @@
+Bien joué !
+
+Les circuits peuvent être modifiés quand ils passent par des portes logiques
+
+Ici il y a une porte tampon (bleu) et une porte NON (rose).

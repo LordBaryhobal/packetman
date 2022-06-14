@@ -1,0 +1,5 @@
+In dieser nächsten Schaltung werden zwei neue Logikgatter verwendet!
+
+Das UND-Gatter (grün) leuchtet nur, wenn seine beiden Eingänge aktiviert sind.
+
+und das ODER-Gatter (gelb), das seinerseits leuchtet, wenn mindestens einer seiner Eingänge aktiviert ist.
