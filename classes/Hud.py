@@ -45,7 +45,7 @@ class Hud:
             [Aluminium(), Brass(), Copper(), Gold(), Iron(), Lead(), Zinc()],
             [Insulator(), Plastic(), ThermalConductor(), Spike(), DetectionTile(), DroneSpawner()],
             [Plate(), Button(), Wire(), InsulatedWire(), BufferGate(), AndGate(), OrGate(), NotGate(), PuzzleDoor()],
-            [Bridge()],
+            [CrossWire()],
             [Hacker(), Robot(), Drone(type_=1), PlayerTrigger(), TileTrigger()]
         ]
 
