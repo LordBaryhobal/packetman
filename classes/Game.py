@@ -312,7 +312,7 @@ class Game:
             self.loading_state = 2
             SoundManager.load_all(self)
             self.loading_state = 3
-            TextManager.load_all(self)
+            TextManager.load_all(self, self.settings.get("lang"))
             self.loading_state = 4
             sleep(1)
             self.events.append(Event(Event.ASSETS_LOADED))

@@ -40,10 +40,13 @@ class TextManager:
         self.opacity = 0
         self.displaying = False
     
-    def load_all(game):
-        TextManager.TOTAL = len(glob.glob(Path("assets", "texts", "**", "*.txt"), recursive=True))
+    def load_all(game, lang="en"):
+        if not os.path.isdir(Path("assets", "texts", lang)):
+            lang = "en"
+        
+        TextManager.TOTAL = len(glob.glob(Path("assets", "texts", lang, "**", "*.txt"), recursive=True))
         TextManager.LOADED = 0
-        TextManager.load_walk(game, Path("assets", "texts"))
+        TextManager.load_walk(game, Path("assets", "texts", lang))
     
     def load_walk(game, path, name=""):
         content = os.listdir(path)
