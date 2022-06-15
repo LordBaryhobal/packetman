@@ -5,6 +5,8 @@ from classes.Event import Event, listener, on
 from classes.Tile import Tile
 from classes.Vec import Vec
 from classes.SoundManager import SoundManager
+from classes.entities.Triggers import Trigger
+from classes.Player import Player
 
 class Electrical(Tile):
     """Electrical component"""
@@ -387,9 +389,24 @@ class PuzzleDoor(Wire):
             self.solid = False
             self.update_texture()
         else:
+            if self.powered == True:
+                self.kill_entities()
             self.powered = False
             self.solid = True
             self.update_texture()
+    
+    def kill_entities(self):
+        """Kills entities inside the door"""
+        if self.world.game.config["edition"]:
+            return
+        tl, br = self.pos.get_tl_br_corners(self.pos + Vec(1, 1))
+        entities = self.world.get_entities_in_rect(tl, br)
+        entities_to_kill = filter(lambda e: not isinstance(e, Trigger), entities)
+        for e in entities_to_kill:
+            e.die()
+            if isinstance(e, Player):
+                break
+        
 PuzzleDoor.CONNECT_TO = (PuzzleDoor, )
 
 

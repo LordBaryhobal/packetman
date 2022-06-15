@@ -8,6 +8,7 @@ from classes.Rect import Rect
 from classes.Texture import Texture
 from classes.Utility import import_class
 from classes.Vec import Vec
+from classes.Event import Event
 
 ENTITIES = {
     "Bullet": "classes.entities.Bullet",
@@ -171,3 +172,10 @@ class Entity(Copyable):
             return "entity."+self.__class__.I18N_KEY
         
         return ""
+    
+    def die(self):
+        """Kills the entity"""
+        self.world.remove_entity(self)
+        event = Event(Event.DIE)
+        event.entity = self
+        self.world.game.events.append(event)
