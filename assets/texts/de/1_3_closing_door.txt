@@ -1,0 +1,2 @@
+Achtung!
+Wenn sich eine Tür vor einem Wesen schließt, stirbt es.

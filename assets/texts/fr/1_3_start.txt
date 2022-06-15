@@ -1,0 +1,6 @@
+Ce qui est devant toi est un drone !
+Ils peuvent activer les plaques de pression.
+
+Il peut être ativé et désactivé avec "e"
+
+quand il est activé il te suit.

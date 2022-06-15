@@ -1,0 +1,1 @@
+Les drones essayent de suivre le joueur même à travers les murs !

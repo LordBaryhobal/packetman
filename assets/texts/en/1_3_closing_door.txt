@@ -1,0 +1,2 @@
+Beware!
+When a door closes on an entity, it dies.
