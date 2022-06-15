@@ -1,0 +1,2 @@
+Now that you know the basic gates,
+you can try to solve these slightly more difficult circuits.
