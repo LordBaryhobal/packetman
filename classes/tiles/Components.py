@@ -10,6 +10,7 @@ from classes.Player import Player
 from classes.entities.Drone import Drone
 from classes.entities.Hacker import Hacker
 from classes.entities.Robot import Robot
+from classes.entities.Bullet import Bullet
 
 class Electrical(Tile):
     """Electrical component"""
@@ -107,13 +108,13 @@ class Button(Input):
     I18N_KEY = "button"
 
     interactive = True
-    pressed = False
     rotatable = True
     
     _save = ["neighbors", "rotation", "pressed"]
     
     def __init__(self, x=0, y=0, type_=0, world=None):
         super().__init__(x, y, type_, world)
+        self.pressed = False
         self.rotation = 0
         self.set_pressed(False)
 
@@ -452,3 +453,31 @@ class CrossWire(Electrical):
         self.powered_by = [0,0]
         self.powered = [False, False]
         self.update_texture()
+
+@listener
+class Target(Input):
+    
+    _TILES = {
+        0: "target"
+    }
+    I18N_KEY = "target"
+
+    solid = True
+    
+    def __init__(self, x=0, y=0, type_=0, world=None):
+        super().__init__(x, y, type_, world)
+        self.pressed = False
+    
+    @on(Event.COLLISION_WORLD)
+    def on_collision_world(self, event):
+        if self in event.tiles:
+            if isinstance(event.entity, Bullet):
+                self.toggle_power()
+    
+    def toggle_power(self):
+        self.pressed = not self.pressed
+        self.create_event(pressed=self.pressed)
+        self.update_texture()
+    
+    def update_texture(self):
+        self.texture.id = int(self.pressed)
