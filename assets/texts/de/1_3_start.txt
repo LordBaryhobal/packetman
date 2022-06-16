@@ -1,0 +1,6 @@
+Was hier vor dir liegt, ist eine Drohne!
+Sie können die Druckplatten aktivieren.
+
+Sie kann mit "e" aktiviert und deaktiviert werden.
+
+wenn sie eingeschaltet ist, folgt sie dir.

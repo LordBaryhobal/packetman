@@ -1,0 +1,2 @@
+Beware that what is on the ground are spikes!
+All entities that fall on them die

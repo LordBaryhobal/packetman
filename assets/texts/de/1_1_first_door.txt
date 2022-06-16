@@ -1,0 +1,5 @@
+Gut gemacht!
+
+Stromkreise können verändert werden, wenn sie durch Logikgatter gehen.
+
+Hier gibt es ein Puffer- und ein NICHT-Gatter.

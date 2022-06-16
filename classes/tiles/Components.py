@@ -5,6 +5,12 @@ from classes.Event import Event, listener, on
 from classes.Tile import Tile
 from classes.Vec import Vec
 from classes.SoundManager import SoundManager
+from classes.entities.Triggers import Trigger
+from classes.Player import Player
+from classes.entities.Drone import Drone
+from classes.entities.Hacker import Hacker
+from classes.entities.Robot import Robot
+from classes.entities.Bullet import Bullet
 
 class Electrical(Tile):
     """Electrical component"""
@@ -58,6 +64,8 @@ class Plate(Input):
     }
     I18N_KEY = "plate"
     
+    ACTIVATED_BY = (Player, Drone, Hacker, Robot)
+    
     def __init__(self, x=0, y=0, type_=0, world=None):
         super().__init__(x, y, type_, world)
         self.pressed = False
@@ -66,16 +74,18 @@ class Plate(Input):
     @on(Event.ENTER_TILE)
     def on_enter(self, event):
         if self in event.tiles:
-            if self.entity_count == 0:
-                self.change_pressed(True)
-            self.entity_count += 1
+            if isinstance(event.entity, self.ACTIVATED_BY):
+                if self.entity_count == 0:
+                    self.change_pressed(True)
+                self.entity_count += 1
     
     @on(Event.EXIT_TILE)
     def on_exit(self, event):
         if self in event.tiles:
-            self.entity_count -= 1
-            if self.entity_count == 0:
-                self.change_pressed(False)
+            if isinstance(event.entity, self.ACTIVATED_BY):
+                self.entity_count -= 1
+                if self.entity_count == 0:
+                    self.change_pressed(False)
     
     def change_pressed(self, pressed):
         """Updates pressed state
@@ -98,13 +108,13 @@ class Button(Input):
     I18N_KEY = "button"
 
     interactive = True
-    pressed = False
     rotatable = True
     
     _save = ["neighbors", "rotation", "pressed"]
     
     def __init__(self, x=0, y=0, type_=0, world=None):
         super().__init__(x, y, type_, world)
+        self.pressed = False
         self.rotation = 0
         self.set_pressed(False)
 
@@ -387,9 +397,24 @@ class PuzzleDoor(Wire):
             self.solid = False
             self.update_texture()
         else:
+            if self.powered == True:
+                self.kill_entities()
             self.powered = False
             self.solid = True
             self.update_texture()
+    
+    def kill_entities(self):
+        """Kills entities inside the door"""
+        if self.world.game.config["edition"]:
+            return
+        tl, br = self.pos.get_tl_br_corners(self.pos + Vec(1, 1))
+        entities = self.world.get_entities_in_rect(tl, br)
+        entities_to_kill = filter(lambda e: not isinstance(e, Trigger), entities)
+        for e in entities_to_kill:
+            e.die()
+            if isinstance(e, Player):
+                break
+        
 PuzzleDoor.CONNECT_TO = (PuzzleDoor, )
 
 
@@ -428,3 +453,31 @@ class CrossWire(Electrical):
         self.powered_by = [0,0]
         self.powered = [False, False]
         self.update_texture()
+
+@listener
+class Target(Input):
+    
+    _TILES = {
+        0: "target"
+    }
+    I18N_KEY = "target"
+
+    solid = True
+    
+    def __init__(self, x=0, y=0, type_=0, world=None):
+        super().__init__(x, y, type_, world)
+        self.pressed = False
+    
+    @on(Event.COLLISION_WORLD)
+    def on_collision_world(self, event):
+        if self in event.tiles:
+            if isinstance(event.entity, Bullet):
+                self.toggle_power()
+    
+    def toggle_power(self):
+        self.pressed = not self.pressed
+        self.create_event(pressed=self.pressed)
+        self.update_texture()
+    
+    def update_texture(self):
+        self.texture.id = int(self.pressed)

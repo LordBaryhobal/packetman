@@ -1,0 +1,2 @@
+Attention!
+Lorsqu'une porte se referme sur une entité, celle-ci meurt.

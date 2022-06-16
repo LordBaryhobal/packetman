@@ -1,0 +1,3 @@
+The doors open when they receive an electric current
+
+Press "e" to interact with the button

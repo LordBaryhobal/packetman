@@ -8,6 +8,8 @@ from classes.Rect import Rect
 from classes.Texture import Texture
 from classes.Utility import import_class
 from classes.Vec import Vec
+from classes.Event import Event
+from classes.SoundManager import SoundManager
 
 ENTITIES = {
     "Bullet": "classes.entities.Bullet",
@@ -36,6 +38,8 @@ class Entity(Copyable):
     HINT_SIZE = Vec(0.5,0.5)
     HINT_TEXTURE = None
     SIZE = Vec(0.5,0.5)
+    MAX_HEALTH = 1
+    HIT_SOUND = None
     
     force_render = False
     gravity = True
@@ -80,6 +84,8 @@ class Entity(Copyable):
         
         if Entity.HINT_TEXTURE is None:
             Entity.HINT_TEXTURE = Texture("interaction_hint", width=64, height=64)
+        
+        self.health = self.MAX_HEALTH
     
     def __del__(self, *args, **kwargs):
         pass
@@ -171,3 +177,28 @@ class Entity(Copyable):
             return "entity."+self.__class__.I18N_KEY
         
         return ""
+    
+    def hit(self, damage):
+        """Reduces the player's health by a given amount
+
+        Arguments:
+            damage {int} -- amount of damage to deal to the player
+        """
+        if self.HIT_SOUND:
+            SoundManager.play(self.HIT_SOUND)
+        self.health = max(self.health - damage, 0)
+        if self.health <= 0:
+            self.die()
+    
+    def die(self):
+        """Kills the entity"""
+        self.world.remove_entity(self)
+        event = Event(Event.DIE)
+        event.entity = self
+        self.world.game.events.append(event)
+        exit_tiles = list(filter(lambda t: t.name ,self.world.get_tiles_in_rect(*self.last_pos).flatten()))
+        if exit_tiles:
+            exit_event = Event(Event.EXIT_TILE)
+            exit_event.tiles = exit_tiles
+            exit_event.entity = self
+            self.world.game.events.append(exit_event)

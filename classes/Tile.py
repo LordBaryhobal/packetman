@@ -29,6 +29,7 @@ TILES = {
     "Plate": "classes.tiles.Components",
     "PuzzleDoor": "classes.tiles.Components",
     "Spike": "classes.tiles.Terrain",
+    "Target": "classes.tiles.Components",
     "ThermalConductor": "classes.tiles.Terrain",
     "Wire": "classes.tiles.Components",
     "Zinc": "classes.tiles.Metals"

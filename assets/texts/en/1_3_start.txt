@@ -1,0 +1,6 @@
+What is in front of you is a drone!
+They can activate pressure plates.
+
+It can be activated and deactivated with "e".
+
+when it is activated it follows you.

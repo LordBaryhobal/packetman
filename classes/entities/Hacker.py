@@ -56,7 +56,7 @@ class Hacker(Entity):
         SoundManager.play("entity.hacker.shoot")
         bullet_pos = self.pos + self.SIZE/2
         bullet_vel = (pos - bullet_pos).normalize() * self.BULLET_SPEED
-        self.world.add_entity(Bullet(bullet_pos, bullet_vel))
+        self.world.add_entity(Bullet(bullet_pos, bullet_vel, owner=self))
         self.last_shot = time()
     
     def render(self, surface, hud_surf, pos, size, dimensions=None):

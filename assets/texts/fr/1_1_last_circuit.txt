@@ -1,0 +1,5 @@
+Dans ce prochain circuit deux nouvelles portes logiques sont utilisées !
+
+La porte ET (vert) s'allume uniquement si ses 2 entrées sont activées.
+
+et la porte OU (jaune) qui, elle, s'allume quand au moins une de ses entrées est activée.
