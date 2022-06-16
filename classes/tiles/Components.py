@@ -7,6 +7,9 @@ from classes.Vec import Vec
 from classes.SoundManager import SoundManager
 from classes.entities.Triggers import Trigger
 from classes.Player import Player
+from classes.entities.Drone import Drone
+from classes.entities.Hacker import Hacker
+from classes.entities.Robot import Robot
 
 class Electrical(Tile):
     """Electrical component"""
@@ -60,6 +63,8 @@ class Plate(Input):
     }
     I18N_KEY = "plate"
     
+    ACTIVATED_BY = (Player, Drone, Hacker, Robot)
+    
     def __init__(self, x=0, y=0, type_=0, world=None):
         super().__init__(x, y, type_, world)
         self.pressed = False
@@ -68,16 +73,18 @@ class Plate(Input):
     @on(Event.ENTER_TILE)
     def on_enter(self, event):
         if self in event.tiles:
-            if self.entity_count == 0:
-                self.change_pressed(True)
-            self.entity_count += 1
+            if isinstance(event.entity, self.ACTIVATED_BY):
+                if self.entity_count == 0:
+                    self.change_pressed(True)
+                self.entity_count += 1
     
     @on(Event.EXIT_TILE)
     def on_exit(self, event):
         if self in event.tiles:
-            self.entity_count -= 1
-            if self.entity_count == 0:
-                self.change_pressed(False)
+            if isinstance(event.entity, self.ACTIVATED_BY):
+                self.entity_count -= 1
+                if self.entity_count == 0:
+                    self.change_pressed(False)
     
     def change_pressed(self, pressed):
         """Updates pressed state

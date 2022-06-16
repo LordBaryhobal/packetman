@@ -11,8 +11,8 @@ from classes.Event import Event, listener, on
 from classes.SoundManager import SoundManager
 from classes.Texture import Texture
 from classes.Vec import Vec
-from classes.Event import Event, listener, on
 from classes.tiles.DetectionTile import DetectionTile
+from classes.entities.Bullet import Bullet
 
 @listener
 class Player(Entity):
@@ -34,8 +34,11 @@ class Player(Entity):
     
     HB_LOGO = None
     HB_LOGO_SIZE = Vec(1,1)
-    MAX_HEALTH = 10
+    MAX_HEALTH = 3
     HB_SIZE = Vec(3, 1/4)
+    HIT_SOUND = "entity.player.hit"
+    BULLET_SPEED = 10
+    RELOAD_TIME = 1  # in seconds
 
     mass = 1.5
     
@@ -43,10 +46,10 @@ class Player(Entity):
         super().__init__(pos, vel, acc, type_, highlight, world)
         self.finishing_level = False
         self.last_step = time()
-        self.health = self.MAX_HEALTH
         if Player.HB_LOGO is None:
             Player.HB_LOGO = Texture("health_bar_logo")
         self.direction = 1 # 1 if facing right, -1 if facing left
+        self.last_shot = time()
     
     def jump(self):
         """Makes the player jump if on the ground"""
@@ -71,10 +74,17 @@ class Player(Entity):
             events {list[pygame.Event]} -- list of pygame events
         """
 
-        for event in events:
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE:
-                    self.jump()
+        """for event in events:
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    if time() - self.last_shot > self.RELOAD_TIME:
+                        self.shoot()"""
+        
+        if pygame.mouse.get_pressed()[0]:
+            if time() - self.last_shot > self.RELOAD_TIME:
+                self.shoot()
+                
+                
         
         keys = pygame.key.get_pressed()
         
@@ -85,6 +95,13 @@ class Player(Entity):
         if keys[pygame.K_a]:
             self.move(-1)
             self.direction = -1
+        
+        if keys[pygame.K_SPACE]:
+            self.jump()
+        
+        """if keys[pygame.K_f]:
+            if time() - self.last_shot > self.RELOAD_TIME:
+                self.shoot()"""
     
     @on(Event.ENTER_TILE)
     def on_enter_tile(self, event):
@@ -137,18 +154,16 @@ class Player(Entity):
         pygame.draw.rect(surf, color, (self.HB_LOGO_SIZE.x*size, self.HB_LOGO_SIZE.y*size*(1-self.HB_SIZE.y)/2, \
             (self.MAX_HEALTH-self.health)/self.MAX_HEALTH*size*self.HB_SIZE.x, self.HB_LOGO_SIZE.y*size*self.HB_SIZE.y), 0)
     
-    def get_hit(self, damage):
-        """Reduces the player's health by a given amount
-
-        Arguments:
-            damage {int} -- amount of damage to deal to the player
-        """
-
-        self.health = max(self.health - damage, 0)
-        if self.health <= 0:
-            self.die()
-    
     def die(self):
         """Kills the player"""
         SoundManager.play("entity.player.death")
         self.world.load(self.world.level_file)
+    
+    def shoot(self):
+        """Shoots a bullet"""
+        pos = self.world.game.camera.screen_to_world(Vec(*pygame.mouse.get_pos()), round_ = False)
+        SoundManager.play("entity.player.shoot")
+        bullet_pos = self.pos + self.SIZE/2
+        bullet_vel = (pos - bullet_pos).normalize() * self.BULLET_SPEED
+        self.world.add_entity(Bullet(bullet_pos, bullet_vel, owner=self))
+        self.last_shot = time()
