@@ -1,0 +1,1 @@
+Projectiles can activate and deactivate targets

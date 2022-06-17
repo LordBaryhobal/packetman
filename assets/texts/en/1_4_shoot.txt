@@ -1,0 +1,4 @@
+You can throw a projectile by pressing left click.
+This projectile will be thrown in the direction of the mouse.
+
+The projectile does damage to the entities it collides with.

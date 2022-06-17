@@ -1,0 +1,4 @@
+Tu peux lancer un projectile en appuyant sur clique gauche.
+Ce projectile sera lancé en direction de la souris.
+
+Le projectile fait des dégats aux entitées avec lesquelles il entre en collision.

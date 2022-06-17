@@ -1,0 +1,4 @@
+Du kannst ein Projektil abschießen, indem du die linke Maustaste drückst.
+Das Projektil wird in Richtung der Maus geschossen.
+
+Das Projektil richtet bei den Wesen, mit denen es kollidiert, Schaden an.
