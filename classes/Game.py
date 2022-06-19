@@ -150,7 +150,9 @@ class Game:
             
             elif event.type == pygame.KEYDOWN:
                 if not self.config["edition"]:
-                    pass
+                    if event.key == pygame.K_g:
+                        SoundManager.play("entity.player.death")
+                        self.world.load(self.world.level_file)
                     """if event.key == pygame.K_c:
                         self.cutscene = Cutscene(self, "level", "test_tiles")
                     
