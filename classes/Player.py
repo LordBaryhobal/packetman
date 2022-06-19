@@ -161,9 +161,9 @@ class Player(Entity):
     
     def shoot(self):
         """Shoots a bullet"""
-        pos = self.world.game.camera.screen_to_world(Vec(*pygame.mouse.get_pos()), round_ = False)
+        pos = self.world.game.camera.screen_to_world(Vec(*pygame.mouse.get_pos()), round_ = False) - Bullet.SIZE/2
         SoundManager.play("entity.player.shoot")
-        bullet_pos = self.pos + self.SIZE/2
+        bullet_pos = (self.pos + self.SIZE/2) - Bullet.SIZE/2
         bullet_vel = (pos - bullet_pos).normalize() * self.BULLET_SPEED
         self.world.add_entity(Bullet(bullet_pos, bullet_vel, owner=self))
         self.last_shot = time()
