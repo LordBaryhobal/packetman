@@ -25,7 +25,7 @@ class Drone(Entity):
 
     gravity = True
     interactive = True
-    speed = 2
+    speed = 3
     
     def __init__(self, pos=None, vel=None, acc=None, type_=None, highlight=False, world=None):
         super().__init__(pos, vel, acc, type_, highlight, world)
