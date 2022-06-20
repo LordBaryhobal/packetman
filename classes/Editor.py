@@ -380,6 +380,7 @@ class Editor:
                     tile = self.game.world.get_tile(world_mouse_pos)
                     if tile.rotatable:
                         tile.rotate()
+                        self.init_circuit_reset(tile)
                 
                 elif event.key == pygame.K_e:
                     world_mouse_pos = self.game.camera.screen_to_world(self.get_mousepos())
@@ -526,6 +527,15 @@ class Editor:
     def on_world_saved(self, event):
         if self.game.world.level_file:
             self.game.gui.get_by_name("level_name").value = self.game.world.level_file
+    
+    def init_circuit_reset(self, tile):
+        for offset in (Vec(1, 0), Vec(0, 1), Vec(-1, 0), Vec(0, -1)):
+            next_tile = self.game.world.get_tile(tile.pos+offset)
+            if next_tile and isinstance(next_tile, Electrical):
+                self.reset_circuit(next_tile)
+            self.update_notgates()
+            self.notgates = set()
+            self.visited_tiles = set()
         
     def reset_circuit(self, tile):
         if tile in self.visited_tiles:

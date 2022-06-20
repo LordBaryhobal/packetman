@@ -171,14 +171,7 @@ class World:
         self.tiles[pos.y, pos.x] = tile
         self.update_tile(pos)
         if reset_circuit:
-            for offset in (Vec(1, 0), Vec(0, 1), Vec(-1, 0), Vec(0, -1)):
-                next_tile = self.get_tile(tile.pos+offset)
-                if next_tile and isinstance(next_tile, Electrical):
-                    self.game.editor.reset_circuit(next_tile)
-            self.game.editor.update_notgates()
-            self.game.editor.notgates = set()
-            self.game.editor.visited_tiles = set()
-
+            self.game.editor.init_circuit_reset(tile)
     def get_tiles_in_rect(self, topleft, bottomright):
         """Get tiles overlapping with rectangle
 
