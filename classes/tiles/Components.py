@@ -420,7 +420,7 @@ PuzzleDoor.CONNECT_TO = (PuzzleDoor, )
 
 class CrossWire(Electrical):
     _TILES = {
-        0: "crosswire"
+        0: "crosswire2"
     }
     DIRECTION = (Vec(0, 1), Vec(1, 0), Vec(0, -1), Vec(-1, 0))
     
