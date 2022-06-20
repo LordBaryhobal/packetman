@@ -24,6 +24,10 @@
         "level": "components"
     },
     {
+        "name": "tiles",
+        "level": "tiles"
+    },
+    {
         "name": "test_d_latch",
         "level": "test_d_latch"
     }
