@@ -36,8 +36,8 @@ class Trigger(Entity):
         if not self.world or self.world.game.config["edition"]:
             super().render(surface, hud_surf, pos, size, dimensions)
         
-        elif self.triggered:
-            pygame.draw.rect(surface, (77,196,240), [pos.x,pos.y-self.SIZE.y*size,self.SIZE.x*size, self.SIZE.y*size],2)
+        """elif self.triggered:
+            pygame.draw.rect(surface, (77,196,240), [pos.x,pos.y-self.SIZE.y*size,self.SIZE.x*size, self.SIZE.y*size],2)"""
 
 @listener
 class PlayerTrigger(Trigger):

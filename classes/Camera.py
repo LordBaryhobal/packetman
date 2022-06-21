@@ -90,7 +90,7 @@ class Camera:
             editor_surf {pygame.Surface} -- surface to render selections on
         """
         
-        world_surf.fill((40,40,40))
+        world_surf.fill((70,70,70))
         hud_surf.fill((0,0,0,0))
         editor_surf.fill((0,0,0,0))
 

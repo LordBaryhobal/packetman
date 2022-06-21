@@ -262,6 +262,7 @@ class Game:
                 ])
         
         else:
+            self.camera.update_visible_entities()
             self.camera.render(self.world_surf, self.hud_surf, self.editor_surf)
             TextManager.render(self.hud_surf)
 

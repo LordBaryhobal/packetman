@@ -28,7 +28,7 @@ class Hud:
 
     MARGIN = 20
     SLOT_COL = (150,150,150)
-    SLOT_INDICATOR_COL = (200,80,80)
+    SLOT_INDICATOR_COL = (0,255,0)
 
     def __init__(self, game):
         """Initializes a Hud instance
