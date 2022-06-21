@@ -5,8 +5,9 @@ UI,ui.entity.velocity,Vitesse,Velocity,Geschwindigkeit
 UI,ui.main.choose_level,Choisir un niveau,Choose level,Level wählen
 UI,ui.main.settings,Paramètres,Settings,Einstellungen
 UI,ui.main.quit,Quitter,Quit,Verlassen
-UI,ui.levels.new,Nouveau niveau,New level,Neuer Level
+UI,ui.levels.autosave,Sauvegarde auto,Autosave,Automatisches Speichern
 UI,ui.levels.back,Retour au menu principal,Back to main menu,Zurück zum Hauptmenü
+UI,ui.levels.new,Nouveau niveau,New level,Neuer Level
 UI,ui.load_assets.loaded,Ressources chargées,Loaded assets,Ressourcen geladen
 UI,ui.load_assets.sounds,Chargement des sons,Loading sounds,Ladegeräusche
 UI,ui.load_assets.texts,Chargement des textes,Loading texts,Ladetexte
@@ -33,6 +34,7 @@ Tile,tile.brass,Laiton,Brass,Messing
 Tile,tile.buffer_gate,Porte tampon,Buffer gate,Puffergatter
 Tile,tile.button,Bouton,Button,Taste
 Tile,tile.copper,Cuivre,Copper,Kupfer
+Tile,tile.crosswire,Fils croisés,Crosswire,Kreuzdraht
 Tile,tile.detection_tile,Détecteur,Detector,Detektor
 Tile,tile.drone_spawner,Générateur de drone,Drone spawner,Spawner
 Tile,tile.gold,Or,Gold,Gold
@@ -46,6 +48,7 @@ Tile,tile.plastic,Plastique,Plastic,Plastik
 Tile,tile.plate,Plaque de pression,Pressure plate,Druckplatte
 Tile,tile.puzzle_door,Porte de puzzle,Puzzle door,Rätseltür
 Tile,tile.spike,Pic,Spike,Spike
+Tile,tile.target,Cible,Target,Ziel
 Tile,tile.thermal_conductor,Conducteur thermique,Thermal conductor,Wärmeleiter
 Tile,tile.wire,Cable,Wire,Kabel
 Tile,tile.zinc,Zinc,Zinc,Zink
