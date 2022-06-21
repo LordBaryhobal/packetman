@@ -1,8 +1,8 @@
 {
-    "edition": true,
-    "loglevel": 15,
+    "edition": false,
+    "loglevel": 7,
     "number_of_tiles": 15,
-    "bypass_progress": true,
+    "bypass_progress": false,
 
     "gui": {
         "editor": {
