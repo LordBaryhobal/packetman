@@ -16,6 +16,10 @@
         "level": "world1_lvl4"
     },
     {
+        "name": "World 1: level 5",
+        "level": "world1_lvl5"
+    },
+    {
         "name": "test_d_latch",
         "level": "test_d_latch"
     }
