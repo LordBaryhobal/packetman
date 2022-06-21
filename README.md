@@ -21,7 +21,7 @@ Packetman is a 2D platformer taking place in a computer. Its goal, other than en
 2. Clone this repository on your machine.
 3. Navigate to the downloaded folder
 4. Run `pip install -r requirements.txt`. This will install all the needed Python modules.
-5. In the game folder, run `main.py` or, if you have VS Code installed, you can the folder and run one of the launch configs.
+5. In the game folder, run `main.py` or, if you have VS Code installed, you can open the folder and run one of the launch configs.
 
 ### 2.2 Playing
 No tutorial is given for the game but elements are explained throughout the levels.
