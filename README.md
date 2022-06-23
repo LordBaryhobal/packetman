@@ -10,6 +10,7 @@
   - [3.1 Report issues](#31-report-issues)
   - [3.2 Ideas & Pull Requests](#32-ideas--pull-requests)
 - [4. Copyright](#4-copyright)
+- [5. Spreadsheets](#5-spreadsheets)
 
 ## 1. What is it ?
 Packetman is a 2D platformer taking place in a computer. Its goal, other than entertainment, is to teach the concepts and structures behind networking and internet communication. It is entirely coded in Python using Pygame. It was originally started as a project for a computer course but is now more a personnal project to practice different programming skills.
@@ -41,3 +42,6 @@ You can also fork the repository and create pull requests.
 
 ## 4. Copyright
 You are free to use this project in any way or form, even for commercial purposes, as long as you keep the same license (GPL-3.0) and credit the orignal authors.
+
+## 5. Spreadsheets
+You an access the different spreadsheets listing all translations, texts, sounds, settings and save format through by clicking [here](https://docs.google.com/spreadsheets/d/1mztYjDFp3rQhIc3oBZIXcrTSugGvXeVyIbywnN1AFCc/edit?usp=sharing).
