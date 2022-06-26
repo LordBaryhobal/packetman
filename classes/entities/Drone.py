@@ -47,9 +47,12 @@ class Drone(Entity):
             
             current_pos = self.pos + self.SIZE/2
             
-            direction = (player_pos-current_pos).normalize()
-            self.direction = copysign(1, direction.x)
-            self.vel = direction * self.speed
+            if player_pos.distance_to(current_pos) > 0.2:
+                direction = (player_pos-current_pos).normalize()
+                self.direction = copysign(1, direction.x)
+                self.vel = direction * self.speed
+            else:
+                self.vel *= 0
     
     @on(Event.INTERACTION)
     def on_interract(self, event):
