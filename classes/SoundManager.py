@@ -95,7 +95,9 @@ class SoundManager:
             s = choice(SoundManager._cache[sound])
             s.play().set_volume(SoundManager.volume)
         else:
-            SoundManager._cache[sound].play().set_volume(SoundManager.volume)
+            s = SoundManager._cache[sound].play()
+            if s:
+                s.set_volume(SoundManager.volume)
     
     def set_volume(volume):
         """Sets playback volume
