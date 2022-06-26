@@ -44,4 +44,4 @@ You can also fork the repository and create pull requests.
 You are free to use this project in any way or form, even for commercial purposes, as long as you keep the same license (GPL-3.0) and credit the orignal authors.
 
 ## 5. Spreadsheets
-You an access the different spreadsheets listing all translations, texts, sounds, settings and save format through by clicking [here](https://docs.google.com/spreadsheets/d/1mztYjDFp3rQhIc3oBZIXcrTSugGvXeVyIbywnN1AFCc/edit?usp=sharing).
+You can access the different spreadsheets listing all translations, texts, sounds, settings and save format by clicking [here](https://docs.google.com/spreadsheets/d/1mztYjDFp3rQhIc3oBZIXcrTSugGvXeVyIbywnN1AFCc/edit?usp=sharing).
