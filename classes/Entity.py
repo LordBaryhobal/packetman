@@ -140,17 +140,52 @@ class Entity(Copyable):
             delta {float} -- time elapsed in last frame in seconds
         """
 
-        if self.gravity:
+        x,y = self.pos
+        vx,vy = self.vel
+
+        ax, ay = self.accel(x, y, vx, vy)
+        h2 = delta/2
+        h6 = delta/6
+        
+        q1x, q1y = vx + h2*ax, vy + h2*ay
+        k1x, k1y = self.accel(x+h2*vx, y+h2*vy, q1x, q1y)
+        
+        q2x, q2y = vx + h2*k1x, vy + h2*k1y
+        k2x, k2y = self.accel(x+h2*q1x, y+h2*q1y, q2x, q2y)
+        
+        q3x, q3y = vx + delta*k2x, vy + delta*k2y
+        k3x, k3y = self.accel(x+delta*q2x, y+delta*q2y, q3x, q3y)
+        
+        
+        self.pos.x += delta * (vx + h6*(ax + k1x + k2x))
+        self.pos.y += delta * (vy + h6*(ay + k1y + k2y))
+        
+        self.vel.x += h6*(ax + 2*k1x + 2*k2x + k3x)
+        self.vel.y += h6*(ay + 2*k1y + 2*k2y + k3y)
+
+        """if self.gravity:
             self.acc = Vec(0, -20) * self.mass
 
         self.pos += self.vel * delta
-        self.vel += self.acc * delta
+        self.vel += self.acc * delta"""
         
         self.pos = round(self.pos, 6)
         self.vel = round(self.vel, 6)
         self.acc = round(self.acc, 6)
 
         self.update()
+    
+    def accel(self, x, y, vx, vy):
+        """fx, fy = 0, -10*self.mass
+        
+        ax = fx/self.mass
+        ay = fy/self.mass
+        
+        return (ax, ay)"""
+        ax, ay = 0, 0
+        if self.gravity:
+            ay = -30
+        return (ax, ay)
     
     def update(self):
         """Updates the entity's hitbox"""
