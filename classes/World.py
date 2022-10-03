@@ -225,7 +225,9 @@ class World:
         collided = False
         collided_with = []
 
-        vel = entity.vel - entity.acc*delta
+        #vel = entity.vel - entity.acc*delta
+        if entity.last_pos is None: return
+        vel = Vec(entity.pos.x-entity.last_pos[0].x, entity.pos.y-entity.last_pos[0].y+entity.SIZE.y)/delta
         v = vel.length
 
         tl = Vec( int(entity.pos.x), int(entity.pos.y+entity.box.h))
