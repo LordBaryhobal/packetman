@@ -76,8 +76,8 @@ class Camera:
         self.pos = self.pos.max(Vec())  # clamp to (0;0)
         
         # According to the screen
-        bottomright = self.screen_to_world(Vec(self.game.WIDTH, self.game.HEIGHT))
-        topleft = self.screen_to_world(Vec())
+        bottomright = self.screen_to_world(Vec(self.game.WIDTH, self.game.HEIGHT), round_=False)
+        topleft = self.screen_to_world(Vec(),round_=False)
 
         self.visible_entities = self.game.world.get_entities_in_rect(topleft, bottomright, True)
 
