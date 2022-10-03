@@ -183,8 +183,7 @@ class Entity(Copyable):
         
         return (ax, ay)"""
         ax, ay = 0, 0
-        if self.gravity:
-            ay = -30
+        
         return (ax, ay)
     
     def update(self):
