@@ -35,8 +35,8 @@ class Camera:
 
         if self.follow_player:
             player = self.game.world.player
-            player_tl = self.world_to_screen(Vec(player.pos.x, player.pos.y+player.box.h))
-            player_br = self.world_to_screen(Vec(player.pos.x+player.box.w, player.pos.y))
+            player_tl = self.world_to_screen(player.pos)
+            player_br = self.world_to_screen(player.pos+player.box)
             
             W, H = self.game.WIDTH, self.game.HEIGHT
             hm, vm = W/3, H/3
@@ -49,9 +49,9 @@ class Camera:
                 self.pos.x += player_br.x-W+hm
             
             if player_tl.y < vm:                # bottom
-                self.pos.y += vm-player_tl.y
+                self.pos.y -= vm-player_tl.y
             elif player_br.y > H-vm:            # top
-                self.pos.y -= player_br.y-H+vm
+                self.pos.y += player_br.y-H+vm
             
             self.pos = self.pos.max(Vec(0,0))
             
@@ -67,6 +67,7 @@ class Camera:
         # According to the screen
         bottomright = self.screen_to_world(Vec(self.game.WIDTH, self.game.HEIGHT))
         topleft = self.screen_to_world(Vec())
+        print(topleft, bottomright)
         
         self.visible_tiles = self.game.world.get_tiles_in_rect(topleft, bottomright).flatten()
     
@@ -116,7 +117,7 @@ class Camera:
             Vec -- world coordinates
         """
 
-        pos = (Vec(pos.x, self.game.HEIGHT-pos.y) + self.pos)/self.tilesize
+        pos = (pos + self.pos)/self.tilesize
         return floor(pos) if round_ else pos
 
     def world_to_screen(self, pos):
@@ -129,7 +130,4 @@ class Camera:
             Vec -- screen coordinates
         """
 
-        return Vec(
-            pos.x*self.tilesize - self.pos.x,
-            self.game.HEIGHT - pos.y*self.tilesize + self.pos.y
-        )
+        return pos*self.tilesize - self.pos

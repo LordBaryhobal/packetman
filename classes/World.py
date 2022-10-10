@@ -64,6 +64,8 @@ class World:
             entity.on_ground = False
             
             # Check tiles a little bit below to see if entity is on the ground
+            # TODO: refaire
+            """
             if entity.vel.y <= 0:
                 tiles_below = self.get_tiles_in_rect(
                     floor( entity.pos + Vec(0, -0.001) ),
@@ -80,15 +82,11 @@ class World:
                             else:
                                 entity.play_step(material="not_metal")
                     entity.on_ground = True
-                    entity.vel.x = 0
+                    entity.vel.x = 0"""
             
             if isinstance(entity, Player):
                 entity.vel.x *= 0.95
-            
-            if entity.on_ground and not was_on_ground:
-                event = Event(Event.HIT_GROUND)
-                event.entity = entity
-                self.game.events.append(event)
+                entity.vel.y *= 0.95
             
             # Check entity/entity collisions
             if i != count-1:
@@ -209,7 +207,7 @@ class World:
             list[Entity] -- array of entities
         """
 
-        rect = Rect(topleft.x, bottomright.y, bottomright.x-topleft.x, topleft.y-bottomright.y)
+        rect = Rect(topleft.x, topleft.y, bottomright.x, bottomright.y)
 
         return list(filter(lambda e: e.box.overlaps(rect) \
             or (with_force_render and e.force_render), self.entities))
@@ -230,11 +228,14 @@ class World:
         vel = Vec(entity.pos.x-entity.last_pos[0].x, entity.pos.y-entity.last_pos[0].y+entity.SIZE.y)/delta
         v = vel.length
 
-        tl = Vec( int(entity.pos.x), int(entity.pos.y+entity.box.h))
-        br = Vec( int(entity.pos.x+entity.box.w), int(entity.pos.y))
+        #tl = Vec( int(entity.pos.x), int(entity.pos.y+entity.box.h))
+        #br = Vec( int(entity.pos.x+entity.box.w), int(entity.pos.y))
+        tl = Vec(int(entity.pos.x), int(entity.pos.y))
+        br = Vec(int(entity.pos.x+entity.box.w), int(entity.pos.y+entity.box.h))
 
         tiles = self.get_tiles_in_rect(tl, br).flatten()
 
+        """
         if entity.pos.x < 0:
             tiles = np.append(tiles, Tile(floor(entity.pos.x), floor(entity.pos.y-1), -1))
             tiles = np.append(tiles, Tile(floor(entity.pos.x), floor(entity.pos.y), -1))
@@ -244,9 +245,10 @@ class World:
             tiles = np.append(tiles, Tile(floor(entity.pos.x-1), floor(entity.pos.y), -1))
             tiles = np.append(tiles, Tile(floor(entity.pos.x), floor(entity.pos.y), -1))
             tiles = np.append(tiles, Tile(floor(entity.pos.x+1), floor(entity.pos.y), -1))
+        """
         
         # Order according to speed -> going right = sort from left to right
-        #                             going up = sort from botton to top
+        #                             going down = sort from top to bottom
         tiles = sorted(tiles, key=lambda t: copysign(t.pos.x,vel.x)+copysign(t.pos.y,vel.y))
 
         for tile in tiles:
