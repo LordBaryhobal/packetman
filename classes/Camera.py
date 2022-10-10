@@ -67,7 +67,6 @@ class Camera:
         # According to the screen
         bottomright = self.screen_to_world(Vec(self.game.WIDTH, self.game.HEIGHT))
         topleft = self.screen_to_world(Vec())
-        print(topleft, bottomright)
         
         self.visible_tiles = self.game.world.get_tiles_in_rect(topleft, bottomright).flatten()
     
