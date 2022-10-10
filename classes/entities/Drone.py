@@ -30,7 +30,7 @@ class Drone(Entity):
     def __init__(self, pos=None, vel=None, acc=None, type_=None, highlight=False, world=None):
         super().__init__(pos, vel, acc, type_, highlight, world)
         self.following = False
-        self.direction = 1
+        self.direction = Vec(1,0)
     
     def handle_events(self, events):
         """Handles events
@@ -49,7 +49,7 @@ class Drone(Entity):
             
             if player_pos.distance_to(current_pos) > 0.2:
                 direction = (player_pos-current_pos).normalize()
-                self.direction = copysign(1, direction.x)
+                self.direction.x = copysign(1, direction.x)
                 self.vel = direction * self.speed
             else:
                 self.vel *= 0

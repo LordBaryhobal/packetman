@@ -28,7 +28,7 @@ class Robot(Entity):
     
     def __init__(self, pos=None, vel=None, acc=None, type_=None, highlight=False, world=None):
         super().__init__(pos, vel, acc, type_, highlight, world)
-        self.direction = 0  # -1 = left, 1 = right
+        self.direction = Vec(1,0)  # -1 = left, 1 = right
         self.speed = uniform(1,3)
     
     def jump(self):
@@ -44,7 +44,7 @@ class Robot(Entity):
             direction {int} -- negative if moving left, positive if moving right
         """
 
-        self.vel.x = copysign(self.speed, direction)
+        self.vel.x = copysign(self.speed, direction.x)
     
     def handle_events(self, events):
         """Handles event
@@ -59,7 +59,7 @@ class Robot(Entity):
         player = self.world.player
         player_pos = player.pos + player.SIZE/2
         if player_pos.distance_to(self.pos + self.SIZE/2) <= self.VIEW_DISTANCE:
-            self.direction = copysign(1, self.world.player.pos.x - self.pos.x)
+            self.direction.x = copysign(1, self.world.player.pos.x - self.pos.x)
             self.move(self.direction)
         
             if player_pos.y - self.pos.y - self.SIZE.y/2 > 0.5:

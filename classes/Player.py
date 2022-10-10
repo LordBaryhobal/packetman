@@ -48,15 +48,8 @@ class Player(Entity):
         self.last_step = time()
         if Player.HB_LOGO is None:
             Player.HB_LOGO = Texture("health_bar_logo")
-        self.direction = 1 # 1 if facing right, -1 if facing left
+        self.direction = Vec(1,0) # 1 if facing right, -1 if facing left
         self.last_shot = time()
-    
-    def jump(self):
-        """Makes the player jump if on the ground"""
-
-        if self.on_ground:
-            self.vel.y = self.JUMP_SPEED
-            SoundManager.play("entity.player.jump")
     
     def move(self, direction):
         """Moves the player horizontally
@@ -64,8 +57,20 @@ class Player(Entity):
         Arguments:
             direction {int} -- negative if moving left, positive if moving right
         """
-
-        self.vel.x = copysign(self.speed, direction)
+        if direction.x == 0:
+            self.direction.x = 0
+            self.vel.x = 0
+        else:
+            self.vel.x = copysign(self.speed, direction.x)
+            self.direction.x = direction.x
+        
+        if direction.y == 0:
+            self.direction.y = 0
+            self.vel.y = 0
+        else:
+            self.vel.y = copysign(self.speed, direction.y)
+            self.direction.y = direction.y
+        self.vel.y = copysign(self.speed, direction.y)
     
     def handle_events(self, events):
         """Handles events for the player
@@ -84,24 +89,24 @@ class Player(Entity):
             if time() - self.last_shot > self.RELOAD_TIME:
                 self.shoot()
                 
-                
+    
+        move_vec = Vec()
         
         keys = pygame.key.get_pressed()
         
         if keys[pygame.K_d]:
-            self.move(1)
-            self.direction = 1
+            move_vec.x += 1
         
         if keys[pygame.K_a]:
-            self.move(-1)
-            self.direction = -1
+            move_vec.x -= 1
         
-        if keys[pygame.K_SPACE]:
-            self.jump()
+        if keys[pygame.K_w]:
+            move_vec.y -= 1
+    
+        if keys[pygame.K_s]:
+            move_vec.y += 1
         
-        """if keys[pygame.K_f]:
-            if time() - self.last_shot > self.RELOAD_TIME:
-                self.shoot()"""
+        self.move(move_vec)
     
     @on(Event.ENTER_TILE)
     def on_enter_tile(self, event):
