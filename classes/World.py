@@ -188,7 +188,7 @@ class World:
         bottomright = floor(bottomright)
         self.modify_tilelistlen(bottomright.max(topleft))
 
-        return self.tiles[bottomright.y:topleft.y+1, topleft.x:bottomright.x+1]
+        return self.tiles[topleft.y:bottomright.y+1, topleft.x:bottomright.x+1]
     
     def get_entities_in_rect(self, topleft, bottomright, with_force_render=False):
         """Get entities overlapping with rectangle
