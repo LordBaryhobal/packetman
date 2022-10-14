@@ -130,4 +130,4 @@ class Texture(Copyable):
         if flip:
             img = pygame.transform.flip(img, True, False)
 
-        surface.blit(img, [pos.x, pos.y-h], [x, y, w, h])
+        surface.blit(img, [pos.x, pos.y], [x, y, w, h])
