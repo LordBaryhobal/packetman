@@ -36,7 +36,7 @@ class Camera:
         if self.follow_player:
             player = self.game.world.player
             player_tl = self.world_to_screen(player.pos)
-            player_br = self.world_to_screen(player.pos+player.box)
+            player_br = self.world_to_screen(player.pos+Vec(player.box.w, player.box.h))
             
             W, H = self.game.WIDTH, self.game.HEIGHT
             hm, vm = W/3, H/3
