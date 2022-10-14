@@ -30,13 +30,6 @@ class Robot(Entity):
         super().__init__(pos, vel, acc, type_, highlight, world)
         self.direction = Vec(1,0)  # -1 = left, 1 = right
         self.speed = uniform(1,3)
-    
-    def jump(self):
-        """Makes the Robot jump if on the ground"""
-
-        if self.on_ground:
-            self.vel.y = self.JUMP_SPEED
-    
     def move(self, direction):
         """Moves the robot horizontally
 
@@ -61,9 +54,6 @@ class Robot(Entity):
         if player_pos.distance_to(self.pos + self.SIZE/2) <= self.VIEW_DISTANCE:
             self.direction.x = copysign(1, self.world.player.pos.x - self.pos.x)
             self.move(self.direction)
-        
-            if player_pos.y - self.pos.y - self.SIZE.y/2 > 0.5:
-                self.jump()
     
     def render(self, surface, hud_surf, pos, size, dimensions=None):
         super().render(surface, hud_surf, pos, size, dimensions)
