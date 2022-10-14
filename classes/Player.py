@@ -27,7 +27,7 @@ class Player(Entity):
     I18N_KEY = "player"
     
     JUMP_SPEED = 14
-    SIZE = Vec(0.75,1.5)
+    SIZE = Vec(0.8,0.8)
     
     speed = 5
     TIME_STEP = 0.3
