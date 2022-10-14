@@ -207,7 +207,7 @@ class World:
             list[Entity] -- array of entities
         """
 
-        rect = Rect(topleft.x, topleft.y, bottomright.x, bottomright.y)
+        rect = Rect(topleft.x, topleft.y, bottomright.x-topleft.x, bottomright.y-topleft.y)
 
         return list(filter(lambda e: e.box.overlaps(rect) \
             or (with_force_render and e.force_render), self.entities))
