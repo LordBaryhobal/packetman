@@ -630,8 +630,8 @@ class World:
             # Get the tiles around the player
             player = self.player
             
-            pos1 = player.pos + (player.SIZE * Vec(0, 1)) + Vec(-0.25, 0.25)
-            pos2 = player.pos + (player.SIZE * Vec(1, 0)) + Vec(0.25, -0.25)
+            pos1 = player.pos + Vec(-0.25, -0.25)
+            pos2 = player.pos + player.SIZE + Vec(0.25, 0.25)
             
             tiles = self.get_tiles_in_rect(pos1, pos2)
             interactive_tiles = list(filter(lambda t: t.interactive, list(tiles.flatten())))
