@@ -70,7 +70,6 @@ class Player(Entity):
         else:
             self.vel.y = copysign(self.speed, direction.y)
             self.direction.y = direction.y
-        self.vel.y = copysign(self.speed, direction.y)
     
     def handle_events(self, events):
         """Handles events for the player
