@@ -147,7 +147,6 @@ class Editor:
                         tl, br = self.selection[1].get_tl_br_corners(self.selection[2])
                         
                         self.selected_tiles = self.game.world.get_tiles_in_rect(tl, br).copy()
-                        print(self.selected_tiles)
                         self.modify_selection(Tile, 0)
                         
                         self.start_move_pos = self.game.camera.screen_to_world(self.get_mousepos())
@@ -253,12 +252,11 @@ class Editor:
                             self.highlight_entities(self.selected_entities, highlight=False)
                             
                         else:
-                            bl, tr = self.selection[1].get_tl_br_corners(self.selection[2])
-                            self.selection = [2, bl, tr]
+                            tl, br = self.selection[1].get_tl_br_corners(self.selection[2])
+                            self.selection = [2, tl, br]
                             
                             if self.select_entities:
                                 # Get the top-left and bottom-right corners of the selection
-                                tl, br = self.selection[1].get_tl_br_corners(self.selection[2])
                                 br += Vec(1, 1)
                                 self.selected_entities = self.game.world.get_entities_in_rect(tl, br)
                                 self.highlight_entities(self.selected_entities, highlight=True)
@@ -307,9 +305,9 @@ class Editor:
                 
                 # Copy the selection
                 elif event.key == pygame.K_c and event.mod & pygame.KMOD_CTRL and self.selection[0] == 2 and self.placing == 0:
-                    v1, v2 = self.selection[1].get_tl_br_corners(self.selection[2])
+                    tl, br = self.selection[1].get_tl_br_corners(self.selection[2])
                         
-                    self.copied_tiles = self.game.world.get_tiles_in_rect(v1, v2).copy()
+                    self.copied_tiles = self.game.world.get_tiles_in_rect(tl, br).copy()
                     for y,row in enumerate(self.copied_tiles):
                         for x,tile in enumerate(row):
                             self.copied_tiles[y, x] = tile.copy()
@@ -420,11 +418,11 @@ class Editor:
             mousepos = self.game.camera.screen_to_world(self.get_mousepos())
             v1 = self.game.camera.world_to_screen(self.selection[1])
             v2 = self.game.camera.world_to_screen(mousepos)
-            bl, tr = v1.get_tl_br_corners(v2)
+            tl, br = v1.get_tl_br_corners(v2)
             
             self.boundingbox.from_vectors(
-                bl,
-                tr+Vec(self.game.camera.tilesize, self.game.camera.tilesize)
+                tl,
+                br+Vec(self.game.camera.tilesize, self.game.camera.tilesize)
             )
             self.boundingbox.render(editor_surf, (100,100,100), 5)
             
@@ -449,11 +447,11 @@ class Editor:
             # Render the selection
             v1 = self.game.camera.world_to_screen(self.selection[1]+displacement)
             v2 = self.game.camera.world_to_screen(self.selection[2]+displacement)
-            bl, tr = v1.get_tl_br_corners(v2)
+            tl, br = v1.get_tl_br_corners(v2)
             
             self.boundingbox.from_vectors(
-                bl,
-                tr+Vec(self.game.camera.tilesize, self.game.camera.tilesize)
+                tl,
+                br+Vec(self.game.camera.tilesize, self.game.camera.tilesize)
             )
             self.boundingbox.render(editor_surf, (100,100,100), 5)
         
@@ -471,11 +469,11 @@ class Editor:
             )
             v1 = self.game.camera.world_to_screen(pos)
             v2 = self.game.camera.world_to_screen(pos + size)
-            bl, tr = v1.get_tl_br_corners(v2)
+            tl, br = v1.get_tl_br_corners(v2)
             
             self.boundingbox.from_vectors(
-                bl,
-                tr+Vec(self.game.camera.tilesize,self.game.camera.tilesize)
+                tl,
+                br+Vec(self.game.camera.tilesize,self.game.camera.tilesize)
             )
             self.boundingbox.render(editor_surf, (100,100,100), 5)
             
