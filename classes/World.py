@@ -97,7 +97,8 @@ class World:
                         self.game.events.append(event)
             
             # Store current top-left and bottom-right corners
-            current_pos = [entity.pos + entity.SIZE*Vec(0, 1), entity.pos + entity.SIZE*Vec(1, 0)]
+            # .copy() is very very important (read with indian accent)
+            current_pos = [entity.pos.copy(), entity.pos + entity.SIZE]
 
             if entity.last_pos is None:
                 entity.last_pos = current_pos
@@ -111,6 +112,7 @@ class World:
                     self.game.events.append(event)
             else:
                 if floor(entity.last_pos[0]) == floor(current_pos[0]) and floor(entity.last_pos[1]) == floor(current_pos[1]):
+                    entity.last_pos = current_pos
                     continue
                 
                 last_tiles = self.get_tiles_in_rect(*entity.last_pos).flatten()
@@ -225,7 +227,7 @@ class World:
 
         #vel = entity.vel - entity.acc*delta
         if entity.last_pos is None: return
-        vel = Vec(entity.pos.x-entity.last_pos[0].x, entity.pos.y-entity.last_pos[0].y+entity.SIZE.y)/delta
+        vel = Vec(entity.pos.x-entity.last_pos[0].x, entity.pos.y-entity.last_pos[0].y)/delta
         v = vel.length
 
         #tl = Vec( int(entity.pos.x), int(entity.pos.y+entity.box.h))
@@ -234,18 +236,6 @@ class World:
         br = Vec(int(entity.pos.x+entity.box.w), int(entity.pos.y+entity.box.h))
 
         tiles = self.get_tiles_in_rect(tl, br).flatten()
-
-        """
-        if entity.pos.x < 0:
-            tiles = np.append(tiles, Tile(floor(entity.pos.x), floor(entity.pos.y-1), -1))
-            tiles = np.append(tiles, Tile(floor(entity.pos.x), floor(entity.pos.y), -1))
-            tiles = np.append(tiles, Tile(floor(entity.pos.x), floor(entity.pos.y+1), -1))
-        
-        if entity.pos.y < 0:
-            tiles = np.append(tiles, Tile(floor(entity.pos.x-1), floor(entity.pos.y), -1))
-            tiles = np.append(tiles, Tile(floor(entity.pos.x), floor(entity.pos.y), -1))
-            tiles = np.append(tiles, Tile(floor(entity.pos.x+1), floor(entity.pos.y), -1))
-        """
         
         # Order according to speed -> going right = sort from left to right
         #                             going down = sort from top to bottom
@@ -270,8 +260,8 @@ class World:
                     dy = tile.pos.y - (entity.pos.y+entity.box.h)
                 
 
-                d1 = abs(v * dx / vel.x) if vel.x != 0 else 0
-                d2 = abs(v * dy / vel.y) if vel.y != 0 else 0
+                d1 = abs(dx / vel.x) if vel.x != 0 else 0
+                d2 = abs(dy / vel.y) if vel.y != 0 else 0
 
                 d = min(d1, d2) if d1*d2 != 0 else max(d1, d2)
                 
