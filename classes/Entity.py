@@ -118,7 +118,7 @@ class Entity(Copyable):
         if dimensions is None:
             dimensions = self.SIZE
         
-        rect = (pos.x, pos.y-self.box.h*size, self.box.w*size, self.box.h*size)
+        rect = (pos.x, pos.y, self.box.w*size, self.box.h*size)
 
         if self.texture:
             self.texture.render(surface, pos, size, dimensions, hasattr(self, "direction") and self.direction.x == -1)

@@ -104,7 +104,7 @@ class Hud:
 
             if self.hotbar < len(self.hotbars) and i < len(self.hotbars[self.hotbar]):
                 # dimension = Vec(1,1) because we want the entity to be scaled at 1x1 tile
-                self.hotbars[self.hotbar][i].render(surface, surface, Vec(x+margin, y+slot_size-margin), slot_size*0.8, dimensions=Vec(1,1))
+                self.hotbars[self.hotbar][i].render(surface, surface, Vec(x+margin, y+margin), slot_size*0.8, dimensions=Vec(1,1))
         
         if hotbar_pos == 0:
             w, h = slot_size*0.75, self.MARGIN/4
@@ -136,9 +136,9 @@ class Hud:
             y_thumb_h = min(1, self.game.HEIGHT/world_h) * self.game.HEIGHT
 
             x = rx * (self.game.WIDTH - x_thumb_w)
-            y = (1 - ry) * (self.game.HEIGHT - y_thumb_h)
+            y = ry * (self.game.HEIGHT - y_thumb_h)
 
-            pygame.draw.rect(surface, (255,255,255, self.sb_opacity), [x, HEIGHT-5, x_thumb_w,5])
+            pygame.draw.rect(surface, (255,255,255, self.sb_opacity), [x, 0, x_thumb_w,5])
             pygame.draw.rect(surface, (255,255,255, self.sb_opacity), [0, y, 5, y_thumb_h])
         
         cls, type_, sel = self.get_type()
