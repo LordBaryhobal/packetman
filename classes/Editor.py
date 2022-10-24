@@ -58,13 +58,9 @@ class Editor:
         # Moving camera
         if self.move[0] == 1:
             newpos = self.get_mousepos()
-            mvec = Vec(1, -1)
             
             # If shift is pressed, move 5x faster
-            if pygame.key.get_pressed()[pygame.K_LSHIFT]:
-                mvec *= 5
-            
-            self.game.camera.pos += (self.move[1]-newpos)*mvec
+            self.game.camera.pos += (self.move[1]-newpos)*(int(pygame.key.get_pressed()[pygame.K_LSHIFT])*4 + 1)
             self.move[1] = newpos
             self.game.camera.update_visible_tiles()
             self.game.camera.update_visible_entities()
@@ -99,7 +95,7 @@ class Editor:
                             self.selected_entity.highlight = False
                         
                         pos = self.game.camera.screen_to_world(self.get_mousepos())
-                        entity = self.game.world.get_entities_in_rect(pos+Vec(0,1), pos+Vec(1,0))
+                        entity = self.game.world.get_entities_in_rect(pos, pos+Vec(1,1))
                         
                         if len(entity) != 0:
                             self.selected_entity = entity[0]
@@ -151,6 +147,7 @@ class Editor:
                         tl, br = self.selection[1].get_tl_br_corners(self.selection[2])
                         
                         self.selected_tiles = self.game.world.get_tiles_in_rect(tl, br).copy()
+                        print(self.selected_tiles)
                         self.modify_selection(Tile, 0)
                         
                         self.start_move_pos = self.game.camera.screen_to_world(self.get_mousepos())
@@ -256,14 +253,13 @@ class Editor:
                             self.highlight_entities(self.selected_entities, highlight=False)
                             
                         else:
-                            bl, tr = self.selection[1].get_bl_tr_corners(self.selection[2])
+                            bl, tr = self.selection[1].get_tl_br_corners(self.selection[2])
                             self.selection = [2, bl, tr]
                             
                             if self.select_entities:
                                 # Get the top-left and bottom-right corners of the selection
                                 tl, br = self.selection[1].get_tl_br_corners(self.selection[2])
-                                tl += Vec(0, 1)
-                                br += Vec(1, 0)
+                                br += Vec(1, 1)
                                 self.selected_entities = self.game.world.get_entities_in_rect(tl, br)
                                 self.highlight_entities(self.selected_entities, highlight=True)
                                 
@@ -299,8 +295,7 @@ class Editor:
                     # Remove all the entities (except the player) in the selection
                     if event.mod & pygame.KMOD_ALT:
                         tl, br = self.selection[1].get_tl_br_corners(self.selection[2])
-                        tl += Vec(0, 1)
-                        br += Vec(1, 0)
+                        br += Vec(1, 1)
                         entities = self.game.world.get_entities_in_rect(tl, br)
                         for entity in entities:
                             if not isinstance(entity, Player):
@@ -425,11 +420,11 @@ class Editor:
             mousepos = self.game.camera.screen_to_world(self.get_mousepos())
             v1 = self.game.camera.world_to_screen(self.selection[1])
             v2 = self.game.camera.world_to_screen(mousepos)
-            bl, tr = v1.get_bl_tr_corners(v2)
+            bl, tr = v1.get_tl_br_corners(v2)
             
             self.boundingbox.from_vectors(
-                bl-Vec(0, self.game.camera.tilesize),
-                tr+Vec(self.game.camera.tilesize, 0)
+                bl,
+                tr+Vec(self.game.camera.tilesize, self.game.camera.tilesize)
             )
             self.boundingbox.render(editor_surf, (100,100,100), 5)
             
@@ -454,11 +449,11 @@ class Editor:
             # Render the selection
             v1 = self.game.camera.world_to_screen(self.selection[1]+displacement)
             v2 = self.game.camera.world_to_screen(self.selection[2]+displacement)
-            bl, tr = v1.get_bl_tr_corners(v2)
+            bl, tr = v1.get_tl_br_corners(v2)
             
             self.boundingbox.from_vectors(
-                bl-Vec(0, self.game.camera.tilesize),
-                tr+Vec(self.game.camera.tilesize, 0)
+                bl,
+                tr+Vec(self.game.camera.tilesize, self.game.camera.tilesize)
             )
             self.boundingbox.render(editor_surf, (100,100,100), 5)
         
@@ -469,17 +464,18 @@ class Editor:
                 for x,tile in enumerate(row):
                     tile.render(editor_surf, hud_surf, self.game.camera.world_to_screen(pos+Vec(x, y)), self.game.camera.tilesize)
 
+
             size = Vec(
                 len(self.copied_tiles[0]) - 1,
                 len(self.copied_tiles)-1
             )
             v1 = self.game.camera.world_to_screen(pos)
             v2 = self.game.camera.world_to_screen(pos + size)
-            bl, tr = v1.get_bl_tr_corners(v2)
+            bl, tr = v1.get_tl_br_corners(v2)
             
             self.boundingbox.from_vectors(
-                bl-Vec(0, self.game.camera.tilesize),
-                tr+Vec(self.game.camera.tilesize,0)
+                bl,
+                tr+Vec(self.game.camera.tilesize,self.game.camera.tilesize)
             )
             self.boundingbox.render(editor_surf, (100,100,100), 5)
             

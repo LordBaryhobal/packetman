@@ -160,22 +160,6 @@ class Vec(Copyable):
             Vec -- bottom-right corner
         """
 
-        tl = Vec(min(self.x, other.x), max(self.y, other.y))
-        br = Vec(max(self.x, other.x), min(self.y, other.y))
-        return tl, br
-
-    def get_bl_tr_corners(self,other):
-        """Returns the bottom-left and top-right corners of the rectangle
-        formed by `self` and `other`
-
-        Arguments:
-            other {Vec} -- other vector
-
-        Returns:
-            Vec -- bottom-left corner
-            Vec -- top-right corner
-        """
-
         bl = self.min(other)
         tr = self.max(other)
         return bl, tr
