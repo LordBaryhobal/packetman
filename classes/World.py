@@ -545,7 +545,7 @@ class World:
         """
         
         tile = self.get_tile(pos)
-        offsets = [Vec(0, 1), Vec(1, 0), Vec(0, -1), Vec(-1, 0)]
+        offsets = [Vec(0, -1), Vec(1, 0), Vec(0, 1), Vec(-1, 0)]
         
         for i, off in enumerate(offsets):
             bit, bit2 = 2**i, 2**((i+2)%4)

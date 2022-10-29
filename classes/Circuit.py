@@ -74,15 +74,15 @@ class Circuit:
                 tile.powered_by -= 1
             
             if tile.neighbors & 1:
-                self.power_tiles(self.world.get_tile(tile.pos + Vec(0,1)), 0, power)
+                self.power_tiles(self.world.get_tile(tile.pos + Vec(0, -1)), 0, power)
             
             if tile.neighbors & 2:
-                self.power_tiles(self.world.get_tile(tile.pos + Vec(1,0)), 1, power)
+                self.power_tiles(self.world.get_tile(tile.pos + Vec(1, 0)), 1, power)
             
             if tile.neighbors & 4:
-                self.power_tiles(self.world.get_tile(tile.pos + Vec(0,-1)), 2, power)
+                self.power_tiles(self.world.get_tile(tile.pos + Vec(0, 1)), 2, power)
             
             if tile.neighbors & 8:
-                self.power_tiles(self.world.get_tile(tile.pos + Vec(-1,0)), 3, power)
+                self.power_tiles(self.world.get_tile(tile.pos + Vec(-1, 0)), 3, power)
         
         tile.update_power()

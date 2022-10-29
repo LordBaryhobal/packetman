@@ -26,7 +26,7 @@ class Input(Electrical):
     
     def create_event(self, pressed):
         neighbors = []
-        for i, delta in enumerate((Vec(0, 1), Vec(1, 0), Vec(0, -1), Vec(-1, 0))):
+        for i, delta in enumerate((Vec(0, -1), Vec(1, 0), Vec(0, 1), Vec(-1, 0))):
             ntile = self.world.get_tile(self.pos+delta)
             if isinstance(ntile, Electrical):
                 neighbors.append((i,ntile))
@@ -200,7 +200,7 @@ class Gate(Output, Input):
         0: "gate"
     }
 
-    DIRECTION = (Vec(0, 1), Vec(1, 0), Vec(0, -1), Vec(-1, 0))
+    DIRECTION = (Vec(0, -1), Vec(1, 0), Vec(0, 1), Vec(-1, 0))
 
     solid = True
     
@@ -422,7 +422,7 @@ class CrossWire(Electrical):
     _TILES = {
         0: "crosswire2"
     }
-    DIRECTION = (Vec(0, 1), Vec(1, 0), Vec(0, -1), Vec(-1, 0))
+    DIRECTION = (Vec(0, -1), Vec(1, 0), Vec(0, 1), Vec(-1, 0))
     
     I18N_KEY = "crosswire"
 
