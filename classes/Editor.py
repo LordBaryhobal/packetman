@@ -281,10 +281,6 @@ class Editor:
                             self.game.world.remove_entity(self.selected_entity)
                             self.selected_entity = None
                     
-                    # Remove the tiles in the selection
-                    if self.selection[0] == 2:
-                        self.modify_selection(Tile, 0)
-                    
                     # Stop placing the pasted tiles/entities
                     if self.placing == 2:
                         self.placing = 0
@@ -299,6 +295,10 @@ class Editor:
                             if not isinstance(entity, Player):
                                 self.game.world.remove_entity(entity)
                             
+                    # Remove the tiles in the selection
+                    elif self.selection[0] == 2:
+                        self.modify_selection(Tile, 0)
+                        
                 # Save the world
                 elif event.key == pygame.K_s and event.mod & pygame.KMOD_CTRL:
                     self.game.gui.switch_menu("save_menu")
