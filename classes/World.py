@@ -6,18 +6,15 @@ import os
 import tempfile
 
 import numpy as np
-import pickle
 import pygame
-import struct
 
 from classes.Circuit import Circuit
-from classes.Entity import Entity
 from classes.Event import Event
 from classes.Logger import Logger
-from classes.tiles.Metals import Metal
 from classes.Path import Path
 from classes.Player import Player
 from classes.Rect import Rect
+from classes.SaveFile import SaveFile
 from classes.Tile import Tile
 from classes.Vec import Vec
 from classes.tiles.Components import Electrical
@@ -27,8 +24,6 @@ AUTOSAVE_PATH = os.path.join(tempfile.gettempdir(), "packetman_autosave.dat")
 
 class World:
     """World class holding world tiles and entities. Also processes physics."""
-
-    SAVE_FORMAT = 1
 
     WIDTH = 1
     HEIGHT = 1
@@ -47,6 +42,9 @@ class World:
         self.player = Player(Vec(1, 1), world=self)
         self.entities.append(self.player)
         self.circuit = Circuit(self)
+        self.chunks = {}
+        self.default_ground_tile = Tile()
+        self.file = None
     
     def physics(self, delta):
         """Simulates physics
@@ -330,74 +328,8 @@ class World:
             if os.path.isfile(AUTOSAVE_PATH):
                 os.remove(AUTOSAVE_PATH)
 
-        buf_tiles = bytearray()
-        buf_entities = bytearray()
-
-        max_x, max_y = 0, 0
-
-        Logger.info("Saving tiles")
-        tiles = self.tiles.flatten()
-        for tile in tiles:
-            if not tile.name:
-                continue
-            
-            buf_tile = bytearray()
-            buf_tile.extend(struct.pack(">H", tile.type))
-            buf_tile.extend(struct.pack(">H", tile.pos.x))
-            buf_tile.extend(struct.pack(">H", tile.pos.y))
-            buf_tile.extend(bytearray(tile.__class__.__name__, "utf-8"))
-            buf_tile.append(0)
-            attrs = {}
-
-            if hasattr(tile, "_save"):
-                for a in tile._save:
-                    if hasattr(tile, a):
-                        # TODO: Remove later
-                        if a != "neighbors" or tile.CONNECTED:
-                            attrs[a] = getattr(tile, a)
-            
-            attrs = pickle.dumps(attrs)
-            buf_tile.extend(attrs)
-
-            buf_tiles.extend(struct.pack(">H", len(buf_tile)))
-            buf_tiles += buf_tile
-
-            max_x = max(max_x, tile.pos.x)
-            max_y = max(max_y, tile.pos.y)
-        
-        entities = self.entities
-
-        Logger.info("Saving entities")
-        for entity in entities:
-            buf_entity = bytearray()
-            buf_entity.extend(struct.pack(">H", entity.type))
-            buf_entity.extend(struct.pack(">f", entity.pos.x))
-            buf_entity.extend(struct.pack(">f", entity.pos.y))
-            buf_entity.extend(bytearray(entity.__class__.__name__, "utf-8"))
-            buf_entity.append(0)
-            attrs = {}
-
-            if hasattr(entity, "_save"):
-                for a in entity._save:
-                    if hasattr(entity, a):
-                        attrs[a] = getattr(entity, a)
-            
-            attrs = pickle.dumps(attrs)
-            buf_entity.extend(attrs)
-
-            buf_entities.extend(struct.pack(">H", len(buf_entity)))
-            buf_entities += buf_entity
-        
-        Logger.info("Writing to file")
-
-        with open(path, "wb") as f:
-            f.write(struct.pack(">I", self.SAVE_FORMAT))
-            f.write(struct.pack(">I", len(buf_tiles) ))
-            f.write(struct.pack(">I", len(buf_entities) ))
-            f.write(struct.pack(">H", max_x+1))
-            f.write(struct.pack(">H", max_y+1))
-            f.write(buf_tiles)
-            f.write(buf_entities)
+        self.file = SaveFile(path, self)
+        self.file.save()
         
         Logger.info("Level saved successfully (maybe)")
         if not autosave:
@@ -423,81 +355,9 @@ class World:
         
         else:
             path = Path("levels", filename+".dat")
-
-        for tile in self.tiles.flatten():
-            tile.__del__()
-        
-        for entity in self.entities:
-            entity.__del__()
-
-        with open(path, "rb") as f:
-            save_format = struct.unpack(">I", f.read(4))[0]
-
-            if save_format != self.SAVE_FORMAT:
-                Logger.error("This level was not saved in the current format. It may not properly or crash the game.")
             
-            size_tiles = struct.unpack(">I", f.read(4))[0]
-            size_entities = struct.unpack(">I", f.read(4))[0]
-            WIDTH = struct.unpack(">H", f.read(2))[0]
-            HEIGHT = struct.unpack(">H", f.read(2))[0]
-            
-            tiles = np.empty([HEIGHT, WIDTH], dtype='object')
-            self.entities = []
-
-            Logger.info("Loading tiles")
-            while f.tell() < size_tiles+12:
-                size = struct.unpack(">H", f.read(2))[0]
-                type_ = struct.unpack(">H", f.read(2))[0]
-                x = struct.unpack(">H", f.read(2))[0]
-                y = struct.unpack(">H", f.read(2))[0]
-
-                cls = b""
-
-                while True:
-                    c = f.read(1)
-                    if c == b"\0": break
-                    cls += c
-
-                attrs = pickle.loads(f.read(size - len(cls) - 7))
-
-                cls = str(cls, "utf-8")
-                tile = Tile.get_cls(cls)(x, y, type_, self)
-                for k, v in attrs.items():
-                    setattr(tile, k, v)
-                
-                tiles[y, x] = tile
-            
-            for y in range(HEIGHT):
-                for x in range(WIDTH):
-                    if tiles[y, x] is None:
-                        tiles[y, x] = Tile(x, y)
-            self.WIDTH, self.HEIGHT, self.tiles = WIDTH, HEIGHT, tiles
-            
-            Logger.info("Loading entities")
-            while f.tell() < size_entities+size_tiles+12:
-                size = struct.unpack(">H", f.read(2))[0]
-                type_ = struct.unpack(">H", f.read(2))[0]
-                x = struct.unpack(">f", f.read(4))[0]
-                y = struct.unpack(">f", f.read(4))[0]
-
-                cls = b""
-
-                while True:
-                    c = f.read(1)
-                    if c == b"\0": break
-                    cls += c
-                
-                attrs = pickle.loads(f.read(size - len(cls) - 11))
-
-                cls = str(cls, "utf-8")
-                entity = Entity.get_cls(cls)(pos=Vec(x,y), type_=type_)
-
-                for k, v in attrs.items():
-                    setattr(entity, k, v)
-                
-                self.add_entity(entity)
-                if cls == "Player":
-                    self.player = entity
+        self.file = SaveFile(path, self)
+        self.file.load()
         
         Logger.info("Level loaded successfully (maybe)")
         self.level_file = filename
