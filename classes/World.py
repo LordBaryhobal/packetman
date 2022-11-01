@@ -144,12 +144,11 @@ class World:
             Tile -- tile if pos is in the world, None otherwise
         """
         
-        x, y = int(pos.x), int(pos.y)
-
-        if x < 0 or x >= self.WIDTH or y < 0 or y >= self.HEIGHT:
-            return None
+        pos = floor(pos)
         
-        return self.tiles[y, x]
+        c =self.get_chunk(pos//16)
+
+        return c if c is None else c.get_tile(pos%16)
     
     def set_tile(self, tile, pos):
         """Sets the tile at a given pos
@@ -159,17 +158,19 @@ class World:
             pos {Vec} -- world coordinates of the tile
         """
         reset_circuit = False
+        
+        pos = floor(pos)
+        cpos = pos//16
 
-        if pos.x >= self.WIDTH or pos.y >= self.HEIGHT:
-            self.modify_tilelistlen(pos)
+        c = self.get_chunk(cpos.x, cpos.y, create=True)
         
         if isinstance(self.get_tile(pos), Electrical) or isinstance(tile, Electrical):
             reset_circuit = True
 
         tile.pos = pos.copy()
         tile.world = self
-        self.tiles[pos.y, pos.x] = tile
-        self.update_tile(pos)
+        c.set_tile(tile, pos%16)
+        self.update_tile(tile)
         if reset_circuit:
             self.game.editor.init_circuit_reset(tile)
     def get_tiles_in_rect(self, topleft, bottomright):
@@ -188,9 +189,24 @@ class World:
 
         topleft = floor(topleft)
         bottomright = floor(bottomright)
-        self.modify_tilelistlen(bottomright.max(topleft))
-
-        return self.tiles[topleft.y:bottomright.y+1, topleft.x:bottomright.x+1]
+        
+        rtiles = []
+        for y in range(topleft.y//16, bottomright.y//16 + 1):
+            tilerow = None         
+            for x in range(topleft.x//16, bottomright.x//16 + 1):
+                relativetopleft = (max(topleft.x-x*16, 0), max(topleft.y-y*16,0))
+                relativebottomright = (min(bottomright.x-x*16, 16), min(bottomright.y-y*16,16))
+                c = self.get_chunk(x,y)
+                if c is None:
+                    s = (relativetopleft.x -relativebottomright.x,\
+                        relativetopleft.y -relativebottomright.y)
+                    tiles = np.full(shape=s, fill_value=None, dtype="object")
+                else:
+                    tiles = c.get_tiles_in_rect(relativetopleft, relativebottomright)
+                tilerow.append(tiles)
+            rtiles.append(np.concatenate(tilerow, axis=1))
+        
+        return np.concatenate(rtiles, axis =0)
     
     def get_entities_in_rect(self, topleft, bottomright, with_force_render=False):
         """Get entities overlapping with rectangle
@@ -535,7 +551,7 @@ class World:
                     continue
                 self.set_tile(t, newpos)
     
-    def update_tile(self, pos):
+    def update_tile(self, tile, pos):
         """Updates a tile
 
         Updates the tile's neighbor count and of neighboring tiles
@@ -544,12 +560,11 @@ class World:
             pos {Vec} -- world coordinates of the tile to update
         """
         
-        tile = self.get_tile(pos)
         offsets = [Vec(0, -1), Vec(1, 0), Vec(0, 1), Vec(-1, 0)]
         
         for i, off in enumerate(offsets):
             bit, bit2 = 2**i, 2**((i+2)%4)
-            tile2 = self.get_tile(pos+off)
+            tile2 = self.get_tile(tile.pos+off)
             
             # t --> does tile want to connect to tile2?
             # t2 --> does tile2 want to connect to tile?
