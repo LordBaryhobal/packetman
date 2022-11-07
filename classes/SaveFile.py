@@ -41,8 +41,8 @@ class SaveFile:
         Logger.info("Loading chunk header")
         self.chunk_offsets = {}
         for i in range(nchunks):
-            x = struct.unpack(">H", f.read(2))[0]
-            y = struct.unpack(">H", f.read(2))[0]
+            x = struct.unpack(">h", f.read(2))[0]
+            y = struct.unpack(">h", f.read(2))[0]
             offset = struct.unpack(">I", f.read(4))[0]
             self.chunk_offsets[(x,y)] = offset
         
@@ -62,7 +62,7 @@ class SaveFile:
             attrs = staff.loads(f.read(size - len(cls) - 3))
 
             cls = str(cls, "utf-8")
-            tile = Tile.get_cls(cls)(x, y, type_, self)
+            tile = Tile.get_cls(cls)(x, y, type_, self.world)
             for k, v in attrs.items():
                 setattr(tile, k, v)
             
@@ -155,8 +155,8 @@ class SaveFile:
         
         Logger.info("Saving chunks")
         for [cx, cy], chunk in self.world.chunks.items():
-            buf_chunk_header.extend(struct.pack(">H", cx))
-            buf_chunk_header.extend(struct.pack(">H", cy))
+            buf_chunk_header.extend(struct.pack(">h", cx))
+            buf_chunk_header.extend(struct.pack(">h", cy))
             buf_chunk_header.extend(struct.pack(">I", len(buf_chunks)))
             
             ground = list(chunk.ground_tiles[chunk.ground_tiles != np.array(None)])
