@@ -146,7 +146,7 @@ class Vec(Copyable):
         return Vec(round(self.x, n), round(self.y, n))
     
     def __floor__(self):
-        return Vec(int(self.x), int(self.y))
+        return Vec(math.floor(self.x), math.floor(self.y))
 
     def get_tl_br_corners(self,other):
         """Returns the top-left and bottom-right corners of the rectangle
