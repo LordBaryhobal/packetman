@@ -53,7 +53,6 @@ class Camera:
             elif player_br.y > H-vm:            # top
                 self.pos.y += player_br.y-H+vm
             
-            self.pos = self.pos.max(Vec(0,0))
             
             if prev_pos != self.pos:
                 self.update_visible_tiles()
@@ -62,7 +61,6 @@ class Camera:
     def update_visible_tiles(self):
         """Updates the list of visible tiles"""
 
-        self.pos = self.pos.max(Vec())  # clamp to (0;0)
         
         # According to the screen
         bottomright = self.screen_to_world(Vec(self.game.WIDTH, self.game.HEIGHT))
@@ -73,8 +71,6 @@ class Camera:
     def update_visible_entities(self):
         """Updates the list of visible entities"""
 
-        self.pos = self.pos.max(Vec())  # clamp to (0;0)
-        
         # According to the screen
         bottomright = self.screen_to_world(Vec(self.game.WIDTH, self.game.HEIGHT), round_=False)
         topleft = self.screen_to_world(Vec(),round_=False)
@@ -95,6 +91,7 @@ class Camera:
         editor_surf.fill((0,0,0,0))
 
         for tile in self.visible_tiles:
+            if tile is None: continue
             tile.render(world_surf, hud_surf, self.world_to_screen(tile.pos), self.tilesize)
         
         for entity in self.visible_entities:
