@@ -148,7 +148,7 @@ class World:
 
         return c if c is None else c.get_tile(pos%16)
     
-    def set_tile(self, tile, pos):
+    def set_tile(self, tile, pos, ground=False):
         """Sets the tile at a given pos
 
         Arguments:
@@ -162,15 +162,17 @@ class World:
 
         c = self.get_chunk(cpos.x, cpos.y, create=True)
         
-        if isinstance(self.get_tile(pos), Electrical) or isinstance(tile, Electrical):
-            reset_circuit = True
 
         tile.pos = pos.copy()
-        tile.world = self
-        c.set_tile(tile, pos%16)
-        self.update_tile(tile)
-        if reset_circuit:
-            self.game.editor.init_circuit_reset(tile)
+        if not ground:
+            if isinstance(self.get_tile(pos), Electrical) or isinstance(tile, Electrical):
+                reset_circuit = True
+            tile.world = self
+        c.set_tile(tile, pos%16, ground)
+        if not ground:
+            self.update_tile(tile)
+            if reset_circuit:
+                self.game.editor.init_circuit_reset(tile)
     def get_tiles_in_rect(self, topleft, bottomright):
         """Get tiles overlapping with rectangle
 
