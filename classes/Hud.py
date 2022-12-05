@@ -70,7 +70,7 @@ class Hud:
             selected = self.hotbars[self.hotbar][self.slot]
             return (selected.__class__, selected.type, selected)
         
-        return (Tile, 0, Tile(type_=0))
+        return (Tile, 0, None)
 
     def render(self, surface):
         """Renders the hud
@@ -142,9 +142,10 @@ class Hud:
             pygame.draw.rect(surface, (255,255,255, self.sb_opacity), [0, y, 5, y_thumb_h])
         
         cls, type_, sel = self.get_type()
-        txt = self.name_font.render(i18n(sel.get_i18n_key()), True, (255,255,255))
-        txt.set_alpha(self.name_opacity)
-        surface.blit(txt, [WIDTH/2 - txt.get_width()/2, HEIGHT-slot_size-self.MARGIN-txt.get_height()])
+        if sel:
+            txt = self.name_font.render(i18n(sel.get_i18n_key()), True, (255,255,255))
+            txt.set_alpha(self.name_opacity)
+            surface.blit(txt, [WIDTH/2 - txt.get_width()/2, HEIGHT-slot_size-self.MARGIN-txt.get_height()])
     
     def set_hotbar(self, i):
         """Sets which hotbar is currently selected

@@ -69,7 +69,7 @@ class Editor:
         if self.placing == 1:
             pos = self.game.camera.screen_to_world(self.get_mousepos())
             cls, type, t = self.hud.get_type()
-            tile = t.copy()
+            tile = t.copy() if t else None
             self.game.world.set_tile(tile, pos)
             self.game.camera.update_visible_tiles()
         
@@ -119,6 +119,7 @@ class Editor:
 
                         for y,row in enumerate(self.copied_tiles):
                             for x,tile in enumerate(row):
+                                if tile is None: continue
                                 self.copied_tiles[y, x] = tile.copy()
                         
                         self.game.camera.update_visible_tiles()
@@ -146,7 +147,7 @@ class Editor:
                         
                         tl, br = self.selection[1].get_tl_br_corners(self.selection[2])
                         
-                        self.selected_tiles = self.game.world.get_tiles_in_rect(tl, br).copy()
+                        self.selected_tiles = self.game.world.get_tiles_in_rect(tl, br+Vec(1,1)).copy()
                         self.modify_selection(Tile, 0)
                         
                         self.start_move_pos = self.game.camera.screen_to_world(self.get_mousepos())
@@ -307,9 +308,10 @@ class Editor:
                 elif event.key == pygame.K_c and event.mod & pygame.KMOD_CTRL and self.selection[0] == 2 and self.placing == 0:
                     tl, br = self.selection[1].get_tl_br_corners(self.selection[2])
                         
-                    self.copied_tiles = self.game.world.get_tiles_in_rect(tl, br).copy()
+                    self.copied_tiles = self.game.world.get_tiles_in_rect(tl, br+Vec(1,1)).copy()
                     for y,row in enumerate(self.copied_tiles):
                         for x,tile in enumerate(row):
+                            if tile is None: continue
                             self.copied_tiles[y, x] = tile.copy()
                     
                     # Remove the copied entities from last time
@@ -371,7 +373,7 @@ class Editor:
                 elif event.key == pygame.K_r:
                     world_mouse_pos = self.game.camera.screen_to_world(self.get_mousepos())
                     tile = self.game.world.get_tile(world_mouse_pos)
-                    if tile.rotatable:
+                    if tile and tile.rotatable:
                         tile.rotate()
                         self.init_circuit_reset(tile)
                 
@@ -436,6 +438,7 @@ class Editor:
                 
                 # Render moving tiles
                 for tile in self.selected_tiles.flatten():
+                    if tile is None: continue
                     tile.render(editor_surf, hud_surf, self.game.camera.world_to_screen(tile.pos+displacement), self.game.camera.tilesize)
                 
                 # Render moving entities
@@ -460,6 +463,7 @@ class Editor:
             pos = self.game.camera.screen_to_world(self.get_mousepos())
             for y,row in enumerate(self.copied_tiles):
                 for x,tile in enumerate(row):
+                    if tile is None: continue
                     tile.render(editor_surf, hud_surf, self.game.camera.world_to_screen(pos+Vec(x, y)), self.game.camera.tilesize)
 
 

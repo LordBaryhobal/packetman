@@ -8,6 +8,7 @@ import tempfile
 import numpy as np
 import pygame
 
+from classes.Chunk import Chunk
 from classes.Circuit import Circuit
 from classes.Event import Event
 from classes.Logger import Logger
@@ -18,7 +19,7 @@ from classes.SaveFile import SaveFile
 from classes.Tile import Tile
 from classes.Vec import Vec
 from classes.tiles.Components import Electrical
-
+from classes.tiles.Metals import Aluminium
 
 AUTOSAVE_PATH = os.path.join(tempfile.gettempdir(), "packetman_autosave.dat")
 
@@ -43,7 +44,7 @@ class World:
         self.entities.append(self.player)
         self.circuit = Circuit(self)
         self.chunks = {}
-        self.default_ground_tile = Tile()
+        self.default_ground_tile = Aluminium()
         self.file = None
     
     def physics(self, delta):
@@ -132,6 +133,17 @@ class World:
                 
                 entity.last_pos = current_pos
                     
+    def get_chunk(self, x, y, create=False):
+        pos = (x, y)
+        if not pos in self.chunks:
+            if create:
+                self.chunks[pos] = Chunk(x, y)
+        
+            else:
+                return None
+        
+        return self.chunks[pos]
+    
     def get_tile(self, pos):
         """Returns the tile at a given position
 
@@ -144,7 +156,7 @@ class World:
         
         pos = floor(pos)
         
-        c =self.get_chunk(pos//16)
+        c = self.get_chunk(*(pos//16))
 
         return c if c is None else c.get_tile(pos%16)
     
@@ -162,17 +174,18 @@ class World:
 
         c = self.get_chunk(cpos.x, cpos.y, create=True)
         
-
-        tile.pos = pos.copy()
-        if not ground:
-            if isinstance(self.get_tile(pos), Electrical) or isinstance(tile, Electrical):
-                reset_circuit = True
-            tile.world = self
+        if tile:
+            tile.pos = pos.copy()
+            if not ground:
+                if isinstance(self.get_tile(pos), Electrical) or isinstance(tile, Electrical):
+                    reset_circuit = True
+                tile.world = self
         c.set_tile(tile, pos%16, ground)
         if not ground:
             self.update_tile(tile)
             if reset_circuit:
                 self.game.editor.init_circuit_reset(tile)
+    
     def get_tiles_in_rect(self, topleft, bottomright):
         """Get tiles overlapping with rectangle
 
@@ -192,14 +205,14 @@ class World:
         
         rtiles = []
         for y in range(topleft.y//16, bottomright.y//16 + 1):
-            tilerow = None         
+            tilerow = []
             for x in range(topleft.x//16, bottomright.x//16 + 1):
-                relativetopleft = (max(topleft.x-x*16, 0), max(topleft.y-y*16,0))
-                relativebottomright = (min(bottomright.x-x*16, 16), min(bottomright.y-y*16,16))
+                relativetopleft = Vec(max(topleft.x-x*16, 0), max(topleft.y-y*16,0))
+                relativebottomright = Vec(min(bottomright.x-x*16, 16), min(bottomright.y-y*16, 16))
                 c = self.get_chunk(x,y)
                 if c is None:
-                    s = (relativetopleft.x -relativebottomright.x,\
-                        relativetopleft.y -relativebottomright.y)
+                    s = (relativebottomright.y - relativetopleft.y,
+                         relativebottomright.x - relativetopleft.x)
                     tiles = np.full(shape=s, fill_value=None, dtype="object")
                 else:
                     tiles = c.get_tiles_in_rect(relativetopleft, relativebottomright)
@@ -406,14 +419,12 @@ class World:
         for y in range(selection.shape[0]):
             for x in range(selection.shape[1]):
                 t = selection[y, x]
-                if not t.name and not place_empty:
+                if (t is None or not t.name) and not place_empty:
                     continue
                 newpos = pos + Vec(x, y)
-                if newpos.x < 0 or newpos.y < 0:
-                    continue
                 self.set_tile(t, newpos)
     
-    def update_tile(self, tile):
+    def update_tile(self, pos):
         """Updates a tile
 
         Updates the tile's neighbor count and of neighboring tiles
@@ -422,43 +433,29 @@ class World:
             pos {Vec} -- world coordinates of the tile to update
         """
         
+        tile = self.get_tile(pos)
         offsets = [Vec(0, -1), Vec(1, 0), Vec(0, 1), Vec(-1, 0)]
         
         for i, off in enumerate(offsets):
             bit, bit2 = 2**i, 2**((i+2)%4)
-            tile2 = self.get_tile(tile.pos+off)
-            
-            # t --> does tile want to connect to tile2?
-            # t2 --> does tile2 want to connect to tile?
-            
-            # Verify that tile2 is not None
-            t, t2 = False, False
-            
-            if not tile2:
-                t2 = False
-                if tile.CONNECTED:
-                    t = True
-            
-            else:
-                t = False
-                if tile.CONNECT_TO:
-                    t = tile.CONNECTED and isinstance(tile2, tile.CONNECT_TO)
+            tile2 = self.get_tile(pos+off)
+
+            if tile and tile.CONNECTED:
+                if tile2 and (not tile.CONNECT_TO or isinstance(tile2, tile.CONNECT_TO)):
+                    tile.neighbors |= bit
                 
-                t2 = False
-                if tile2.CONNECT_TO:
-                    t2 = tile2.CONNECTED and isinstance(tile, tile2.CONNECT_TO)
-            
-            if t:
-                tile.neighbors |= bit
-            elif tile and tile.CONNECTED:
-                tile.neighbors &= ~bit
-            
-            if t2:
-                tile2.neighbors |= bit2
-            elif tile2 and tile2.CONNECTED:
-                tile2.neighbors &= ~bit2
+                else:
+                    tile.neighbors &= ~bit
+
             
             if tile2:
+                if tile2.CONNECTED:
+                    if tile and (not tile2.CONNECT_TO or isinstance(tile, tile2.CONNECT_TO)):
+                        tile2.neighbors |= bit2
+                    
+                    else:
+                        tile2.neighbors &= ~bit2
+            
                 tile2.on_update()
         
         if tile:

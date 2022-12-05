@@ -13,9 +13,9 @@ class Chunk:
     
     def set_tile(self, tile, pos, ground=False):
         if ground:
-            self.ground_tiles[pos.x, pos.y] = tile
+            self.ground_tiles[pos.y, pos.x] = tile
         else:
-            self.tiles[pos.x, pos.y] = tile
+            self.tiles[pos.y, pos.x] = tile
     
     def get_tile(self, pos, ground=False):
         if ground:
@@ -23,8 +23,11 @@ class Chunk:
         
         return self.tiles[pos.y, pos.x]
     
-    def get_tile_in_rect(self, tl, br, ground=False):
+    def get_tiles_in_rect(self, tl, br, ground=False):
         if ground:
-            return self.ground_tiles[br.y:tl.y+1, tl.x:br.x+1]
+            return self.ground_tiles[tl.y:br.y, tl.x:br.x]
         
-        return self.tiles[br.y:tl.y+1, tl.x:br.x+1]
+        return self.tiles[tl.y:br.y, tl.x:br.x]
+
+    def is_empty(self):
+        return np.all(self.ground_tiles == None) and np.all(self.tiles == None)
